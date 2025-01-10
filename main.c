@@ -2,41 +2,48 @@
 
 #include <stdio.h>
 
+typedef struct
+{
+    Vector2 posicao;
+    Vector2 velocidade;
+    Texture2D sprite; 
+} Player ;
 
 
 int main(){
 
-    int posX=0, posY=300;
-    InitWindow(800, 600, "Titulo");
-
-    float frametime=0;
     char string[100];
 
-    Texture2D sprite = LoadTexture("resources/cheese.png");
+    InitWindow(800, 600, "Titulo");
 
-    printf(">>> %f", frametime);
+    Player player;
+    
+    player.posicao.x = 0.0f;
+    player.posicao.y = 0.0f;
+    
+    player.velocidade.x = 0.0f;
+    player.velocidade.y = 0.0f;
+
+    player.sprite = LoadTexture("resources/cheese.png");
+
+    
     SetTargetFPS(30);
 
     while (!WindowShouldClose()) {
-
-        frametime = GetFrameTime();
-
-        posX += 100 * frametime;
-
-
-        sprintf(string, "FRAME TIME> %f e FPS > %d",frametime, GetFPS() );
+        // INPUT
         
+        // UPDATE
 
-
-        if (posX > 800 ){ posX = 0;}
-
+        // DRAW
         BeginDrawing();
         
             ClearBackground(WHITE);
 
-            DrawTexture(sprite, posX, posY, WHITE);
+            DrawTexture(player.sprite, player.posicao.x, player.posicao.y, WHITE);
+            
+            sprintf(string, "FPS > %d", GetFPS() );
             DrawText(string, 100,100,30, BLACK);
-            //DrawCircle(400, 300, 4.0f, RED);
+            DrawCircle(400, 300, 4.0f, RED);
 
         EndDrawing();
     }
