@@ -1,33 +1,56 @@
-#include "raylib.h"
+#include "include/raylib.h"
 
 #include <stdio.h>
+#include <stdlib.h>
+
+
+char string[100];
 
 typedef struct
 {
-    Vector2 posicao;
-    Vector2 velocidade;
+    Vector2 position;
+    Vector2 velocity;
     Texture2D sprite; 
-} Player ;
+} Person;
 
+void setPerson(Person* target, Vector2 initPos, Vector2 initVel, char* sprite){
+    TraceLog(LOG_DEBUG, "Loading person %s", sprite);
+    target->position = initPos;
+    target->velocity = initVel;
+    target->sprite = LoadTexture(sprite);
+
+}
+
+void drawPerson(Person* target){
+    DrawTexture(target->sprite, target->position.x, target->position.y, WHITE);
+}
+
+void drawFps(){
+            sprintf(string, "FPS > %d", GetFPS() );
+            DrawText(string, 100,100,30, BLACK);
+}
 
 int main(){
+    // Config Screen
+    TraceLog(LOG_DEBUG, "- Init Raylib");
+    InitWindow(800, 600, "Titulo"); 
 
-    char string[100];
-
-    InitWindow(800, 600, "Titulo");
-
-    Player player;
-    
-    player.posicao.x = 0.0f;
-    player.posicao.y = 0.0f;
-    
-    player.velocidade.x = 0.0f;
-    player.velocidade.y = 0.0f;
-
-    player.sprite = LoadTexture("resources/cheese.png");
-
-    
     SetTargetFPS(30);
+
+
+    // Load Objects
+    int numPersons
+    TraceLog(LOG_DEBUG, "- Loading PERSONS");
+    
+    Person *player = malloc(sizeof(Person));
+
+    if(player == NULL){
+        TraceLog(LOG_ERROR, "Failed to load person");
+        return 1;
+    }
+
+    setPerson(player, (Vector2){20.0f, 200.0f}, (Vector2){0.0f, 0.0f}, "resources/cheese.png" );
+  
 
     while (!WindowShouldClose()) {
         // INPUT
@@ -39,16 +62,13 @@ int main(){
         
             ClearBackground(WHITE);
 
-            DrawTexture(player.sprite, player.posicao.x, player.posicao.y, WHITE);
-            
-            sprintf(string, "FPS > %d", GetFPS() );
-            DrawText(string, 100,100,30, BLACK);
-            DrawCircle(400, 300, 4.0f, RED);
+            drawPerson(player);
 
         EndDrawing();
     }
 
     CloseWindow();
+    free(player);
 
     return 0;
 }

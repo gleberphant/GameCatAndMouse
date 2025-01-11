@@ -22,7 +22,7 @@
                 }
             ],
             "windows": {
-                "miDebuggerPath": "e:/raylib/w64devkit/bin/gdb.exe"
+                "miDebuggerPath": "c:/w64devkit/bin/gdb.exe"
             },
             "osx": {
                 "MIMode": "lldb"
@@ -45,7 +45,7 @@
             "MIMode": "gdb",
             "windows": {
                 "program": "${workspaceFolder}/${fileBasenameNoExtension}.exe",
-                "miDebuggerPath": "E:/raylib/w64devkit/bin/gdb.exe"
+                "miDebuggerPath": "c:/w64devkit/bin/gdb.exe"
             },
             "osx": {
                 "MIMode": "lldb"
@@ -62,11 +62,11 @@
             "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "E:/raylib/w64devkit/bin",
+            "cwd": "c:/w64devkit/bin",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "E:\\raylib\\w64devkit\\bin\\gdb.exe",
+            "miDebuggerPath": "c:\\w64devkit\\bin\\gdb.exe",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -92,7 +92,7 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "/path/to/gdb",
+            "miDebuggerPath": "c:/win64devkit/bin",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
