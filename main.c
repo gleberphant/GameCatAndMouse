@@ -1,4 +1,6 @@
 #include "include/raylib.h"
+#include "include/raymath.h"
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,6 +14,7 @@ typedef struct Player Player;
 struct Player{
     Vector2 position;
     Vector2 moviment;
+    Vector2 size;
     Texture2D sprite;
 };
 
@@ -51,7 +54,8 @@ void setPerson(Player* target, Vector2 initPos, Vector2 initVel, char* sprite){
     target->position = initPos;
     target->moviment = initVel;
     target->sprite = LoadTexture(sprite);
-
+    target->size.x = target->sprite.width;
+    target->size.y = target->sprite.height;
 }
 
 void drawPerson(Player* target){
@@ -91,6 +95,27 @@ void drawPlayers(Players* enemyList, Player* playerNode ){
         EndDrawing();
 }
 
+bool isInside(Vector2 position, Vector2 size, Rectangle *arena){
+    Rectangle  targetBox ={
+        position.x,
+        position.y,
+        size.x,
+        size.y
+    };
+
+    return CheckCollisionRecs(targetBox, *arena);
+    // if ( targetBox.x < arena->x || targetBox.x > arena->width-targetBox.width){
+    //     return false;
+    // }
+    // if( targetBox.y < arena->y || targetBox.y > arena->height-targetBox.height){
+    //     return false;
+    // }
+
+    // return true;
+    
+
+}
+
 int gameLoop(){
 
 // Load Enemy list
@@ -106,6 +131,7 @@ int gameLoop(){
         return 1;
     }
 
+
     // Load Player
     TraceLog(LOG_DEBUG, "- Loading PLAYER");
     player = malloc(sizeof(Player));
@@ -117,9 +143,23 @@ int gameLoop(){
     }
 
     setPerson(player, (Vector2){400.0f, 200.0f}, (Vector2){0.0f, 0.0f}, "resources/mouse.png" );
-  
+
+    
+    // load map
+
+    
+    Rectangle arena = {
+        player->size.x,
+        player->size.y, 
+        W_WIDTH - player->size.x*2, 
+        W_HEIGHT - player->size.y*2
+    };
+    
+    // SET VARIABLES
+    Vector2 newPos;
     srand(time(NULL));
     unsigned int enemyVel = 4;
+    
     // GAME LOOP
     while (gameStage == GAME) {
         
@@ -150,28 +190,18 @@ int gameLoop(){
         }
 
         // UPDATE STATUS
+        newPos = Vector2Add(player->position, player->moviment);
         
-        player->position.x += player->moviment.x; 
-        player->position.y += player->moviment.y;
-        
-        
-            // check boundaries
-            if (player->position.x > W_WIDTH - player->sprite.width 
-            || player->position.x < 1 )
-            {
-                player->position.x -= player->moviment.x;
-            }
-
-            if (player->position.y > W_HEIGHT - player->sprite.height
-            || player->position.y < 1 )
-            {
-                player->position.y -= player->moviment.y;
-            }
-        
-        player->moviment = (Vector2){0,0};
+        // check boundaries
+        if(isInside(newPos, player->size, &arena)){
+            player->position = newPos;
+        }
+        player->moviment = Vector2Zero();
 
         for(Players* currentEnemy = enemyListHead; currentEnemy != NULL; currentEnemy = currentEnemy->next )
         {
+            Vector2 oldPos = currentEnemy->node->position;
+
             // Comportamento de perseguição
             if (player->position.x > currentEnemy->node->position.x){
                 currentEnemy->node->moviment.x += (rand() % enemyVel)   ;
@@ -186,28 +216,19 @@ int gameLoop(){
             }
 
             // movimenta
-            currentEnemy->node->position.x += currentEnemy->node->moviment.x;            
-            currentEnemy->node->position.y += currentEnemy->node->moviment.y;
-
+            currentEnemy->node->position = Vector2Add(currentEnemy->node->position, currentEnemy->node->moviment);
 
             // check boundaries
-            if (currentEnemy->node->position.x > W_WIDTH - currentEnemy->node->sprite.width 
-            || currentEnemy->node->position.x < 1 )
+            if (!isInside(currentEnemy->node->position, currentEnemy->node->size,&arena))
             {
-                currentEnemy->node->position.x -= currentEnemy->node->moviment.x;
+                currentEnemy->node->position = oldPos;
             }
-
-            if (currentEnemy->node->position.y > W_HEIGHT - currentEnemy->node->sprite.height
-            || currentEnemy->node->position.y < 1)
-            {
-                currentEnemy->node->position.y -= currentEnemy->node->moviment.y;
-            }
-
-            currentEnemy->node->moviment.x=0;
-            currentEnemy->node->moviment.y=0;
+            
+            currentEnemy->node->moviment = Vector2Zero();
             
         }
         // DRAW
+        DrawRectangleRec(arena,GRAY);
         drawPlayers(enemyListHead, player);    
     }
 
