@@ -8,7 +8,7 @@ SOURCES = main.c
 CFLAGS = -Wall -Wextra -g -I.\include\
 
 # Bibliotecas
-LDFLAGS =-lraylib -L.\lib -lopengl32 -lgdi32 -luser32 -lwinmm -mwindows
+LDFLAGS =-lraylib -L.\lib -lopengl32 -lgdi32 -luser32 -lwinmm
 
 # Regra padrão
 all: $(TARGET)

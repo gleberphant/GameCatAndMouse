@@ -1,14 +1,13 @@
 /* TODO
-- CHECK COLISION
 - COLISAO ITEM = MAIS PONTO
 - COLISAO ENEMY = MORTE
 - ELABORAR FUNÇÃO PARA ADICIONAR E REMOVER ITENS DA LISTA
+- carregar mapa de arquivo
 */
 
 
 #include "include/raylib.h"
 #include "include/raymath.h"
-
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,21 +16,27 @@
 #define W_WIDTH 800
 #define W_HEIGHT 600
 #define MAP_BORDER 10
-// structs
 
-
-typedef struct Player Player;
-typedef struct Players Players;
+// DECLARAÇÃO DE STRUCT E ENUM
+typedef struct Object Object;
+typedef struct LinkedNode LinkedNode;
 typedef struct Actions Actions;
-typedef enum ActionType ActionType;
-typedef enum StageType StageType;
+typedef struct SetupNode SetupNode;
 
+typedef enum ActionType ActionType;
+typedef enum GameStatusType GameStatusType;
+typedef enum NodeType NodeType;
+
+
+
+// TIPOS DE AÇÕES
 enum ActionType{
     MOVE,
     STOP
 };
 
-enum StageType { 
+// ESTADOS QUE O JOGO PODE SE ENCONTRAR
+enum GameStatusType { 
     INTRO, 
     MENU, 
     GAME, 
@@ -39,35 +44,56 @@ enum StageType {
     EXIT 
 };
 
-struct Player{
+enum NodeType{
+    PLAYER,
+    ENEMY,
+    ITEM
+};
+
+struct SetupNode{
+    Vector2 position;
+    NodeType type;
+};
+
+//OBJETO PRINCIPAL. SERVE PARA JOGADOR, INIMIGOS E ITENS
+struct Object{
     Vector2 position;
     Vector2 moviment;
     Vector2 size;
+    Rectangle box;
+    NodeType type;
     Texture2D sprite;
 };
 
-struct Players{
-    Player* node;
-    Players* next;
+// LINKED LIST DE OBJETOS
+struct LinkedNode{
+    Object* node;
+    LinkedNode* next;
 };
 
-
+// DEFINE UMA AÇÃO FEITA POR UM OBJETO 
 struct Actions{
-    
     Vector2 moviment;
     ActionType type;
-
 };
 
-// Global Variables
-Players *enemyListHead, *itemListHead;
-//Players *currentEnemy, *currentItem;
-Player *player;
+// estrutura do mapa 
+struct Map{
+    Rectangle area;
+    Color color;
+    LinkedNode *enemyList;
+    LinkedNode *itensList;
+};
 
+// VARIAVEIS GLOBAIS
+LinkedNode *enemyListHead, *itemListHead;
+Object *player, *currentEnemy, *currentItem;
 Rectangle arena;
 Actions playerAction;
-
-StageType gameStage;
+GameStatusType gameStage;
+int score;
+bool death = false;
+char text[100];
 
 Vector2 mapEnemys[] = {
     (Vector2){20.0f, 200.0f},
@@ -75,38 +101,37 @@ Vector2 mapEnemys[] = {
     (Vector2){320.0f, 100.0f}
 };
 
-
 Vector2 mapItens[] = {
-    (Vector2){20.0f, 200.0f},
-    (Vector2){100.0f, 200.0f},
-    (Vector2){320.0f, 100.0f}
+    (Vector2){100.0f, 120.0f},
+    (Vector2){300.0f, 80.0f},
+    (Vector2){600.0f, 500.0f}
 };
 
-char string[100];
+/* FUNÇÕES */
 
-
-// functions
-void setPerson(Player* target, Vector2 initPos, Vector2 initVel, char* sprite){
+/* INICIADOR DE UM OBJETO */
+void setObject(Object* target, Vector2 initPos, char* sprite){
     TraceLog(LOG_DEBUG, "Loading person %s", sprite);
     target->position = initPos;
-    target->moviment = initVel;
+    target->moviment = Vector2Zero();
     target->sprite = LoadTexture(sprite);
     target->size.x = target->sprite.width;
     target->size.y = target->sprite.height;
 }
 
-
-
-Players* initPoll( Vector2 mapPositions[], char* sprite, short maxNodes)
+/* 
+inicia uma lista de OBJETOS - inimigos ou itens
+recebe a posição inicial de cada objeto e o sprite dos objetos
+*/ 
+LinkedNode* initLinkedList( Vector2 initPosition[], char* sprite, short maxNodes)
 {
-    Players *newListNode, *headListNode = NULL;
-    
+    LinkedNode *newListNode, *headListNode = NULL;
+  
     for (int i = 0 ; i < maxNodes; i++){
-        newListNode = malloc(sizeof(Players));
-        newListNode->node = malloc(sizeof(Player));
 
-        setPerson(newListNode->node, (Vector2)mapPositions[i], (Vector2){0.0f,0.0f}, sprite);
-        
+        newListNode = malloc(sizeof(LinkedNode));
+        newListNode->node = malloc(sizeof(Object));
+        setObject(newListNode->node, initPosition[i], sprite);
         newListNode->next = headListNode;
         headListNode = newListNode;
         
@@ -115,8 +140,7 @@ Players* initPoll( Vector2 mapPositions[], char* sprite, short maxNodes)
 }
 
 
-
-void drawPerson(Player* target){
+void drawNode(Object* target){
     // DrawRectangleRec(
     // (Rectangle){target->position.x-2, target->position.y-2, target->size.x+2, target->size.y+2 }, 
     // BLACK
@@ -124,17 +148,17 @@ void drawPerson(Player* target){
     DrawTexture(target->sprite, target->position.x, target->position.y, WHITE);
 }
 
-void drawPlayers(Players* targetList){
-    Players *currentEnemy;
+void drawNodeList(LinkedNode* targetList){
+    LinkedNode *currentEnemy;
     for(currentEnemy = targetList; currentEnemy != NULL ; currentEnemy = currentEnemy->next)
     {
-        drawPerson(currentEnemy->node);
+        drawNode(currentEnemy->node);
     }
 
        
 }
 
-bool isInside(Player* target, Rectangle *arena){
+bool isInside(Object* target, Rectangle *arena){
     Rectangle  targetBox ={
         target->position.x,
         target->position.y,
@@ -187,7 +211,7 @@ int gameIntro(){
                 EndDrawing();
             }
 
-
+    return 0;
 }
 
 
@@ -196,7 +220,7 @@ int gameLoop(){
 // Load Enemy list
     TraceLog(LOG_DEBUG, "- Loading ENEMYS");
     
-    enemyListHead = initPoll(
+    enemyListHead = initLinkedList(
         mapEnemys,
         "resources/cat.png", 
         (unsigned short )sizeof(mapEnemys)/sizeof(Vector2)
@@ -209,7 +233,7 @@ int gameLoop(){
     }
 
     TraceLog(LOG_DEBUG, "- Loading ITENS");
-    itemListHead = initPoll(
+    itemListHead = initLinkedList(
         mapItens,
         "resources/item.png", 
         (unsigned short)sizeof(mapItens)/sizeof(Vector2)
@@ -223,7 +247,7 @@ int gameLoop(){
 
     // LOAD PLAYER
     TraceLog(LOG_DEBUG, "- Loading PLAYER");
-    player = malloc(sizeof(Player));
+    player = malloc(sizeof(Object));
 
     if(player == NULL){
         TraceLog(LOG_ERROR, "Failed to load PLAYER");
@@ -231,7 +255,7 @@ int gameLoop(){
         return 1;
     }
 
-    setPerson(player, (Vector2){400.0f, 200.0f}, (Vector2){0.0f, 0.0f}, "resources/mouse.png" );
+    setObject(player, (Vector2){400.0f, 400.0f}, "resources/mouse.png" );
     
     // LOAD MAP
     TraceLog(LOG_DEBUG, "- Loading PLAYER");
@@ -299,8 +323,6 @@ int gameLoop(){
         }
 
         // UPDATE ENEMYS
-        float distanciaX=0, distanciaY=0;
-        Vector2 currentPosition, distance;
         Rectangle enemyRec, playerRec, itemRec, colisionRec;
 
         colisionRec = (Rectangle){0 ,0,0,0};
@@ -311,7 +333,7 @@ int gameLoop(){
                 player->size.y
         };
 
-        for(Players* itemNode = itemListHead; itemNode != NULL ; itemNode = itemNode->next){
+        for(LinkedNode* itemNode = itemListHead; itemNode != NULL ; itemNode = itemNode->next){
             itemRec = (Rectangle){ 
                 itemNode->node->position.x, 
                 itemNode->node->position.y,
@@ -325,7 +347,7 @@ int gameLoop(){
                 
             }
         }
-        for(Players* currentEnemy = enemyListHead; currentEnemy != NULL; currentEnemy = currentEnemy->next )
+        for(LinkedNode* currentEnemy = enemyListHead; currentEnemy != NULL; currentEnemy = currentEnemy->next )
         {
             // Comportamento de perseguição
             enemyRec = (Rectangle){ 
@@ -383,10 +405,10 @@ int gameLoop(){
             // ClearBackground(WHITE);
             DrawRectangleRec(arena,GRAY);
 
-            drawPlayers(enemyListHead);
+            drawNodeList(enemyListHead);
 
-            drawPlayers(itemListHead);
-            drawPerson(player);
+            drawNodeList(itemListHead);
+            drawNode(player);
 
             DrawCircle(colisionRec.x,colisionRec.y, 10, RED);
 
@@ -397,7 +419,7 @@ int gameLoop(){
     free(player);
      
     //FREE enemy list
-    Players *temp; 
+    LinkedNode *temp; 
     int i = 0;
 
     while(enemyListHead != NULL){
@@ -406,18 +428,23 @@ int gameLoop(){
         enemyListHead = temp;
         i++;
     }
+
+    return 0;
 }
 
 
 int main(){
     // Config Screen
-    TraceLog(LOG_DEBUG, "-- Init Raylib");
-    
     InitWindow(W_WIDTH, W_HEIGHT, "CatAndMouse - GAME"); 
+    
+    SetTraceLogLevel(LOG_DEBUG);
+    
+    TraceLog(LOG_DEBUG, "Iniciando raylib");
+
     SetTargetFPS(30);
+    
 
     gameStage = INTRO;
-    
     while(gameStage != EXIT){
 
         if (gameStage == INTRO){
