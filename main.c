@@ -61,6 +61,7 @@ struct Actions{
 
 // Global Variables
 Players *enemyListHead, *itemListHead;
+//Players *currentEnemy, *currentItem;
 Player *player;
 
 Rectangle arena;
@@ -297,57 +298,97 @@ int gameLoop(){
             }        
         }
 
-        // update ENEMYS
+        // UPDATE ENEMYS
         float distanciaX=0, distanciaY=0;
+        Vector2 currentPosition, distance;
+        Rectangle enemyRec, playerRec, itemRec, colisionRec;
+
+        colisionRec = (Rectangle){0 ,0,0,0};
+        playerRec = (Rectangle){ 
+                player->position.x, 
+                player->position.y,
+                player->size.x,
+                player->size.y
+        };
+
+        for(Players* itemNode = itemListHead; itemNode != NULL ; itemNode = itemNode->next){
+            itemRec = (Rectangle){ 
+                itemNode->node->position.x, 
+                itemNode->node->position.y,
+                itemNode->node->size.x,
+                itemNode->node->size.y
+            };
+
+            if(CheckCollisionRecs(playerRec, itemRec)){
+                
+                colisionRec = GetCollisionRec(playerRec, itemRec);
+                
+            }
+        }
         for(Players* currentEnemy = enemyListHead; currentEnemy != NULL; currentEnemy = currentEnemy->next )
         {
             // Comportamento de perseguição
-            distanciaX = currentEnemy->node->position.x - player->position.x;
-            distanciaY = currentEnemy->node->position.y - player->position.y;
+            enemyRec = (Rectangle){ 
+                currentEnemy->node->position.x, 
+                currentEnemy->node->position.y,
+                currentEnemy->node->size.x,
+                currentEnemy->node->size.y
+            };
+
             playerAction.moviment = Vector2Zero();
             playerAction.type = STOP;
 
-            if (distanciaX < 0){
+            if ((enemyRec.x - player->position.x) < 0){
                 playerAction.type = MOVE;
                 playerAction.moviment.x += rand() % enemyVel;
             }else{
                 playerAction.type = MOVE;
-                playerAction.moviment.x += -(rand() % enemyVel);
+                playerAction.moviment.x -= (rand() % enemyVel);
             }
 
-            if (distanciaY < 0){
+            if ((enemyRec.y - player->position.y) < 0){
                 playerAction.type = MOVE;
                 playerAction.moviment.y += (rand() % enemyVel);
                 
             }else{
                 playerAction.type = MOVE;
-                playerAction.moviment.y += -(rand() % enemyVel);                
+                playerAction.moviment.y -= (rand() % enemyVel);                
             }
 
             // ENEMY ACTION
-
             // move action
             currentEnemy->node->moviment = playerAction.moviment;
-
             oldPos = currentEnemy->node->position;
             currentEnemy->node->position = Vector2Add(currentEnemy->node->position, currentEnemy->node->moviment);
             currentEnemy->node->moviment = Vector2Zero();
+
 
             // CHECK COLISIONS
             if (!isInside(currentEnemy->node ,&arena))
             {
                 currentEnemy->node->position = oldPos;
             }                   
+
+            if(CheckCollisionRecs(playerRec, enemyRec)){
+                
+                colisionRec= GetCollisionRec(playerRec, enemyRec);
+                
+                DrawRectangleRec(playerRec,RED);    
+            }
+
         }
         
         // DRAW
         BeginDrawing();
             // ClearBackground(WHITE);
             DrawRectangleRec(arena,GRAY);
+
             drawPlayers(enemyListHead);
 
             drawPlayers(itemListHead);
             drawPerson(player);
+
+            DrawCircle(colisionRec.x,colisionRec.y, 10, RED);
 
         EndDrawing();    
     }
