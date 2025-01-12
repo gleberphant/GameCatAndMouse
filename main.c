@@ -1,3 +1,11 @@
+/* TODO
+- CHECK COLISION
+- COLISAO ITEM = MAIS PONTO
+- COLISAO ENEMY = MORTE
+- ELABORAR FUNÇÃO PARA ADICIONAR E REMOVER ITENS DA LISTA
+*/
+
+
 #include "include/raylib.h"
 #include "include/raymath.h"
 
@@ -8,8 +16,28 @@
 
 #define W_WIDTH 800
 #define W_HEIGHT 600
+#define MAP_BORDER 10
 // structs
+
+
 typedef struct Player Player;
+typedef struct Players Players;
+typedef struct Actions Actions;
+typedef enum ActionType ActionType;
+typedef enum StageType StageType;
+
+enum ActionType{
+    MOVE,
+    STOP
+};
+
+enum StageType { 
+    INTRO, 
+    MENU, 
+    GAME, 
+    OVER,
+    EXIT 
+};
 
 struct Player{
     Vector2 position;
@@ -18,37 +46,45 @@ struct Player{
     Texture2D sprite;
 };
 
-typedef struct Players Players;
-
 struct Players{
     Player* node;
     Players* next;
+};
+
+
+struct Actions{
+    
+    Vector2 moviment;
+    ActionType type;
+
 };
 
 // Global Variables
 Players *enemyListHead, *itemListHead;
 Player *player;
 
-typedef enum StageType { 
-    INTRO, 
-    MENU, 
-    GAME, 
-    OVER,
-    EXIT 
-} StageType;
-
+Rectangle arena;
+Actions playerAction;
 
 StageType gameStage;
 
 Vector2 mapEnemys[] = {
-    (Vector2){2.0f, 200.0f},
+    (Vector2){20.0f, 200.0f},
     (Vector2){100.0f, 200.0f},
-    (Vector2){320.0f, 100.0f},
-    (Vector2){100.0f, 20.0f}
+    (Vector2){320.0f, 100.0f}
+};
+
+
+Vector2 mapItens[] = {
+    (Vector2){20.0f, 200.0f},
+    (Vector2){100.0f, 200.0f},
+    (Vector2){320.0f, 100.0f}
 };
 
 char string[100];
 
+
+// functions
 void setPerson(Player* target, Vector2 initPos, Vector2 initVel, char* sprite){
     TraceLog(LOG_DEBUG, "Loading person %s", sprite);
     target->position = initPos;
@@ -58,12 +94,9 @@ void setPerson(Player* target, Vector2 initPos, Vector2 initVel, char* sprite){
     target->size.y = target->sprite.height;
 }
 
-void drawPerson(Player* target){
-    DrawTexture(target->sprite, target->position.x, target->position.y, WHITE);
-}
 
 
-Players* initPoll( Vector2 mapPositions[], short maxNodes)
+Players* initPoll( Vector2 mapPositions[], char* sprite, short maxNodes)
 {
     Players *newListNode, *headListNode = NULL;
     
@@ -71,7 +104,7 @@ Players* initPoll( Vector2 mapPositions[], short maxNodes)
         newListNode = malloc(sizeof(Players));
         newListNode->node = malloc(sizeof(Player));
 
-        setPerson(newListNode->node, (Vector2)mapPositions[i], (Vector2){0.0f,0.0f}, "resources/cat.png");
+        setPerson(newListNode->node, (Vector2)mapPositions[i], (Vector2){0.0f,0.0f}, sprite);
         
         newListNode->next = headListNode;
         headListNode = newListNode;
@@ -81,171 +114,47 @@ Players* initPoll( Vector2 mapPositions[], short maxNodes)
 }
 
 
-void drawPlayers(Players* enemyList, Player* playerNode ){
+
+void drawPerson(Player* target){
+    // DrawRectangleRec(
+    // (Rectangle){target->position.x-2, target->position.y-2, target->size.x+2, target->size.y+2 }, 
+    // BLACK
+    // );
+    DrawTexture(target->sprite, target->position.x, target->position.y, WHITE);
+}
+
+void drawPlayers(Players* targetList){
     Players *currentEnemy;
-    BeginDrawing();
-            ClearBackground(WHITE);
-            for(currentEnemy = enemyList; currentEnemy != NULL ; currentEnemy = currentEnemy->next)
-            {
-                drawPerson(currentEnemy->node);
-            }
+    for(currentEnemy = targetList; currentEnemy != NULL ; currentEnemy = currentEnemy->next)
+    {
+        drawPerson(currentEnemy->node);
+    }
 
-            drawPerson(playerNode);
-
-        EndDrawing();
+       
 }
 
-bool isInside(Vector2 position, Vector2 size, Rectangle *arena){
+bool isInside(Player* target, Rectangle *arena){
     Rectangle  targetBox ={
-        position.x,
-        position.y,
-        size.x,
-        size.y
+        target->position.x,
+        target->position.y,
+        target->size.x,
+        target->size.y
     };
 
-    return CheckCollisionRecs(targetBox, *arena);
-    // if ( targetBox.x < arena->x || targetBox.x > arena->width-targetBox.width){
-    //     return false;
-    // }
-    // if( targetBox.y < arena->y || targetBox.y > arena->height-targetBox.height){
-    //     return false;
-    // }
+    // return CheckCollisionRecs(targetBox, *arena);
+    if( targetBox.x < arena->x || targetBox.x > arena->width+arena->x-targetBox.width){
+        return false;
+    }
+    if( targetBox.y < arena->y || targetBox.y > arena->height+arena->y-targetBox.height){
+        return false;
+    }
 
-    // return true;
+    return true;
     
 
 }
 
-int gameLoop(){
 
-// Load Enemy list
-    TraceLog(LOG_DEBUG, "- Loading ENEMYS");
-    
-    enemyListHead = initPoll(mapEnemys, ( unsigned short )sizeof(mapEnemys)/sizeof(Vector2));
-
-    // itemListHead = initPoll((Vector2* ){233, 30});
-
-    if(enemyListHead == NULL){
-        TraceLog(LOG_ERROR, "Failed to load ENEMY LIST");
-        gameStage = EXIT;
-        return 1;
-    }
-
-
-    // Load Player
-    TraceLog(LOG_DEBUG, "- Loading PLAYER");
-    player = malloc(sizeof(Player));
-
-    if(player == NULL){
-        TraceLog(LOG_ERROR, "Failed to load PLAYER");
-        gameStage = EXIT;
-        return 1;
-    }
-
-    setPerson(player, (Vector2){400.0f, 200.0f}, (Vector2){0.0f, 0.0f}, "resources/mouse.png" );
-
-    
-    // load map
-
-    
-    Rectangle arena = {
-        player->size.x,
-        player->size.y, 
-        W_WIDTH - player->size.x*2, 
-        W_HEIGHT - player->size.y*2
-    };
-    
-    // SET VARIABLES
-    Vector2 newPos;
-    srand(time(NULL));
-    unsigned int enemyVel = 4;
-    
-    // GAME LOOP
-    while (gameStage == GAME) {
-        
-        // INPUT HANDLE
-        if(WindowShouldClose() == true)
-        {
-            gameStage = EXIT;
-        }
-
-        if(IsKeyDown(KEY_UP)){
-            player->moviment.y -= 10;
-        }
-        if(IsKeyDown(KEY_DOWN)){
-            player->moviment.y += 10;
-        }
-        if(IsKeyDown(KEY_LEFT)){
-            player->moviment.x -= 10;
-        }
-        if(IsKeyDown(KEY_RIGHT)){
-            player->moviment.x += 10;
-        }
-        
-        if(IsKeyDown(KEY_L)){
-            enemyVel ++;
-        }
-        if(IsKeyDown(KEY_K) && enemyVel > 1){
-            enemyVel --;           
-        }
-
-        // UPDATE STATUS
-        newPos = Vector2Add(player->position, player->moviment);
-        
-        // check boundaries
-        if(isInside(newPos, player->size, &arena)){
-            player->position = newPos;
-        }
-        player->moviment = Vector2Zero();
-
-        for(Players* currentEnemy = enemyListHead; currentEnemy != NULL; currentEnemy = currentEnemy->next )
-        {
-            Vector2 oldPos = currentEnemy->node->position;
-
-            // Comportamento de perseguição
-            if (player->position.x > currentEnemy->node->position.x){
-                currentEnemy->node->moviment.x += (rand() % enemyVel)   ;
-            }else{
-                currentEnemy->node->moviment.x -= (rand() % enemyVel)  ;
-            }
-
-            if (player->position.y > currentEnemy->node->position.y){
-                currentEnemy->node->moviment.y += (rand() % enemyVel)  ;
-            }else{
-                currentEnemy->node->moviment.y -= (rand() % enemyVel)  ;
-            }
-
-            // movimenta
-            currentEnemy->node->position = Vector2Add(currentEnemy->node->position, currentEnemy->node->moviment);
-
-            // check boundaries
-            if (!isInside(currentEnemy->node->position, currentEnemy->node->size,&arena))
-            {
-                currentEnemy->node->position = oldPos;
-            }
-            
-            currentEnemy->node->moviment = Vector2Zero();
-            
-        }
-        // DRAW
-        DrawRectangleRec(arena,GRAY);
-        drawPlayers(enemyListHead, player);    
-    }
-
-    
-    free(player);
-     
-    //FREE enemy list
-    Players *temp; 
-    int i = 0;
-
-    while(enemyListHead != NULL){
-        temp = enemyListHead->next;
-        free(enemyListHead);
-        enemyListHead = temp;
-        i++;
-    }
-}
 int gameIntro(){
 
             // carregar imagem e texto de abertura
@@ -278,6 +187,184 @@ int gameIntro(){
             }
 
 
+}
+
+
+int gameLoop(){
+
+// Load Enemy list
+    TraceLog(LOG_DEBUG, "- Loading ENEMYS");
+    
+    enemyListHead = initPoll(
+        mapEnemys,
+        "resources/cat.png", 
+        (unsigned short )sizeof(mapEnemys)/sizeof(Vector2)
+    );
+
+    if(enemyListHead == NULL){
+        TraceLog(LOG_ERROR, "Failed to load ENEMY LIST");
+        gameStage = EXIT;
+        return 1;
+    }
+
+    TraceLog(LOG_DEBUG, "- Loading ITENS");
+    itemListHead = initPoll(
+        mapItens,
+        "resources/item.png", 
+        (unsigned short)sizeof(mapItens)/sizeof(Vector2)
+    );
+
+    if(itemListHead == NULL){
+        TraceLog(LOG_ERROR, "Failed to load ITENS LIST");
+        gameStage = EXIT;
+        return 1;
+    }
+
+    // LOAD PLAYER
+    TraceLog(LOG_DEBUG, "- Loading PLAYER");
+    player = malloc(sizeof(Player));
+
+    if(player == NULL){
+        TraceLog(LOG_ERROR, "Failed to load PLAYER");
+        gameStage = EXIT;
+        return 1;
+    }
+
+    setPerson(player, (Vector2){400.0f, 200.0f}, (Vector2){0.0f, 0.0f}, "resources/mouse.png" );
+    
+    // LOAD MAP
+    TraceLog(LOG_DEBUG, "- Loading PLAYER");
+    arena.x = 0+MAP_BORDER;
+    arena.y = 0+MAP_BORDER;
+    arena.width = W_WIDTH-(MAP_BORDER*2); 
+    arena.height = W_HEIGHT-(MAP_BORDER*2);
+    
+    // SET VARIABLES
+    TraceLog(LOG_DEBUG, "- set VARIABLES");
+    Vector2 oldPos;
+    srand(time(NULL));
+    unsigned short enemyVel = 4;
+    
+    // GAME LOOP
+    while (gameStage == GAME) {
+        // INPUT HANDLE
+        if(WindowShouldClose() == true)
+        {
+            gameStage = EXIT;
+        }
+        
+        playerAction.type = STOP;
+        playerAction.moviment = Vector2Zero();
+        
+        if(IsKeyDown(KEY_UP)){
+            playerAction.type = MOVE;
+            playerAction.moviment.y -= 10;
+        }
+        if(IsKeyDown(KEY_DOWN)){
+            playerAction.type = MOVE;
+            playerAction.moviment.y += 10;
+        }
+        if(IsKeyDown(KEY_LEFT)){
+            playerAction.type = MOVE;
+            playerAction.moviment.x -= 10;
+        }
+        if(IsKeyDown(KEY_RIGHT)){
+            playerAction.type = MOVE;
+            playerAction.moviment.x += 10;
+        }
+        
+        if(IsKeyDown(KEY_L)){
+            enemyVel ++;
+        }
+        if(IsKeyDown(KEY_K) && enemyVel > 1){
+            enemyVel --;           
+        }
+
+        // UPDATE STATUS
+        
+        // PLAYER
+        // PLAYER ACTION
+        // move action
+        if(playerAction.type == MOVE){
+            player->moviment = playerAction.moviment;
+            oldPos = player->position;
+            player->position = Vector2Add(player->position, player->moviment);
+            player->moviment = Vector2Zero();
+            
+            // CHECK COLISION
+            if(!isInside(player, &arena)){
+                player->position = oldPos;
+            }        
+        }
+
+        // update ENEMYS
+        float distanciaX=0, distanciaY=0;
+        for(Players* currentEnemy = enemyListHead; currentEnemy != NULL; currentEnemy = currentEnemy->next )
+        {
+            // Comportamento de perseguição
+            distanciaX = currentEnemy->node->position.x - player->position.x;
+            distanciaY = currentEnemy->node->position.y - player->position.y;
+            playerAction.moviment = Vector2Zero();
+            playerAction.type = STOP;
+
+            if (distanciaX < 0){
+                playerAction.type = MOVE;
+                playerAction.moviment.x += rand() % enemyVel;
+            }else{
+                playerAction.type = MOVE;
+                playerAction.moviment.x += -(rand() % enemyVel);
+            }
+
+            if (distanciaY < 0){
+                playerAction.type = MOVE;
+                playerAction.moviment.y += (rand() % enemyVel);
+                
+            }else{
+                playerAction.type = MOVE;
+                playerAction.moviment.y += -(rand() % enemyVel);                
+            }
+
+            // ENEMY ACTION
+
+            // move action
+            currentEnemy->node->moviment = playerAction.moviment;
+
+            oldPos = currentEnemy->node->position;
+            currentEnemy->node->position = Vector2Add(currentEnemy->node->position, currentEnemy->node->moviment);
+            currentEnemy->node->moviment = Vector2Zero();
+
+            // CHECK COLISIONS
+            if (!isInside(currentEnemy->node ,&arena))
+            {
+                currentEnemy->node->position = oldPos;
+            }                   
+        }
+        
+        // DRAW
+        BeginDrawing();
+            // ClearBackground(WHITE);
+            DrawRectangleRec(arena,GRAY);
+            drawPlayers(enemyListHead);
+
+            drawPlayers(itemListHead);
+            drawPerson(player);
+
+        EndDrawing();    
+    }
+
+    
+    free(player);
+     
+    //FREE enemy list
+    Players *temp; 
+    int i = 0;
+
+    while(enemyListHead != NULL){
+        temp = enemyListHead->next;
+        free(enemyListHead);
+        enemyListHead = temp;
+        i++;
+    }
 }
 
 
