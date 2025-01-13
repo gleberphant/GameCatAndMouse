@@ -1,6 +1,7 @@
 /* TODO
-- COLISAO ITEM = MAIS PONTO
-- COLISAO ENEMY = MORTE
+
+- animar personagens
+- mostrar score
 - ELABORAR FUNÇÃO PARA ADICIONAR E REMOVER ITENS DA LISTA
 - carregar mapa de arquivo
 */
