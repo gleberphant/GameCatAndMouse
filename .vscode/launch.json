@@ -22,7 +22,7 @@
                 }
             ],
             "windows": {
-                "miDebuggerPath": "c:/w64devkit/bin/gdb.exe"
+                "miDebuggerPath": "e:/w64devkit/bin/gdb.exe"
             },
             "osx": {
                 "MIMode": "lldb"
@@ -45,7 +45,7 @@
             "MIMode": "gdb",
             "windows": {
                 "program": "${workspaceFolder}/${fileBasenameNoExtension}.exe",
-                "miDebuggerPath": "c:/w64devkit/bin/gdb.exe"
+                "miDebuggerPath": "e:/w64devkit/bin/gdb.exe"
             },
             "osx": {
                 "MIMode": "lldb"
@@ -66,7 +66,7 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "c:\\w64devkit\\bin\\gdb.exe",
+            "miDebuggerPath": "e:\\w64devkit\\bin\\gdb.exe",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -92,7 +92,7 @@
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
-            "miDebuggerPath": "c:/win64devkit/bin",
+            "miDebuggerPath": "e:/win64devkit/bin",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",

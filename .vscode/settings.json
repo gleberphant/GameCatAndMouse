@@ -10,11 +10,6 @@
 	},
 	"makefile.launchConfigurations": [
 		{
-			"cwd": "e:\\PROGRAMAS_C\\RayLibVSCode",
-			"binaryPath": "e:\\PROGRAMAS_C\\RayLibVSCode\\game",
-			"binaryArgs": []
-		},
-		{
 			"cwd": "e:\\PROGRAMAS_C\\GameCatAndMouse",
 			"binaryPath": "e:\\PROGRAMAS_C\\GameCatAndMouse\\game",
 			"binaryArgs": []

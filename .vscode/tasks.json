@@ -22,7 +22,7 @@
             },
             "osx": {
                 "args": [
-                    "RAYLIB_PATH=<path_to_raylib>/raylib",
+                    "RAYLIB_PATH=e:/raylib/raylib",
                     "PROJECT_NAME=${fileBasenameNoExtension}",
                     "OBJS=${fileBasenameNoExtension}.c",
                     "BUILD_MODE=DEBUG"
@@ -52,7 +52,7 @@
             },
             "osx": {
                 "args": [
-                    "RAYLIB_PATH=<path_to_raylib>/raylib",
+                    "RAYLIB_PATH=e:/raylib/raylib",
                     "PROJECT_NAME=${fileBasenameNoExtension}",
                     "OBJS=${fileBasenameNoExtension}.c"
                 ]
@@ -65,7 +65,7 @@
         {
             "type": "cppbuild",
             "label": "C/C++: gcc.exe build active file",
-            "command": "E:/raylib/w64devkit/bin/gcc.exe",
+            "command": "e:/w64devkit/bin/gcc.exe",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
@@ -74,7 +74,7 @@
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
             "options": {
-                "cwd": "E:/raylib/w64devkit/bin"
+                "cwd": "e:/w64devkit/bin"
             },
             "problemMatcher": [
                 "$gcc"

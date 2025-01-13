@@ -63,11 +63,12 @@ struct Object{
     Rectangle box;
     NodeType type;
     Texture2D sprite;
+    int life;
 };
 
 // LINKED LIST DE OBJETOS
 struct LinkedNode{
-    Object* node;
+    Object* obj;
     LinkedNode* next;
 };
 
@@ -87,11 +88,11 @@ struct Map{
 
 // VARIAVEIS GLOBAIS
 LinkedNode *enemyListHead, *itemListHead;
-Object *player, *currentEnemy, *currentItem;
+Object *player, *currentItem;
 Rectangle arena;
 Actions playerAction;
 GameStatusType gameStage;
-int score;
+int score = 0;
 bool death = false;
 char text[100];
 
@@ -111,12 +112,13 @@ Vector2 mapItens[] = {
 
 /* INICIADOR DE UM OBJETO */
 void setObject(Object* target, Vector2 initPos, char* sprite){
-    TraceLog(LOG_DEBUG, "Loading person %s", sprite);
+    TraceLog(LOG_DEBUG, "- Loading Object %s", sprite);
     target->position = initPos;
     target->moviment = Vector2Zero();
     target->sprite = LoadTexture(sprite);
     target->size.x = target->sprite.width;
     target->size.y = target->sprite.height;
+    target->life = 10;
 }
 
 /* 
@@ -130,8 +132,8 @@ LinkedNode* initLinkedList( Vector2 initPosition[], char* sprite, short maxNodes
     for (int i = 0 ; i < maxNodes; i++){
 
         newListNode = malloc(sizeof(LinkedNode));
-        newListNode->node = malloc(sizeof(Object));
-        setObject(newListNode->node, initPosition[i], sprite);
+        newListNode->obj = malloc(sizeof(Object));
+        setObject(newListNode->obj, initPosition[i], sprite);
         newListNode->next = headListNode;
         headListNode = newListNode;
         
@@ -140,19 +142,19 @@ LinkedNode* initLinkedList( Vector2 initPosition[], char* sprite, short maxNodes
 }
 
 
-void drawNode(Object* target){
-    // DrawRectangleRec(
-    // (Rectangle){target->position.x-2, target->position.y-2, target->size.x+2, target->size.y+2 }, 
-    // BLACK
-    // );
-    DrawTexture(target->sprite, target->position.x, target->position.y, WHITE);
+void drawObject(Object* target){
+ 
+    DrawTextureV(target->sprite, target->position, WHITE);
 }
 
 void drawNodeList(LinkedNode* targetList){
-    LinkedNode *currentEnemy;
-    for(currentEnemy = targetList; currentEnemy != NULL ; currentEnemy = currentEnemy->next)
+    for(LinkedNode* currenteNode = targetList; currenteNode != NULL ; currenteNode = currenteNode->next)
     {
-        drawNode(currentEnemy->node);
+        if (currenteNode->obj->life < 1){
+                continue;
+        }
+
+        drawObject(currenteNode->obj);
     }
 
        
@@ -309,7 +311,16 @@ int gameLoop(){
         
         // PLAYER
         // PLAYER ACTION
+        // checka se player ta vivo
+        if(player->life < 1){
+
+            gameStage = OVER;
+            continue;
+        }
+        
         // move action
+
+
         if(playerAction.type == MOVE){
             player->moviment = playerAction.moviment;
             oldPos = player->position;
@@ -325,7 +336,8 @@ int gameLoop(){
         // UPDATE ENEMYS
         Rectangle enemyRec, playerRec, itemRec, colisionRec;
 
-        colisionRec = (Rectangle){0 ,0,0,0};
+        colisionRec = (Rectangle){0,0,0,0};
+        
         playerRec = (Rectangle){ 
                 player->position.x, 
                 player->position.y,
@@ -333,28 +345,49 @@ int gameLoop(){
                 player->size.y
         };
 
-        for(LinkedNode* itemNode = itemListHead; itemNode != NULL ; itemNode = itemNode->next){
+        // checa colisão com itens
+        for(LinkedNode* currentNode = itemListHead; currentNode != NULL ; currentNode = currentNode->next){
+            
+            if ( currentNode->obj->life < 1 ){
+                continue;
+            }
+            
             itemRec = (Rectangle){ 
-                itemNode->node->position.x, 
-                itemNode->node->position.y,
-                itemNode->node->size.x,
-                itemNode->node->size.y
+                currentNode->obj->position.x, 
+                currentNode->obj->position.y,
+                currentNode->obj->size.x,
+                currentNode->obj->size.y
             };
 
             if(CheckCollisionRecs(playerRec, itemRec)){
-                
+                // ocorreu colisão
+
                 colisionRec = GetCollisionRec(playerRec, itemRec);
-                
+                currentNode->obj->life = -1;
+                score++;
+                TraceLog(LOG_DEBUG, "COMEU QUEIJO score %d", score);
+
+                // criar novo queijo aleatorio
+                // todo REFATORAR ESSE CODIGO PARA COLOCAR EM UMA FUNÇÃO
+                LinkedNode* newNode;
+                newNode = malloc(sizeof(LinkedNode));
+                newNode->obj = malloc(sizeof(Object));
+
+                setObject(newNode->obj, (Vector2){rand() %700, rand() % 500}, "resources/item.png");
+
+                newNode->next = currentNode->next;
+                currentNode->next = newNode;
+
             }
         }
         for(LinkedNode* currentEnemy = enemyListHead; currentEnemy != NULL; currentEnemy = currentEnemy->next )
         {
             // Comportamento de perseguição
             enemyRec = (Rectangle){ 
-                currentEnemy->node->position.x, 
-                currentEnemy->node->position.y,
-                currentEnemy->node->size.x,
-                currentEnemy->node->size.y
+                currentEnemy->obj->position.x, 
+                currentEnemy->obj->position.y,
+                currentEnemy->obj->size.x,
+                currentEnemy->obj->size.y
             };
 
             playerAction.moviment = Vector2Zero();
@@ -379,23 +412,23 @@ int gameLoop(){
 
             // ENEMY ACTION
             // move action
-            currentEnemy->node->moviment = playerAction.moviment;
-            oldPos = currentEnemy->node->position;
-            currentEnemy->node->position = Vector2Add(currentEnemy->node->position, currentEnemy->node->moviment);
-            currentEnemy->node->moviment = Vector2Zero();
+            currentEnemy->obj->moviment = playerAction.moviment;
+            oldPos = currentEnemy->obj->position;
+            currentEnemy->obj->position = Vector2Add(currentEnemy->obj->position, currentEnemy->obj->moviment);
+            currentEnemy->obj->moviment = Vector2Zero();
 
 
             // CHECK COLISIONS
-            if (!isInside(currentEnemy->node ,&arena))
+            if (!isInside(currentEnemy->obj ,&arena))
             {
-                currentEnemy->node->position = oldPos;
+                currentEnemy->obj->position = oldPos;
             }                   
 
             if(CheckCollisionRecs(playerRec, enemyRec)){
-                
                 colisionRec= GetCollisionRec(playerRec, enemyRec);
-                
-                DrawRectangleRec(playerRec,RED);    
+                score --;
+                player->life--;
+    
             }
 
         }
@@ -408,7 +441,7 @@ int gameLoop(){
             drawNodeList(enemyListHead);
 
             drawNodeList(itemListHead);
-            drawNode(player);
+            drawObject(player);
 
             DrawCircle(colisionRec.x,colisionRec.y, 10, RED);
 
@@ -429,9 +462,58 @@ int gameLoop(){
         i++;
     }
 
+    TraceLog(LOG_DEBUG, "- Liberado %d ENEMY NODE", i);
+
+    //FREE enemy list
+    i = 0;
+    while(itemListHead != NULL){
+        temp = itemListHead->next;
+        free(itemListHead);
+        itemListHead = temp;
+        i++;
+    }
+
+    TraceLog(LOG_DEBUG, "- Liberado %d ITEM NODE", i);
+    
     return 0;
 }
 
+
+int gameOver(){
+
+    
+
+    // carregar imagem e texto de abertura
+    Font fontDefault = GetFontDefault(); 
+    Texture2D gameover = LoadTexture("resources/gameover.png");
+    int textFontSize = 32;
+    char* textIntro = "[ENTER] para jogar [ESC] para sair.";            
+    Vector2 textSize = MeasureTextEx(fontDefault, textIntro, textFontSize, 2);
+    Vector2 textPos = (Vector2){(W_WIDTH - textSize.x)/2, 400 };              
+    
+    Rectangle textBackground = { textPos.x-20, textPos.y-20, textSize.x+60, textSize.y+40 };
+
+    while(gameStage == OVER){
+
+        if(IsKeyPressed(KEY_ESCAPE)){
+            gameStage = EXIT;
+
+        }
+        if(IsKeyReleased(KEY_ENTER)){
+            gameStage = INTRO;
+        }
+
+        BeginDrawing();
+            ClearBackground(BLACK);
+           // DrawTextureEx(gameover, (Vector2){0.0f, 0.0f}, 0.0f, 1.0f, WHITE);
+            
+            DrawTextureV(gameover, (Vector2){0,0}, WHITE);
+            DrawRectangleRec(textBackground, BLACK);
+            DrawText(textIntro, textPos.x, textPos.y, textFontSize, WHITE);
+        EndDrawing();
+    }
+    return 0;
+}
 
 int main(){
     // Config Screen
@@ -450,8 +532,13 @@ int main(){
         if (gameStage == INTRO){
             gameIntro();
         }
+
         if (gameStage == GAME){
             gameLoop();
+        }
+
+        if (gameStage == OVER){
+            gameOver();
         }
     }   
 
