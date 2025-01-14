@@ -9,6 +9,7 @@
 
 #include "include/raylib.h"
 #include "include/raymath.h"
+#include "actor.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,53 +23,17 @@
 #define DEFAULT_LIFE 10
 
 // DECLARAÇÃO DE STRUCT E ENUM
-typedef struct Object Object;
+
 typedef struct LinkedNode LinkedNode;
-typedef struct Actions Actions;
-typedef struct SetupNode SetupNode;
-
-typedef enum ActionType ActionType;
-typedef enum GameStatusType GameStatusType;
-typedef enum NodeType NodeType;
-
-
-
-// TIPOS DE AÇÕES
-enum ActionType{
-    MOVE,
-    STOP
-};
-
+ 
 // ESTADOS QUE O JOGO PODE SE ENCONTRAR
-enum GameStatusType { 
+typedef enum  { 
     INTRO, 
     MENU, 
     GAME, 
     OVER,
     EXIT 
-};
-
-enum NodeType{
-    PLAYER,
-    ENEMY,
-    ITEM
-};
-
-struct SetupNode{
-    Vector2 position;
-    NodeType type;
-};
-
-//OBJETO PRINCIPAL. SERVE PARA JOGADOR, INIMIGOS E ITENS
-struct Object{
-    Vector2 position;
-    Vector2 moviment;
-    Vector2 size;
-    Rectangle box;
-    NodeType type;
-    Texture2D sprite;
-    int life;
-};
+} GameStatusaction;
 
 // LINKED LIST DE OBJETOS
 struct LinkedNode{
@@ -77,10 +42,7 @@ struct LinkedNode{
 };
 
 // DEFINE UMA AÇÃO FEITA POR UM OBJETO 
-struct Actions{
-    Vector2 moviment;
-    ActionType type;
-};
+
 
 // estrutura do mapa 
 struct Map{
@@ -94,8 +56,7 @@ struct Map{
 LinkedNode *enemyListHead, *itemListHead;
 Object *player, *enemy, *currentObj;
 Rectangle arena;
-Actions action;
-GameStatusType gameStage;
+GameStatusaction gameStage;
 Font gameFont; 
 
 float volume = 0.1f;
@@ -343,24 +304,24 @@ int gameLoop(){
             gameStage = EXIT;
         }
         
-        action.type = STOP;
-        action.moviment = Vector2Zero();
+        player->action = STOP;
+        player->moviment = Vector2Zero();
         
         if(IsKeyDown(KEY_UP)){
-            action.type = MOVE;
-            action.moviment.y -= 10;
+            player->action = MOVE;
+            player->moviment.y -= 10;
         }
         if(IsKeyDown(KEY_DOWN)){
-            action.type = MOVE;
-            action.moviment.y += 10;
+            player->action = MOVE;
+            player->moviment.y += 10;
         }
         if(IsKeyDown(KEY_LEFT)){
-            action.type = MOVE;
-            action.moviment.x -= 10;
+            player->action = MOVE;
+            player->moviment.x -= 10;
         }
         if(IsKeyDown(KEY_RIGHT)){
-            action.type = MOVE;
-            action.moviment.x += 10;
+            player->action = MOVE;
+            player->moviment.x += 10;
         }
         
         if(IsKeyDown(KEY_L)){
@@ -383,14 +344,14 @@ int gameLoop(){
         
     
         // MOVER JOGADOR
-        if(action.type == MOVE){
+        if(player->action == MOVE){
             /* 
             TODO:
             - melhorar a funcao. posicao ser alterada apenas depois de verifica se a nova posição esta correta
             - corrigir os nomes dos atributos 
             */
             player->position = (Vector2) {player->box.x, player->box.y}; //oldPos
-            player->position = Vector2Add(player->position, action.moviment); //newpos
+            player->position = Vector2Add(player->position, player->moviment); //newpos
                         
             // VERIFICA SE JOGADOR DENTRO DA ARENA ATUALIZA POSICAO
             if(isInside(player, &arena)){
@@ -440,33 +401,34 @@ int gameLoop(){
         for(LinkedNode* currentNode = enemyListHead; currentNode != NULL; currentNode = currentNode->next )
         {
 
-            // Comportamento de perseguição
             currentObj = currentNode->obj;
 
-            action.moviment = Vector2Zero();
-            action.type = STOP;
+            // Comportamento de perseguição
+            currentObj->action = STOP;
+            currentObj->moviment = Vector2Zero();
+            
 
             if ((currentObj->box.x - player->position.x) < 0){
-                action.type = MOVE;
-                action.moviment.x += rand() % enemyVel;
+                currentObj->action = MOVE;
+                currentObj->moviment.x += rand() % enemyVel;
             }else{
-                action.type = MOVE;
-                action.moviment.x -= (rand() % enemyVel);
+                currentObj->action = MOVE;
+                currentObj->moviment.x -= (rand() % enemyVel);
             }
 
             if ((currentObj->box.y - player->position.y) < 0){
-                action.type = MOVE;
-                action.moviment.y += (rand() % enemyVel);
+                currentObj->action = MOVE;
+                currentObj->moviment.y += (rand() % enemyVel);
                 
             }else{
-                action.type = MOVE;
-                action.moviment.y -= (rand() % enemyVel);                
+                currentObj->action = MOVE;
+                currentObj->moviment.y -= (rand() % enemyVel);                
             }
 
             // ENEMY ACTION
             // move action
             currentObj->position = (Vector2){currentObj->box.x, currentObj->box.y}; //oldPos
-            currentObj->position = Vector2Add(currentObj->position, action.moviment);
+            currentObj->position = Vector2Add(currentObj->position, currentObj->moviment);
 
             if (isInside(currentObj ,&arena))
             {
