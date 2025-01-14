@@ -486,11 +486,25 @@ int gameLoop(){
         // DRAW
         BeginDrawing();
             
+            //limpa tela
             ClearBackground(BLACK);
+            
+            //desenha mapa
             DrawRectangleRec(arena,GRAY);
-            drawNodeList(enemyListHead);
+            
+            //desenha itens
             drawNodeList(itemListHead);
+
+            //desenha inimigos
+            drawNodeList(enemyListHead);
+                      
+            //desenha player
             drawObject(player);
+
+            // Desenha UI
+            DrawText(TextFormat("LIFE : %d", player->life), 20, 20, 20, BLACK);
+            DrawText(TextFormat("SCORE: %d", score ), 20, 40, 20, BLACK);
+
             if(colision) DrawCircle(colisionRec.x,colisionRec.y, 10, RED);
 
         EndDrawing();    
