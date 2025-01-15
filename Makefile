@@ -2,13 +2,13 @@
 TARGET = main
 
 # Arquivos com fonte
-SOURCES = main.c
+SOURCES = main.c actor.c  lists.c maps.c
 
 # Flags do compilador
-CFLAGS = -Wall -Wextra -g -I.\include\
+CFLAGS = -Wall -Wextra -g -I.\raylib\include\
 
 # Bibliotecas
-LDFLAGS =-lraylib -L.\lib -lopengl32 -lgdi32 -luser32 -lwinmm
+LDFLAGS =-lraylib -L.\raylib\lib -lopengl32 -lgdi32 -luser32 -lwinmm
 
 # Regra padrão
 all: $(TARGET)

@@ -10,9 +10,11 @@
 	},
 	"makefile.launchConfigurations": [
 		{
-			"cwd": "e:\\PROGRAMAS_C\\GameCatAndMouse",
-			"binaryPath": "e:\\PROGRAMAS_C\\GameCatAndMouse\\game",
+			"cwd": "${workspaceFolder}",
+			"binaryPath": "${workspaceFolder}/main",
 			"binaryArgs": []
 		}
-	]
+	],
+	"files.autoSave": "onWindowChange",
+	"explorer.fileNesting.enabled": true
 }
