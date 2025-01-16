@@ -2,14 +2,15 @@
 
 Item* getItem(Vector2 initPos, char* sprite, ItemType type){
     Texture2D temp = LoadTexture(sprite);
+    Item* item = malloc(sizeof(Item));
 
-    return &(Item){
-        .sprite = temp,
-        .position = initPos,
-        .box = (Rectangle){initPos.x , initPos.y , temp.width, temp.height},
-        .type = type,
-        .life = ITEM_DEFAULT_LIFE
-    };
+    item->sprite = temp;
+    item->position = initPos;
+    item->box = (Rectangle){initPos.x , initPos.y , temp.width, temp.height};
+    item->type = type;
+    item->life = ITEM_DEFAULT_LIFE;
+
+    return item;
 }
 
 void drawItem(Item* target){

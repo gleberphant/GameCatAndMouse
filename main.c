@@ -2,7 +2,7 @@
 - ELABORAR FUNÇÃO PARA ADICIONAR E REMOVER ITENS DA LISTA
 - carregar mapa de arquivo
 - separar item de ator
-- impementar diferentes comportamentos para o gato
+
 - implementer ratoeira
 */
 
@@ -114,6 +114,7 @@ int gameLoop(){
     // SETAR VARIAVEIS DO LOOP
     TraceLog(LOG_DEBUG, "- carregando GLOBAL VARIABLES");
     Object *currentObj;
+    Item *currentItem;
     Rectangle arena;
     
     Rectangle colisionRec;
@@ -137,9 +138,9 @@ int gameLoop(){
 
     // CARREGAR LISTA DE ITENS
     TraceLog(LOG_DEBUG, "--- carregando ITENS LIST");
-    LinkedNode* itemListHead = initLinkedList(
+    ItemNode* itemListHead = initItemList(
         mapItens,
-        "resources/item", 
+        "resources/02_cheese.png", 
         (unsigned short)sizeof(mapItens)/sizeof(Vector2)
     );
 
@@ -278,29 +279,29 @@ int gameLoop(){
 
         // AÇÕES DOS INIMIGOS   
         // PERCORRE LISTA DE ITENS
-        for(LinkedNode* currentNode = itemListHead; currentNode != NULL ; currentNode = currentNode->next){
+        for(ItemNode* currentNode = itemListHead; currentNode != NULL ; currentNode = currentNode->next){
             
-            currentObj = currentNode->obj;
+            currentItem = currentNode->obj;
 
-            if ( currentObj->life < 1 ){
+            if ( currentItem->life < 1 ){
                 continue;
             }
             
             // checa colisão com itens
-            if(CheckCollisionRecs(player->box, currentObj->box)){
+            if(CheckCollisionRecs(player->box, currentItem->box)){
                 PlaySound(eatCheese);
                 colision = true;
-                colisionRec = GetCollisionRec(player->box, currentObj->box);
-                currentObj->life = -1;
+                colisionRec = GetCollisionRec(player->box, currentItem->box);
+                currentItem->life = -1;
                 score+=5;
 
                 // criar novo queijo aleatorio
                 // todo REFATORAR ESSE CODIGO PARA COLOCAR EM UMA FUNÇÃO
-                LinkedNode* newNode;
-                newNode = malloc(sizeof(LinkedNode));
-                newNode->obj = malloc(sizeof(Object));
+                ItemNode* newNode;
+                newNode = malloc(sizeof(ItemNode));
+                newNode->obj = malloc(sizeof(Item));
 
-                setObject(newNode->obj, (Vector2){rand() %700, rand() % 500}, "resources/item");
+                newNode->obj = getItem((Vector2){rand() %700, rand() % 500}, "resources/00_cheese.png", CHEESE);
 
                 newNode->next = currentNode->next;
                 currentNode->next = newNode;
@@ -375,14 +376,16 @@ int gameLoop(){
             DrawRectangleRec(arena,GRAY);
             
             //desenha itens
-            drawNodeList(itemListHead);
+            drawItemList(itemListHead);
 
             //desenha inimigos
             drawNodeList(enemyListHead);
                       
             //desenha player
-            //if(player->action == MOVE) updateAnimationFrame (player->spriteA);
+    
+            // DrawRectangleRec(player->box,LIGHTGRAY);
             drawObject(player);
+            
             
             
 
@@ -410,7 +413,7 @@ int gameLoop(){
 
     //LIBERAR MEMORIA ITEM LIST
     TraceLog(LOG_DEBUG, "--- LIBERAR MEMORIA ITEM LIST");
-    for(LinkedNode *temp = itemListHead, *prev = NULL; temp != NULL; prev = temp, temp = temp->next){
+    for(ItemNode *temp = itemListHead, *prev = NULL; temp != NULL; prev = temp, temp = temp->next){
         free(prev);
     }
     

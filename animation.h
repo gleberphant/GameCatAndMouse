@@ -28,7 +28,7 @@ typedef struct Animation{
 
 } Animation;
 
-Animation* getAnimation(char* spritesheet);
+Animation* getAnimation(const char* spritesheet);
 
 void updateAnimationFrame(Animation *self);
 

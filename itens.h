@@ -5,6 +5,7 @@
 #include "raylib.h"
 #include "raymath.h"
 
+#include <stdlib.h>
 
 #define ITEM_DEFAULT_LIFE 10
 #define ITEM_DEFAULT_WIDTH 32

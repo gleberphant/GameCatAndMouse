@@ -32,3 +32,30 @@ void drawNodeList(LinkedNode* targetList){
     }
       
 }
+
+ItemNode* initItemList( Vector2 initPosition[], char* sprite, short maxNodes)
+{
+    ItemNode *newListNode, *headListNode = NULL;
+  
+    for (int i = 0 ; i < maxNodes; i++){
+        newListNode = malloc(sizeof(ItemNode));
+        newListNode->obj = malloc(sizeof(Item));
+        newListNode->obj = getItem(initPosition[i], sprite, CHEESE);
+        newListNode->next = headListNode;
+        headListNode = newListNode;       
+    }
+    return headListNode;
+}
+
+
+void drawItemList(ItemNode* targetList){
+    for(ItemNode* currenteNode = targetList; currenteNode != NULL ; currenteNode = currenteNode->next)
+    {
+        if (currenteNode->obj->life < 1){
+                continue;
+        }
+
+        drawItem(currenteNode->obj);
+    }
+      
+}

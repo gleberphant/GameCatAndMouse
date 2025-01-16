@@ -35,6 +35,8 @@ void drawObject(Object* target){
     target->box.width  = target->spriteA2[target->action]->frameRec.width;
     target->box.height = target->spriteA2[target->action]->frameRec.height;
 
+    // DrawRectangleRec(target->box,LIGHTGRAY);
+
     DrawTexturePro(
         target->spriteA2[target->action]->spritesheet,
         target->spriteA2[target->action]->frameRec,
@@ -43,6 +45,9 @@ void drawObject(Object* target){
         target->direction*90,
         WHITE
     );
+
+
+    
 
     updateAnimationFrame (target->spriteA2[target->action] );
     

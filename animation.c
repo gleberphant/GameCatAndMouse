@@ -2,7 +2,7 @@
 
 
 
-Animation* getAnimation(char* spritesheet){
+Animation* getAnimation(const char* spritesheet){
 
     Animation* spriteA;
 
