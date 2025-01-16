@@ -2,7 +2,7 @@
 TARGET = main
 
 # Arquivos com fonte
-SOURCES = animation.c actor.c itens.c lists.c maps.c main.c   
+SOURCES = animation.c actor.c itens.c lists.c maps.c main.c
 
 # Flags do compilador
 CFLAGS = -Wall -Wextra -g -I.\raylib\include\

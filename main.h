@@ -12,20 +12,18 @@
 #include "animation.h"
 #include "actor.h"
 #include "lists.h"
-#include "maps.h"
 #include "itens.h"
-
-
-//CONSTANTES GLOBAIS
+#include "maps.h"
 
 
 // ESTADOS QUE O JOGO PODE SE ENCONTRAR
-typedef enum  GameStatus{ 
+typedef enum GameStatus{ 
     INTRO, 
     MENU, 
     GAME, 
     OVER,
     EXIT 
 } GameStatus;
+
 
 #endif

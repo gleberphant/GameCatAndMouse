@@ -8,7 +8,6 @@
 
 #include <stdlib.h>
 
-
 #include "actor.h"
 #include "itens.h"
 

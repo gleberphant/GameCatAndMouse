@@ -1,8 +1,6 @@
 /* TODO
 - ELABORAR FUNÇÃO PARA ADICIONAR E REMOVER ITENS DA LISTA
 - carregar mapa de arquivo
-- separar item de ator
-
 - implementer ratoeira
 */
 
@@ -15,7 +13,8 @@
 #define FONT_SIZE 32
 #define FONT_SPACE 2.0f
 
-#define PLAYER_INIT_POS (Vector2){380.0f, 300.0f}
+#define PLAYER_INIT_POS (Vector2){ 380.0f, 300.0f }
+
 // VARIAVEIS GLOBAIS
 
 GameStatus gameScene;
@@ -24,23 +23,6 @@ Font gameFont;
 float volume = 0.01f;
 int score = 0, level = 1;
 char textBuffer[100];
-
-/* FUNÇÕES */
-
-
-
-// verifica se um objeto esta dentro de outro
-bool isInside(Object* target, Rectangle *arena){
-/* TODO passar um objeto RECTANGLE ao inves de um objeto inteiro*/
-        
-    if( target->position.x < arena->x || target->position.x + target->box.width > (arena->width + arena->x)){
-        return false;
-    }
-    if( target->position.y < arena->y || target->position.y + target->box.height > (arena->height + arena->y)){
-        return false;
-    }
-    return true;
-}
 
 
 // cena de introdução
@@ -120,9 +102,22 @@ int gameLoop(){
     Rectangle colisionRec;
     bool colision;
     volume = 1;
-    
     unsigned short enemyVel = 4;
+
+    // MAPS
+    Vector2 mapEnemys[] = {
+        (Vector2){20.0f, 140.0f},
+        (Vector2){650.0f, 120.0f},
+        (Vector2){80.0f, 420.0f}
         
+    };
+
+    Vector2 mapItens[] = {
+        (Vector2){100.0f, 120.0f},
+        (Vector2){600.0f, 500.0f}
+    };
+
+      
     // CARREGAR LISTA DE INIMIGOS
     TraceLog(LOG_DEBUG, "-- carregando ENEMY LIST");
     LinkedNode* enemyListHead = initLinkedList(
