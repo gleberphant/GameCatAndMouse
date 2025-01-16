@@ -15,6 +15,6 @@
 			"binaryArgs": []
 		}
 	],
-	"files.autoSave": "onWindowChange",
+	"files.autoSave": "onFocusChange",
 	"explorer.fileNesting.enabled": true
 }

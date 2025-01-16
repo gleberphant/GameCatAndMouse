@@ -6,11 +6,12 @@
 #include "raylib.h"
 #include "raymath.h"
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+
 
 #include "actor.h"
+
+
 
 // LINKED LIST DE ATORES
 typedef struct LinkedNode{

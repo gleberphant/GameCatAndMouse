@@ -1,9 +1,9 @@
 /* TODO
-
-- animar personagens
-- mostrar score
 - ELABORAR FUNÇÃO PARA ADICIONAR E REMOVER ITENS DA LISTA
 - carregar mapa de arquivo
+- separar item de ator
+- impementar diferentes comportamentos para o gato
+- implementer ratoeira
 */
 
 
@@ -15,7 +15,7 @@
 #define FONT_SIZE 32
 #define FONT_SPACE 2.0f
 
-
+#define PLAYER_INIT_POS (Vector2){380.0f, 300.0f}
 // VARIAVEIS GLOBAIS
 
 GameStatus gameScene;
@@ -24,19 +24,6 @@ Font gameFont;
 float volume = 0.01f;
 int score = 0, level = 1;
 char textBuffer[100];
-
-
-// MAPS
-Vector2 mapEnemys[] = {
-    (Vector2){20.0f, 200.0f},
-    (Vector2){100.0f, 200.0f}
-    
-};
-
-Vector2 mapItens[] = {
-    (Vector2){100.0f, 120.0f},
-    (Vector2){600.0f, 500.0f}
-};
 
 /* FUNÇÕES */
 
@@ -139,7 +126,7 @@ int gameLoop(){
     TraceLog(LOG_DEBUG, "-- carregando ENEMY LIST");
     LinkedNode* enemyListHead = initLinkedList(
         mapEnemys,
-        "resources/cat.png", 
+        "resources/catA", 
         (unsigned short )sizeof(mapEnemys)/sizeof(Vector2)
     );
 
@@ -152,7 +139,7 @@ int gameLoop(){
     TraceLog(LOG_DEBUG, "--- carregando ITENS LIST");
     LinkedNode* itemListHead = initLinkedList(
         mapItens,
-        "resources/item.png", 
+        "resources/item", 
         (unsigned short)sizeof(mapItens)/sizeof(Vector2)
     );
 
@@ -170,7 +157,11 @@ int gameLoop(){
         gameScene = EXIT;
     }
 
-    setObject(player, (Vector2){400.0f, 400.0f}, "resources/mouseA_walk.png" ); 
+    setObject(
+        player, 
+        PLAYER_INIT_POS, 
+        "resources/mouseA" 
+    ); 
 
     score = 0;
 
@@ -221,6 +212,11 @@ int gameLoop(){
             player->move.x += 10;
         }
         
+        if(IsKeyDown(KEY_SPACE)){
+            player->action = SPECIAL;
+            
+        }
+
         if(IsKeyDown(KEY_L)){
             enemyVel ++;
         }
@@ -281,10 +277,6 @@ int gameLoop(){
         }
 
         // AÇÕES DOS INIMIGOS   
-        
-        //colisionRec = (Rectangle){0,0,0,0};
-        
-
         // PERCORRE LISTA DE ITENS
         for(LinkedNode* currentNode = itemListHead; currentNode != NULL ; currentNode = currentNode->next){
             
@@ -302,20 +294,19 @@ int gameLoop(){
                 currentObj->life = -1;
                 score+=5;
 
-
                 // criar novo queijo aleatorio
                 // todo REFATORAR ESSE CODIGO PARA COLOCAR EM UMA FUNÇÃO
                 LinkedNode* newNode;
                 newNode = malloc(sizeof(LinkedNode));
                 newNode->obj = malloc(sizeof(Object));
 
-                setObject(newNode->obj, (Vector2){rand() %700, rand() % 500}, "resources/item.png");
+                setObject(newNode->obj, (Vector2){rand() %700, rand() % 500}, "resources/item");
 
                 newNode->next = currentNode->next;
                 currentNode->next = newNode;
             }
         }
-        float distX , distY;
+        //float distX , distY;
         //PERCORRE LISTA DE INIMIGOS
         for(LinkedNode* currentNode = enemyListHead; currentNode != NULL; currentNode = currentNode->next )
         {
@@ -326,31 +317,32 @@ int gameLoop(){
             currentObj->action = STOP;
             currentObj->move = Vector2Zero();
             
-            distX = Vector2Distance((Vector2){currentObj->box.x, 0}, (Vector2){player->position.x, 0});
-            distY = Vector2Distance((Vector2){0, currentObj->box.y}, (Vector2){0, player->position.y});
+            if(Vector2Distance(currentObj->position, player->position) > 300){ continue;}
 
-            if(distX > distY){
-            if ((currentObj->box.x < player->position.x) ){
+          
+
+            if ((currentObj->box.x < player->position.x) && currentObj->action == STOP){
                     currentObj->action = MOVE;
                     currentObj->direction = RIGHT;
                     currentObj->move.x += (rand() % enemyVel);
-            }else{
+            }
+            
+            if ((currentObj->box.x > player->position.x+64) && currentObj->action == STOP){
                     currentObj->action = MOVE;
                     currentObj->direction =  LEFT;
                     currentObj->move.x -= (rand() % enemyVel);
             }
-            }
-            else{
-            if ((currentObj->box.y < player->position.y)  ){
+
+            if ((currentObj->box.y < player->position.y)  && currentObj->action == STOP){
                 currentObj->action = MOVE;
                 currentObj->direction = DOWN;
                 currentObj->move.y += (rand() % enemyVel);
                 
-            }else{
+            }
+            if ((currentObj->box.y > player->position.y+64) && currentObj->action == STOP){
                 currentObj->action = MOVE;
                 currentObj->direction = UP;
                 currentObj->move.y -= (rand() % enemyVel);                
-            }
             }
 
             // ENEMY ACTION
@@ -389,7 +381,7 @@ int gameLoop(){
             drawNodeList(enemyListHead);
                       
             //desenha player
-            if(player->action == MOVE) updateAnimation (player->spriteA);
+            //if(player->action == MOVE) updateAnimationFrame (player->spriteA);
             drawObject(player);
             
             
