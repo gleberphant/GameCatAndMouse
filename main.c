@@ -1,52 +1,42 @@
 /* TODO
-- ELABORAR FUNÇÃO PARA ADICIONAR E REMOVER ITENS DA LISTA
-- carregar mapa de arquivo
-- implementer ratoeira
-*/
+ *
+ * - REFATORAR SISTEMA DE COLISÃO E MOVIMENTO
+ * - CORRIGIR COLISÃO
+ * - ELABORAR FUNÇÃO PARA ADICIONAR E REMOVER ITENS DA LISTA:
+ * - IMPLEMENTAR LISTA DUPLA
+ * - implementer ITEM ratoeira (PRENDE JOGADOR POR UM TEMPO)
+ * - IMPLEMENTAR STRUC DO MAPA
+ * - carregar mapa de arquivo
+ *
+ */
 
 
 #include "main.h"
 
-#define W_WIDTH 800
-#define W_HEIGHT 600
-#define MAP_BORDER 10
-#define FONT_SIZE 32
-#define FONT_SPACE 2.0f
-
-#define PLAYER_INIT_POS (Vector2){ 380.0f, 300.0f }
-
-// VARIAVEIS GLOBAIS
-
-GameStatus gameScene;
-Font gameFont; 
-
-float volume = 0.01f;
-int score = 0, level = 1;
-char textBuffer[100];
 
 
 // cena de introdução
 int gameIntro(){
 
     // CARREGAR MUSICA 
-    TraceLog(LOG_DEBUG, " -- CARREGANDO MUSICA ");
+    TraceLog(LOG_DEBUG, " == CARREGANDO MUSICA ");
     Music introMusic = LoadMusicStream("sounds/intro_music.mp3");
     SetMusicVolume(introMusic, 1.0f);
     PlayMusicStream(introMusic);
 
     // CARREGAR IMAGENS DE FUNDO
-    TraceLog(LOG_DEBUG, " -- CARREGANDO IMAGENS");
+    TraceLog(LOG_DEBUG, " == CARREGANDO IMAGENS");
     Texture2D backgroundTex = LoadTexture("resources/intro_bg.png");
 
     // SETAR TEXTOS
-    TraceLog(LOG_DEBUG, " -- CARREGANDO FONTES ");   
+    TraceLog(LOG_DEBUG, " == CARREGANDO FONTES ");
     char* textIntro = "[ENTER] para jogar [ESC] para sair.";            
     gameFont = GetFontDefault();
     Vector2 textMeasure = MeasureTextEx(gameFont, textIntro, FONT_SIZE, FONT_SPACE);
     Rectangle textRec = { (W_WIDTH - textMeasure.x)/2, 400, textMeasure.x, textMeasure.y };
   
     // INTRO LOOP
-    TraceLog(LOG_DEBUG, " -- CARREGAMENTO CONCLUIDO -- ");   
+    TraceLog(LOG_DEBUG, " == CARREGAMENTO CONCLUÍDO ");
     while (gameScene == INTRO){
         // INPUT HANDLE
         if(IsKeyReleased(KEY_ESCAPE) || WindowShouldClose()){
@@ -73,7 +63,7 @@ int gameIntro(){
         // DRAW
         BeginDrawing();
             ClearBackground(BLACK);
-            DrawTexture(backgroundTex, 0.0f, 0.0f, WHITE);
+            DrawTexture(backgroundTex, 0, 0, WHITE);
             DrawRectangleRec(textRec, BLACK);
             DrawTextEx(gameFont, textIntro, (Vector2){textRec.x, textRec.y}, FONT_SIZE, FONT_SPACE,  WHITE);
         EndDrawing();
@@ -93,23 +83,23 @@ int gameIntro(){
 // cena loop principal
 int gameLoop(){
 
-    // SETAR VARIAVEIS DO LOOP
-    TraceLog(LOG_DEBUG, "- carregando GLOBAL VARIABLES");
-    Object *currentObj;
-    Item *currentItem;
+    // SETAR VARIÁVEIS DO LOOP
+    TraceLog(LOG_DEBUG, "== carregando GLOBAL VARIABLES");
+    Actor *currentActor = NULL;
+    Item *currentItem = NULL;
     Rectangle arena;
-    
-    Rectangle colisionRec;
-    bool colision;
+
+    Rectangle collisionRec = (Rectangle){0,0, 0,0};
+    bool collision = false;
     volume = 1;
     unsigned short enemyVel = 4;
 
     // MAPS
-    Vector2 mapEnemys[] = {
+    Vector2 mapEnemies[] = {
         (Vector2){20.0f, 140.0f},
         (Vector2){650.0f, 120.0f},
         (Vector2){80.0f, 420.0f}
-        
+
     };
 
     Vector2 mapItens[] = {
@@ -117,13 +107,13 @@ int gameLoop(){
         (Vector2){600.0f, 500.0f}
     };
 
-      
+
     // CARREGAR LISTA DE INIMIGOS
-    TraceLog(LOG_DEBUG, "-- carregando ENEMY LIST");
-    LinkedNode* enemyListHead = initLinkedList(
-        mapEnemys,
-        "resources/catA", 
-        (unsigned short )sizeof(mapEnemys)/sizeof(Vector2)
+    TraceLog(LOG_DEBUG, "== carregando ENEMY LIST");
+    ActorNode* enemyListHead = initActorList(
+        mapEnemies,
+        "resources/catA",
+        (unsigned short )sizeof(mapEnemies)/sizeof(Vector2)
     );
 
     if(enemyListHead == NULL){
@@ -132,10 +122,10 @@ int gameLoop(){
     }
 
     // CARREGAR LISTA DE ITENS
-    TraceLog(LOG_DEBUG, "--- carregando ITENS LIST");
+    TraceLog(LOG_DEBUG, "== carregando ITENS LIST");
     ItemNode* itemListHead = initItemList(
         mapItens,
-        "resources/02_cheese.png", 
+        "resources/02_cheese.png",
         (unsigned short)sizeof(mapItens)/sizeof(Vector2)
     );
 
@@ -145,8 +135,8 @@ int gameLoop(){
     }
 
     // CARREGAR PERSONAGEM JOGADOR
-    TraceLog(LOG_DEBUG, "--- carregando PLAYER");
-    Object* player = malloc(sizeof(Object));
+    TraceLog(LOG_DEBUG, "== carregando PLAYER");
+    Actor* player = malloc(sizeof(Actor));
 
     if(player == NULL){
         TraceLog(LOG_ERROR, "::: ERROR ao carregar PLAYER");
@@ -154,39 +144,39 @@ int gameLoop(){
     }
 
     setObject(
-        player, 
-        PLAYER_INIT_POS, 
-        "resources/mouseA" 
-    ); 
+        player,
+        PLAYER_INIT_POS,
+        "resources/mouseA"
+    );
 
     score = 0;
 
     // CARREGAR O MAPA
-    TraceLog(LOG_DEBUG, "--- carregando MAP");
+    TraceLog(LOG_DEBUG, "== carregando MAP");
     arena.x = 0+MAP_BORDER;
     arena.y = 0+MAP_BORDER;
-    arena.width = W_WIDTH-(MAP_BORDER*2); 
+    arena.width = W_WIDTH-(MAP_BORDER*2);
     arena.height = W_HEIGHT-(MAP_BORDER*2);
-    
-    
-    // CARRGAR EFEITOS SONOROS
-    TraceLog(LOG_DEBUG, "--- carregando EFEITOS SONOROS");
-    Sound eatCheese = LoadSound("sounds/eat_cheese.mp3");
-    Sound getHited = LoadSound("sounds/get_hit.mp3");
 
-    
+
+    // CARREGAR EFEITOS SONOROS
+    TraceLog(LOG_DEBUG, "== carregando EFEITOS SONOROS");
+    const Sound eatCheese = LoadSound("sounds/eat_cheese.mp3");
+    const Sound getHit = LoadSound("sounds/get_hit.mp3");
+
+
     // GAME LOOP
     while (gameScene == GAME) {
-        
+
         // INPUT HANDLE
-        if(WindowShouldClose() == true)
-        {
+        if(WindowShouldClose() == true || player == NULL) {
             gameScene = EXIT;
+            break;
         }
-        
+
         player->action = STOP;
         player->move = Vector2Zero();
-        
+
         if(IsKeyDown(KEY_UP)){
             player->action = MOVE;
             player->direction = UP;
@@ -207,17 +197,17 @@ int gameLoop(){
             player->direction = RIGHT;
             player->move.x += 10;
         }
-        
+
         if(IsKeyDown(KEY_SPACE)){
             player->action = SPECIAL;
-            
+
         }
 
         if(IsKeyDown(KEY_L)){
-            enemyVel ++;
+            enemyVel++;
         }
         if(IsKeyDown(KEY_K) && enemyVel > 1){
-            enemyVel --;           
+            enemyVel--;
         }
 
 
@@ -232,11 +222,11 @@ int gameLoop(){
         }
 
 
-        // UPDATE STATUS 
-        colision = false;
-        
-        
-        if(score > level * 20){   
+        // UPDATE STATUS
+        collision = false;
+
+
+        if(score > level * 20){
             enemyVel+=2;
             level++;
         }
@@ -249,54 +239,51 @@ int gameLoop(){
             gameScene = OVER;
             continue;
         }
-        
-    
+
+
         // MOVER JOGADOR
         if(player->action == MOVE){
-            /* 
-            TODO:
-            - melhorar a funcao. posicao ser alterada apenas depois de verifica se a nova posição esta correta
-            - corrigir os nomes dos atributos 
-            */
-    
-            player->position = Vector2Add(player->position, player->move); //nova posicao
-                        
-            // VERIFICA SE JOGADOR DENTRO DA ARENA ATUALIZA POSICAO
+            // TODO - MELHORAR O MOVIMENTO
+
+            player->position = Vector2Add(player->position, player->move); //nova posição
+
+            // VERIFICA SE JOGADOR DENTRO DA ARENA
             if(isInside(player, &arena)){
                 player->box.x = player->position.x; //newPosX
                 player->box.y = player->position.y; //newPosY
-            } 
+            }
 
             player->position.x = player->box.x;
             player->position.y = player->box.y;
 
         }
 
-        // AÇÕES DOS INIMIGOS   
+        // AÇÕES DOS INIMIGOS
         // PERCORRE LISTA DE ITENS
         for(ItemNode* currentNode = itemListHead; currentNode != NULL ; currentNode = currentNode->next){
-            
+
+            if ( currentNode->obj->life < 1 ) continue;
             currentItem = currentNode->obj;
 
-            if ( currentItem->life < 1 ){
-                continue;
-            }
-            
+
             // checa colisão com itens
             if(CheckCollisionRecs(player->box, currentItem->box)){
                 PlaySound(eatCheese);
-                colision = true;
-                colisionRec = GetCollisionRec(player->box, currentItem->box);
+                collision = true;
+                collisionRec = GetCollisionRec(player->box, currentItem->box);
                 currentItem->life = -1;
                 score+=5;
 
                 // criar novo queijo aleatorio
-                // todo REFATORAR ESSE CODIGO PARA COLOCAR EM UMA FUNÇÃO
-                ItemNode* newNode;
-                newNode = malloc(sizeof(ItemNode));
+                // todo REFATORAR ESSE CÓDIGO PARA COLOCAR EM UMA FUNÇÃO
+                ItemNode* newNode = malloc(sizeof(ItemNode));;
                 newNode->obj = malloc(sizeof(Item));
 
-                newNode->obj = getItem((Vector2){rand() %700, rand() % 500}, "resources/00_cheese.png", CHEESE);
+                newNode->obj = getItem(
+                    (Vector2) { (float)GetRandomValue(64, W_WIDTH-64), (float)(float) GetRandomValue(64, W_HEIGHT-64)},
+                    "resources/00_cheese.png",
+                    CHEESE
+                );
 
                 newNode->next = currentNode->next;
                 currentNode->next = newNode;
@@ -304,85 +291,89 @@ int gameLoop(){
         }
         //float distX , distY;
         //PERCORRE LISTA DE INIMIGOS
-        for(LinkedNode* currentNode = enemyListHead; currentNode != NULL; currentNode = currentNode->next )
+        for(ActorNode* currentNode = enemyListHead; currentNode != NULL; currentNode = currentNode->next )
         {
 
-            currentObj = currentNode->obj;
+            if ( currentNode->obj->life < 1 ) continue;
+
+            currentActor = currentNode->obj;
+
+
 
             // Comportamento de perseguição
-            currentObj->action = STOP;
-            currentObj->move = Vector2Zero();
-            
-            if(Vector2Distance(currentObj->position, player->position) > 300){ continue;}
+            currentActor->action = STOP;
+            currentActor->move = Vector2Zero();
 
-          
+            if(Vector2Distance(currentActor->position, player->position) > 300){ continue;}
 
-            if ((currentObj->box.x < player->position.x) && currentObj->action == STOP){
-                    currentObj->action = MOVE;
-                    currentObj->direction = RIGHT;
-                    currentObj->move.x += (rand() % enemyVel);
-            }
-            
-            if ((currentObj->box.x > player->position.x+64) && currentObj->action == STOP){
-                    currentObj->action = MOVE;
-                    currentObj->direction =  LEFT;
-                    currentObj->move.x -= (rand() % enemyVel);
+
+
+            if ((currentActor->box.x < player->position.x) && currentActor->action == STOP){
+                    currentActor->action = MOVE;
+                    currentActor->direction = RIGHT;
+                    currentActor->move.x += (float) GetRandomValue(0, enemyVel);
             }
 
-            if ((currentObj->box.y < player->position.y)  && currentObj->action == STOP){
-                currentObj->action = MOVE;
-                currentObj->direction = DOWN;
-                currentObj->move.y += (rand() % enemyVel);
-                
+            if ((currentActor->box.x > player->position.x+64) && currentActor->action == STOP){
+                    currentActor->action = MOVE;
+                    currentActor->direction =  LEFT;
+                    currentActor->move.x -= (float) GetRandomValue(0, enemyVel);
             }
-            if ((currentObj->box.y > player->position.y+64) && currentObj->action == STOP){
-                currentObj->action = MOVE;
-                currentObj->direction = UP;
-                currentObj->move.y -= (rand() % enemyVel);                
+
+            if ((currentActor->box.y < player->position.y)  && currentActor->action == STOP){
+                currentActor->action = MOVE;
+                currentActor->direction = DOWN;
+                currentActor->move.y += (float) GetRandomValue(0, enemyVel);
+
+            }
+            if ((currentActor->box.y > player->position.y+64) && currentActor->action == STOP){
+                currentActor->action = MOVE;
+                currentActor->direction = UP;
+                currentActor->move.y -= (float) GetRandomValue(0, enemyVel);
             }
 
             // ENEMY ACTION
             // move action
-            currentObj->position = (Vector2){currentObj->box.x, currentObj->box.y}; //oldPos
-            currentObj->position = Vector2Add(currentObj->position, currentObj->move);
+            currentActor->position = (Vector2){currentActor->box.x, currentActor->box.y}; //oldPos
+            currentActor->position = Vector2Add(currentActor->position, currentActor->move);
 
-            if (isInside(currentObj ,&arena))
+            if (isInside(currentActor ,&arena))
             {
-                currentObj->box.x = currentObj->position.x;
-                currentObj->box.y = currentObj->position.y;
-            }                   
+                currentActor->box.x = currentActor->position.x;
+                currentActor->box.y = currentActor->position.y;
+            }
 
-            if(CheckCollisionRecs(player->box, currentObj->box)){
-                PlaySound(getHited);
-                colision = true;
-                colisionRec= GetCollisionRec(player->box, currentObj->box);
+            if(CheckCollisionRecs(player->box, currentActor->box)){
+                PlaySound(getHit);
+                collision = true;
+                collisionRec= GetCollisionRec(player->box, currentActor->box);
                 score --;
                 player->life--;
             }
         }
-        
+
         // DRAW
         BeginDrawing();
-            
+
             //limpa tela
             ClearBackground(BLACK);
-            
+
             //desenha mapa
             DrawRectangleRec(arena,GRAY);
-            
+
             //desenha itens
             drawItemList(itemListHead);
 
             //desenha inimigos
-            drawNodeList(enemyListHead);
-                      
+            drawActorList(enemyListHead);
+
             //desenha player
-    
+
             // DrawRectangleRec(player->box,LIGHTGRAY);
             drawObject(player);
-            
-            
-            
+
+
+
 
             // Desenha UI
             DrawText(TextFormat("LIFE : %d", player->life), 20, 20, 20, BLACK);
@@ -391,66 +382,64 @@ int gameLoop(){
             DrawText(TextFormat("LEVEL: %d", level ), 500, 20, 20, BLACK);
             DrawText(TextFormat("Enemy Vel: %d", enemyVel ), 500, 40, 20, BLACK);
 
-            if(colision) DrawCircle(colisionRec.x,colisionRec.y, 10, RED);
+            if(collision) DrawCircle((int)collisionRec.x,(int)collisionRec.y, 10, RED);
 
-        EndDrawing();    
-
-
+        EndDrawing();
 
     }
 
-             
-    //LIBERAR MEMORIA ENEMY LIST    
-    TraceLog(LOG_DEBUG, "--- LIBERAR MEMORIA ENEMY LIST");
-    for(LinkedNode *temp = enemyListHead, *prev = NULL; temp != NULL; prev = temp, temp = temp->next){
+
+    //LIBERAR MEMORIA ENEMY LIST
+    TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA ENEMY LIST");
+    for(ActorNode *temp = enemyListHead, *prev = NULL; temp != NULL; prev = temp, temp = temp->next){
         free(prev);
     }
 
     //LIBERAR MEMORIA ITEM LIST
-    TraceLog(LOG_DEBUG, "--- LIBERAR MEMORIA ITEM LIST");
+    TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA ITEM LIST");
     for(ItemNode *temp = itemListHead, *prev = NULL; temp != NULL; prev = temp, temp = temp->next){
         free(prev);
     }
-    
+
     //LIBERAR MEMORIA PLAYER
-    TraceLog(LOG_DEBUG, "--- LIBERAR MEMORIA PLAYER");
+    TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA PLAYER");
     free(player);
-    
+
     //LIBERAR MEMORIA MAPA
-    TraceLog(LOG_DEBUG, "--- LIBERAR MEMORIA MAPA");
+    TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA MAPA");
 
     //LIBERAR MEMORIA EFEITOS SONOROS
-    TraceLog(LOG_DEBUG, "--- LIBERAR MEMORIA EFEITOS SONOROS");
+    TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA EFEITOS SONOROS");
     UnloadSound(eatCheese);
-    UnloadSound(getHited);
+    UnloadSound(getHit);
 
-    volume = 0.5;
+    volume = 0.5f;
     return 0;
 }
 
 
 int gameOver(){
     // CARREGAR MUSICA 
-    TraceLog(LOG_DEBUG, " -- CARREGANDO MUSICA ");
-    Music gameoverMusic = LoadMusicStream("sounds/gameover.mp3");
+    TraceLog(LOG_DEBUG, " == CARREGANDO MUSICA == ");
+    const Music gameoverMusic = LoadMusicStream("sounds/gameover.mp3");
     SetMusicVolume(gameoverMusic, volume);
     PlayMusicStream(gameoverMusic);
 
     // CARREGAR IMAGENS 
-    TraceLog(LOG_DEBUG, " -- CARREGANDO IMAGENS");
-    Texture2D backgroundTex = LoadTexture("resources/gameover.png");
+    TraceLog(LOG_DEBUG, " == CARREGANDO IMAGENS ==");
+    const Texture2D backgroundTex = LoadTexture("resources/gameover.png");
     
     // SETAR TEXTOS
-    TraceLog(LOG_DEBUG, " -- CARREGANDO FONTES ");          
+    TraceLog(LOG_DEBUG, " == CARREGANDO FONTES == ");
     char* textOver = "GAME OVER";
     gameFont = GetFontDefault();
     Vector2 textMeasure = MeasureTextEx(gameFont, textOver, FONT_SIZE, FONT_SPACE);
     Rectangle textRec = { (W_WIDTH - textMeasure.x)/2, 400, textMeasure.x, textMeasure.y };
 
     // INTRO LOOP
-    TraceLog(LOG_DEBUG, " -- CARREGAMENTO CONCLUIDO -- ");   
+    TraceLog(LOG_DEBUG, " == CARREGAMENTO CONCLUÍDO == ");
     while(gameScene == OVER){
-        //INPUT HANDLE   
+        //INPUT HANDLE
         if(IsKeyReleased(KEY_ESCAPE) || WindowShouldClose()){
             gameScene = EXIT;
         }
@@ -483,7 +472,7 @@ int gameOver(){
 
 int main(){
     // Config Screen
-    InitWindow(W_WIDTH, W_HEIGHT, "CatAndMouse - GAME"); 
+    InitWindow(W_WIDTH, W_HEIGHT, "CatAndMouse by Handerson Gleber (Gr4v4t1nh4)");
     
     InitAudioDevice();
 
@@ -495,13 +484,13 @@ int main(){
 
     SetMasterVolume(volume);
 
-    srand(time(NULL));
-    
     gameFont = GetFontDefault();
 
     gameScene = INTRO;
     
+    // ReSharper disable once CppDFALoopConditionNotUpdated
     while(gameScene != EXIT){
+
 
         if (gameScene == INTRO){
             gameIntro();

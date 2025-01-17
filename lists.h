@@ -4,31 +4,29 @@
 
 
 #include "raylib.h"
-#include "raymath.h"
-
-#include <stdlib.h>
 
 #include "actor.h"
 #include "itens.h"
 
 
 // LINKED LIST DE ATORES
-typedef struct LinkedNode{
-    Object* obj;
-    struct LinkedNode* next;
-}LinkedNode;
+typedef struct ActorNode{
+    Actor* obj;
+    struct ActorNode* next;
+    struct ActorNode* prev;
+}ActorNode;
 
 
 typedef struct ItemNode{
     Item* obj;
     struct ItemNode* next;
+    struct ItemNode* prev;
 }ItemNode;
 
 
+ActorNode* initActorList( Vector2 initPosition[], char* sprite, short maxNodes);
 
-LinkedNode* initLinkedList( Vector2 initPosition[], char* sprite, short maxNodes);
-
-void drawNodeList(LinkedNode* targetList);
+void drawActorList(ActorNode* targetList);
 
 
 ItemNode* initItemList( Vector2 initPosition[], char* sprite, short maxNodes);

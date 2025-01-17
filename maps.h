@@ -14,12 +14,15 @@
 typedef struct Map{
     Rectangle area;
     Color color;
-    LinkedNode *enemyList;
+    ActorNode *enemyList;
     ItemNode *itensList;
 } Map;
 
 
+bool isInside(Actor* target, Rectangle *arena);
 
-bool isInside(Object* target, Rectangle *arena);
+Vector2* getEnemysPosition();
+
+Vector2* getItensPosition();
 
 #endif

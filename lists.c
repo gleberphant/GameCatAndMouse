@@ -1,18 +1,17 @@
 
 #include "lists.h"
 
-
-/* 
+/*
 inicia uma lista de OBJETOS - inimigos ou itens
 recebe a posição inicial de cada objeto e o sprite dos objetos
 */ 
-LinkedNode* initLinkedList( Vector2 initPosition[], char* sprite, short maxNodes)
+ActorNode* initActorList( Vector2 initPosition[], char* sprite, short maxNodes)
 {
-    LinkedNode *newListNode, *headListNode = NULL;
+    ActorNode *newListNode=NULL, *headListNode = NULL;
   
     for (int i = 0 ; i < maxNodes; i++){
-        newListNode = malloc(sizeof(LinkedNode));
-        newListNode->obj = malloc(sizeof(Object));
+        newListNode = malloc(sizeof(ActorNode));
+        newListNode->obj = malloc(sizeof(Actor));
         setObject(newListNode->obj, initPosition[i], sprite);
         newListNode->next = headListNode;
         headListNode = newListNode;       
@@ -21,21 +20,21 @@ LinkedNode* initLinkedList( Vector2 initPosition[], char* sprite, short maxNodes
 }
 
 
-void drawNodeList(LinkedNode* targetList){
-    for(LinkedNode* currenteNode = targetList; currenteNode != NULL ; currenteNode = currenteNode->next)
+void drawActorList(ActorNode* targetList){
+    for(ActorNode* currentNode = targetList; currentNode != NULL ; currentNode = currentNode->next)
     {
-        if (currenteNode->obj->life < 1){
+        if (currentNode->obj->life < 1){
                 continue;
         }
 
-        drawObject(currenteNode->obj);
+        drawObject(currentNode->obj);
     }
       
 }
 
 ItemNode* initItemList( Vector2 initPosition[], char* sprite, short maxNodes)
 {
-    ItemNode *newListNode, *headListNode = NULL;
+    ItemNode *newListNode=NULL, *headListNode = NULL;
   
     for (int i = 0 ; i < maxNodes; i++){
         newListNode = malloc(sizeof(ItemNode));
@@ -47,15 +46,33 @@ ItemNode* initItemList( Vector2 initPosition[], char* sprite, short maxNodes)
     return headListNode;
 }
 
+void addItemNode(ItemNode** target){
+    ItemNode *newNode = malloc(sizeof(ItemNode));
+    newNode->next= *target;
+    *target = newNode;
+}
+
+void removeItemNode(ItemNode *target){
+    ItemNode *oldNode=NULL;
+
+    oldNode = target->next;
+
+    if(target->next  != NULL){
+        target->next = target->next->next;
+        
+        free(oldNode);
+    }
+
+}
 
 void drawItemList(ItemNode* targetList){
-    for(ItemNode* currenteNode = targetList; currenteNode != NULL ; currenteNode = currenteNode->next)
+    for(ItemNode* currentNode = targetList; currentNode != NULL ; currentNode = currentNode->next)
     {
-        if (currenteNode->obj->life < 1){
+        if (currentNode->obj->life < 1){
                 continue;
         }
 
-        drawItem(currenteNode->obj);
+        drawItem(currentNode->obj);
     }
       
 }

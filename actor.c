@@ -6,7 +6,7 @@ const char* getString(char* str1, char* str2){
 }
 
 // inicia um ator
-void setObject(Object* target, Vector2 initPos, char* sprite){
+void setObject(Actor* target, Vector2 initPos, char* sprite){
     TraceLog(LOG_DEBUG, "- Loading Object %s", sprite);
             
     target->spriteA2[MOVE]   = getAnimation( getString(sprite, "_walk.png") );
@@ -30,7 +30,7 @@ void setObject(Object* target, Vector2 initPos, char* sprite){
 }
 
 // desenhar ator
-void drawObject(Object* target){ 
+void drawObject(Actor* target){ 
 
     target->box.width  = target->spriteA2[target->action]->frameRec.width;
     target->box.height = target->spriteA2[target->action]->frameRec.height;

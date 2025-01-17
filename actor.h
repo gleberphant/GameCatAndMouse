@@ -17,11 +17,11 @@
 // TIPOS 
 typedef enum ActionType { MOVE=0, STOP=1, SPECIAL=2  } ActionType;
 typedef enum DirectionType { UP=0, RIGHT=1, DOWN=2, LEFT=3 } DirectionType ;
-typedef enum ObjectType { PLAYER, ENEMY, ITEM } ObjectType;
+typedef enum ActorType { PLAYER, ENEMY, ITEM } ActorType;
 
 
 // ATORES. SERVE PARA JOGADOR, INIMIGOS E ITENS
-typedef struct Object{
+typedef struct Actor{
     int life;
     float direction;
     
@@ -29,17 +29,16 @@ typedef struct Object{
     Vector2 move;
     
     Rectangle box;
-    ObjectType type;
+    ActorType type;
     ActionType action;
-    //Animation* spriteA;
     Animation* spriteA2[3];
     
-} Object;
+} Actor;
 
 
-void setObject(Object* target, Vector2 initPos, char* sprite);
+void setObject(Actor* target, Vector2 initPos, char* sprite);
 
-void drawObject(Object* target);
+void drawObject(Actor* target);
 
 
 #endif

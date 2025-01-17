@@ -5,9 +5,7 @@
 #include "raylib.h"
 #include "raymath.h"
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 #include "animation.h"
 #include "actor.h"
@@ -15,15 +13,32 @@
 #include "itens.h"
 #include "maps.h"
 
+// constantes
+#define W_WIDTH 800
+#define W_HEIGHT 600
+#define MAP_BORDER 10
+#define FONT_SIZE 32
+#define FONT_SPACE 2.0f
 
-// ESTADOS QUE O JOGO PODE SE ENCONTRAR
-typedef enum GameStatus{ 
-    INTRO, 
-    MENU, 
-    GAME, 
+#define PLAYER_INIT_POS (Vector2){ 380.0f, 300.0f }
+
+// ENUMS
+typedef enum GameStatus{
+    INTRO,
+    MENU,
+    GAME,
     OVER,
-    EXIT 
+    EXIT
 } GameStatus;
+
+
+// VARIÁVEIS GLOBAIS
+GameStatus gameScene;
+Font gameFont;
+
+float volume = 0.01f;
+int score = 0, level = 1;
+char textBuffer[100];
 
 
 #endif
