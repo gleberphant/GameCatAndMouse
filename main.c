@@ -1,5 +1,6 @@
 /* TODO
- *
+ * - criar uma estrutura para CENAS
+ * - modularizar carregamento de recursoc com liberação de recursos
  * - REFATORAR SISTEMA DE COLISÃO E MOVIMENTO
  * - CORRIGIR COLISÃO
  * - ELABORAR FUNÇÃO PARA ADICIONAR E REMOVER ITENS DA LISTA:
@@ -7,7 +8,9 @@
  * - implementer ITEM ratoeira (PRENDE JOGADOR POR UM TEMPO)
  * - IMPLEMENTAR STRUC DO MAPA
  * - carregar mapa de arquivo
- *
+ * - implementar uma load screen
+ * - implementar sprites sortidos para os itens
+ * - 
  */
 
 
@@ -15,69 +18,24 @@
 
 
 
-// cena de introdução
-int gameIntro(){
+GameStatus gameScene=INTRO;
+Font gameFont;
+bool debugMode = false;
+float volume = 0.01f;
+int level, score;
 
-    // CARREGAR MUSICA 
-    TraceLog(LOG_DEBUG, " == CARREGANDO MUSICA ");
-    Music introMusic = LoadMusicStream("sounds/intro_music.mp3");
-    SetMusicVolume(introMusic, 1.0f);
-    PlayMusicStream(introMusic);
 
-    // CARREGAR IMAGENS DE FUNDO
-    TraceLog(LOG_DEBUG, " == CARREGANDO IMAGENS");
-    Texture2D backgroundTex = LoadTexture("resources/intro_bg.png");
 
-    // SETAR TEXTOS
-    TraceLog(LOG_DEBUG, " == CARREGANDO FONTES ");
-    char* textIntro = "[ENTER] para jogar [ESC] para sair.";            
-    gameFont = GetFontDefault();
-    Vector2 textMeasure = MeasureTextEx(gameFont, textIntro, FONT_SIZE, FONT_SPACE);
-    Rectangle textRec = { (W_WIDTH - textMeasure.x)/2, 400, textMeasure.x, textMeasure.y };
-  
-    // INTRO LOOP
-    TraceLog(LOG_DEBUG, " == CARREGAMENTO CONCLUÍDO ");
-    while (gameScene == INTRO){
-        // INPUT HANDLE
-        if(IsKeyReleased(KEY_ESCAPE) || WindowShouldClose()){
-            gameScene = EXIT;
-        }
-
-        if(IsKeyReleased(KEY_ENTER) || IsKeyReleased(KEY_KP_ENTER)){
-            gameScene = GAME;
-        }
-
-        if(IsKeyReleased(KEY_KP_ADD)){
-            volume+=0.05f;
-            SetMasterVolume(volume);
-        }
-
-        if(IsKeyReleased(KEY_KP_SUBTRACT)){
-            volume-=0.05f;
-            SetMasterVolume(volume);
-        }
-
-        //UPDATE
-        UpdateMusicStream(introMusic);
-
-        // DRAW
-        BeginDrawing();
-            ClearBackground(BLACK);
-            DrawTexture(backgroundTex, 0, 0, WHITE);
-            DrawRectangleRec(textRec, BLACK);
-            DrawTextEx(gameFont, textIntro, (Vector2){textRec.x, textRec.y}, FONT_SIZE, FONT_SPACE,  WHITE);
-        EndDrawing();
+// carregar um objeto musica com tratamento de error
+bool loadMusic(Music* music, const char* filepath){
+    *music = LoadMusicStream(filepath);
+    if(music->stream.buffer == NULL){
+        TraceLog(LOG_ERROR, ":: ERRO AO CARREGAR A MUSICA");
+        return false;
     }
-
-    // DESCARREGAR MUSICA 
-    StopMusicStream(introMusic);
-    UnloadMusicStream(introMusic);
-    
-    // DESCARREGAR IMAGENS
-    UnloadTexture(backgroundTex);
-
-     return 0;
+    return true;
 }
+
 
 
 // cena loop principal
@@ -87,14 +45,13 @@ int gameLoop(){
     TraceLog(LOG_DEBUG, "== carregando GLOBAL VARIABLES");
     Actor *currentActor = NULL;
     Item *currentItem = NULL;
-    Rectangle arena;
-
-    Rectangle collisionRec = (Rectangle){0,0, 0,0};
+    Rectangle arena, collisionRec = (Rectangle){0,0, 0,0};
     bool collision = false;
     volume = 1;
-    unsigned short enemyVel = 4;
+    int enemyVel = 4;
 
-    // MAPS
+    // Carregar o mapa
+    TraceLog(LOG_DEBUG, "== carregando MAP");
     Vector2 mapEnemies[] = {
         (Vector2){20.0f, 140.0f},
         (Vector2){650.0f, 120.0f},
@@ -107,13 +64,18 @@ int gameLoop(){
         (Vector2){600.0f, 500.0f}
     };
 
+    arena.x = MAP_BORDER;
+    arena.y = MAP_BORDER;
+    arena.width = W_WIDTH-(MAP_BORDER*2);
+    arena.height = W_HEIGHT-(MAP_BORDER*2);
+
 
     // CARREGAR LISTA DE INIMIGOS
     TraceLog(LOG_DEBUG, "== carregando ENEMY LIST");
     ActorNode* enemyListHead = initActorList(
         mapEnemies,
         "resources/catA",
-        (unsigned short )sizeof(mapEnemies)/sizeof(Vector2)
+        sizeof(mapEnemies)/sizeof(Vector2)
     );
 
     if(enemyListHead == NULL){
@@ -126,7 +88,7 @@ int gameLoop(){
     ItemNode* itemListHead = initItemList(
         mapItens,
         "resources/02_cheese.png",
-        (unsigned short)sizeof(mapItens)/sizeof(Vector2)
+        sizeof(mapItens)/sizeof(Vector2)
     );
 
     if(itemListHead == NULL){
@@ -134,7 +96,7 @@ int gameLoop(){
         gameScene = EXIT;
     }
 
-    // CARREGAR PERSONAGEM JOGADOR
+    // Carregar personagem do jogador
     TraceLog(LOG_DEBUG, "== carregando PLAYER");
     Actor* player = malloc(sizeof(Actor));
 
@@ -149,22 +111,24 @@ int gameLoop(){
         "resources/mouseA"
     );
 
+    // Inicializar pontuação e nível
     score = 0;
     level = 1;
 
-    // CARREGAR O MAPA
-    TraceLog(LOG_DEBUG, "== carregando MAP");
-    arena.x = 0+MAP_BORDER;
-    arena.y = 0+MAP_BORDER;
-    arena.width = W_WIDTH-(MAP_BORDER*2);
-    arena.height = W_HEIGHT-(MAP_BORDER*2);
-
+ 
 
     // CARREGAR EFEITOS SONOROS
     TraceLog(LOG_DEBUG, "== carregando EFEITOS SONOROS");
     const Sound eatCheese = LoadSound("sounds/eat_cheese.mp3");
     const Sound getHit = LoadSound("sounds/get_hit.mp3");
+    
+    Music bgMusic;
+    
+    if (!loadMusic(&bgMusic, "sounds/game_music.mp3")) gameScene = EXIT;
 
+    
+    PlayMusicStream(bgMusic);
+    SetMusicVolume(bgMusic,volume);
 
     // GAME LOOP
     while (gameScene == GAME) {
@@ -222,6 +186,9 @@ int gameLoop(){
             SetMasterVolume(volume);
         }
 
+        if(IsKeyReleased(KEY_F1)){
+            debugMode = !debugMode;
+        }
 
         // UPDATE STATUS
         collision = false;
@@ -387,6 +354,7 @@ int gameLoop(){
 
         EndDrawing();
 
+        UpdateMusicStream(bgMusic);
     }
 
 
@@ -414,11 +382,82 @@ int gameLoop(){
     UnloadSound(eatCheese);
     UnloadSound(getHit);
 
+
+    //LIBERAR MEMORIA MUSICA
+    TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA MUSICA");
+    StopMusicStream(bgMusic);
+    UnloadMusicStream(bgMusic);
+
     volume = 0.5f;
     return 0;
 }
 
+// cena de introdução
+int gameIntro(){
 
+    // CARREGAR MUSICA 
+    TraceLog(LOG_DEBUG, " == CARREGANDO MUSICA ");
+    Music introMusic = LoadMusicStream("sounds/intro_music.mp3");
+    SetMusicVolume(introMusic, 1.0f);
+    PlayMusicStream(introMusic);
+
+    // CARREGAR IMAGENS DE FUNDO
+    TraceLog(LOG_DEBUG, " == CARREGANDO IMAGENS");
+    Texture2D backgroundTex = LoadTexture("resources/intro_bg.png");
+
+    // SETAR TEXTOS
+    TraceLog(LOG_DEBUG, " == CARREGANDO FONTES ");
+    char* textIntro = "[ENTER] para jogar [ESC] para sair.";            
+    gameFont = GetFontDefault();
+    Vector2 textMeasure = MeasureTextEx(gameFont, textIntro, FONT_SIZE, FONT_SPACE);
+    Rectangle textRec = { (W_WIDTH - textMeasure.x)/2, 400, textMeasure.x, textMeasure.y };
+  
+    // INTRO LOOP
+    TraceLog(LOG_DEBUG, " == CARREGAMENTO CONCLUÍDO ");
+    while (gameScene == INTRO){
+        // INPUT HANDLE
+        if(IsKeyReleased(KEY_ESCAPE) || WindowShouldClose()){
+            gameScene = EXIT;
+        }
+
+        if(IsKeyReleased(KEY_ENTER) || IsKeyReleased(KEY_KP_ENTER)){
+            gameScene = GAME;
+        }
+
+        if(IsKeyReleased(KEY_KP_ADD)){
+            volume+=0.05f;
+            SetMasterVolume(volume);
+        }
+
+        if(IsKeyReleased(KEY_KP_SUBTRACT)){
+            volume-=0.05f;
+            SetMasterVolume(volume);
+        }
+
+        //UPDATE
+        UpdateMusicStream(introMusic);
+
+        // DRAW
+        BeginDrawing();
+            ClearBackground(BLACK);
+            DrawTexture(backgroundTex, 0, 0, WHITE);
+            DrawRectangleRec(textRec, BLACK);
+            DrawTextEx(gameFont, textIntro, (Vector2){textRec.x, textRec.y}, FONT_SIZE, FONT_SPACE,  WHITE);
+        EndDrawing();
+    }
+
+    // DESCARREGAR MUSICA 
+    StopMusicStream(introMusic);
+    UnloadMusicStream(introMusic);
+    
+    // DESCARREGAR IMAGENS
+    UnloadTexture(backgroundTex);
+
+     return 0;
+}
+
+
+// cena de game over
 int gameOver(){
     // CARREGAR MUSICA 
     TraceLog(LOG_DEBUG, " == CARREGANDO MUSICA == ");
