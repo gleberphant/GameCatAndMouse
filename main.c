@@ -150,6 +150,7 @@ int gameLoop(){
     );
 
     score = 0;
+    level = 1;
 
     // CARREGAR O MAPA
     TraceLog(LOG_DEBUG, "== carregando MAP");
