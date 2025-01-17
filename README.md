@@ -5,7 +5,6 @@
 <br>
 
 ![C BADGE](https://img.shields.io/badge/c-blue?logo=c)
-
 ![GitHub Sponsors](https://img.shields.io/github/sponsors/gleberphant)
 ![GitHub last commit](https://img.shields.io/github/last-commit/gleberphant/GameCatAndMouse)
 ![GitHub branch status](https://img.shields.io/github/checks-status/gleberphant/GameCatAndMouse/master)
