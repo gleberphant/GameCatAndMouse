@@ -97,8 +97,8 @@ int gameLoop(){
     // MAPS
     Vector2 mapEnemies[] = {
         (Vector2){20.0f, 140.0f},
-        (Vector2){650.0f, 120.0f},
-        (Vector2){80.0f, 420.0f}
+        (Vector2){650.0f, 120.0f}
+        
 
     };
 
