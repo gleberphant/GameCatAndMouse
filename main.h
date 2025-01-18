@@ -31,14 +31,17 @@ typedef enum GameStatus{
     EXIT
 } GameStatus;
 
-
 // VARIÁVEIS GLOBAIS
-GameStatus gameScene;
-Font gameFont;
+extern GameStatus gameScene;
+extern Font gameFont;
 
-float volume = 0.01f;
-int score = 0, level = 1;
-char textBuffer[100];
+
+extern bool debugMode;
+extern float volume;
+extern int score;
+extern int level;
+
+extern char textBuffer[100];
 
 
 #endif
