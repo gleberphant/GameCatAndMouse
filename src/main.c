@@ -165,37 +165,40 @@ int gameLoop(){
         }
 
         // CONTROL PLAYER
-        player->action = STOP;
-        player->velocity = (Vector2){ 0.0f, 0.0f };
-        //player->direction = 0.0f;
 
-        if(IsKeyDown(KEY_UP)){
-            player->action = MOVE;
-            player->direction = 0.0f;
-            if (IsKeyDown(KEY_RIGHT))player->direction += 45.0f;
-            if (IsKeyDown(KEY_LEFT))player->direction -= 45.0f;
-        }
-        else if(IsKeyDown(KEY_RIGHT)){
-            player->action = MOVE;
-            player->direction = 90.0f;
-            if (IsKeyDown(KEY_DOWN))player->direction += 45.0f;
-        }
-        else if(IsKeyDown(KEY_DOWN)){
-            player->action = MOVE;
-            player->direction = 180.0f;
-            if (IsKeyDown(KEY_LEFT))player->direction += 45.0f;
+            player->velocity = (Vector2){ 0.0f, 0.0f };
+            //player->direction = 0.0f;
+        if (player->action == MOVE || player->action == STOP) {
+            player->action = STOP;
+
+            if(IsKeyDown(KEY_UP)){
+                player->action = MOVE;
+                player->direction = 0.0f;
+                if (IsKeyDown(KEY_RIGHT))player->direction += 45.0f;
+                if (IsKeyDown(KEY_LEFT))player->direction -= 45.0f;
+            }
+            else if(IsKeyDown(KEY_RIGHT) ){
+                player->action = MOVE;
+                player->direction = 90.0f;
+                if (IsKeyDown(KEY_DOWN))player->direction += 45.0f;
+            }
+            else if(IsKeyDown(KEY_DOWN)){
+                player->action = MOVE;
+                player->direction = 180.0f;
+                if (IsKeyDown(KEY_LEFT))player->direction += 45.0f;
+            }
+
+            else if(IsKeyDown(KEY_LEFT)){
+                player->action = MOVE;
+                player->direction = 270.0f;
+                if (IsKeyDown(KEY_UP))player->direction += 45.0f;
+            }
         }
 
-        else if(IsKeyDown(KEY_LEFT)){
-            player->action = MOVE;
-            player->direction = 270.0f;
-            if (IsKeyDown(KEY_UP))player->direction += 45.0f;
+        if(IsKeyReleased(KEY_SPACE)){
+            if (player->action == SPECIAL) player->action = STOP;
+            else player->action = SPECIAL;
         }
-
-        if(IsKeyDown(KEY_SPACE)){
-            player->action = SPECIAL;
-        }
-
         // UPDATE
         // Condições de vitória ou derrota
         if(player->life < 1){
@@ -330,6 +333,7 @@ int gameLoop(){
                 PlaySound(getHit);
                 currentActor->collision = true;
                 currentActor->pointOfCollision = GetCollisionRec(player->collisionBox, currentActor->collisionBox);
+                //player->action = SPECIAL;
                 score --;
                 player->life--;
             }
@@ -363,16 +367,13 @@ int gameLoop(){
 
             // debug infor
             if (debugMode) {
-                DrawText(TextFormat("angulo: %f", player->direction ), 500, 40, 20, BLACK);
-                DrawText(TextFormat("velocidade inimigos: %f", enemyVel ), 500, 40, 20, BLACK);
+                DrawText(TextFormat("player->direction: %f", player->direction ), 500, 40, 14, BLACK);
+                DrawText(TextFormat("enemyVel: %f", enemyVel ), 500, 55, 14, BLACK);
+                DrawText(TextFormat("player->Action: %d", player->action ), 500, 70, 14, BLACK);
+                DrawText(TextFormat("spriteA->repeat: %d", player->spriteA2[player->action]->repeat ), 500, 85, 14, BLACK);
 
             }
         EndDrawing();
-
-
-        // Desenha UI
-
-
 
 
         UpdateMusicStream(bgMusic);

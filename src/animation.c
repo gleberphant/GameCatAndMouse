@@ -1,7 +1,6 @@
 #include "animation.h"
 
 
-
 Animation* getAnimation(Texture2D* spritesheet){
 
     Animation* spriteA = malloc(sizeof(Animation));
@@ -12,6 +11,9 @@ Animation* getAnimation(Texture2D* spritesheet){
     spriteA->frameDelay = (int)ceilf((GAME_DEFAULT_FPS/(float)spriteA->totalFrames) * spriteA->length);
     spriteA->currentFrame = 0;
     spriteA->frameCount = 0;
+    spriteA->repeat = 0;
+
+    spriteA->type = 0;
     spriteA->frameRec = (Rectangle)
     {
         .x = 0, 
@@ -25,20 +27,31 @@ Animation* getAnimation(Texture2D* spritesheet){
 }
 
 
-void updateAnimationFrame(Animation *spriteA){
+bool updateAnimationFrame(Animation *spriteA){
+
+    spriteA->frameRec.x = spriteA->frameRec.width * (float)spriteA->currentFrame;
 
     spriteA->frameCount++;
 
-    if(spriteA->frameCount >(int) spriteA->frameDelay){
+    if(spriteA->frameCount > spriteA->frameDelay){
         spriteA->frameCount = 0;
         spriteA->currentFrame++;
 
         // repeating animation
         if( spriteA->currentFrame >= spriteA->totalFrames ){
-            spriteA->currentFrame = 0;
+
+            spriteA->repeat++;
+
+            if (spriteA->type == 0 || spriteA->type == 1) {
+                spriteA->currentFrame = 0;
+            }
+            else if (spriteA->repeat > 10) {
+                spriteA->repeat = 0;;
+                return true;
+            }
+
+
         }
     }
-
-    spriteA->frameRec.x = spriteA->frameRec.width * (float)spriteA->currentFrame;
-
+    return false;
 }

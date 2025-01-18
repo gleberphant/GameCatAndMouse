@@ -5,8 +5,10 @@
 #include "raylib.h"
 #include "raymath.h"
 
+
 #include <math.h>
 #include <stdlib.h>
+
 
 #define ACTOR_DEFAULT_WIDTH 64
 #define ENEMY_DEFAULT_WIDTH 128
@@ -15,12 +17,12 @@
 
 // ANIMAÇÃO
 typedef struct Animation{
-    
+    int repeat;
     int totalFrames;
     int currentFrame;
     int frameCount;
     int frameDelay; // quantidade de frames para atualizar um frame da animação
-    
+    int type;
     float length; // duração da animação em segundos
    
     Rectangle frameRec;
@@ -30,7 +32,7 @@ typedef struct Animation{
 
 Animation* getAnimation(Texture2D* spritesheet);
 
-void updateAnimationFrame(Animation *self);
+bool updateAnimationFrame(Animation *self);
 
 
 #endif

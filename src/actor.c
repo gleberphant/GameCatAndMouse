@@ -7,10 +7,10 @@ void setActor(Actor* target, Vector2 initPos, Texture2D* spritesheet){
     TraceLog(LOG_DEBUG, "-- Loading Object");
 
 
-    target->spriteA2[MOVE]    = getAnimation( &spritesheet[0] );
-    target->spriteA2[STOP]    = getAnimation( &spritesheet[1] );
-    target->spriteA2[SPECIAL] = getAnimation( &spritesheet[2] );
-
+    target->spriteA2[MOVE]    = getAnimation( &spritesheet[MOVE] );
+    target->spriteA2[STOP]    = getAnimation( &spritesheet[STOP] );
+    target->spriteA2[SPECIAL] = getAnimation( &spritesheet[SPECIAL] );
+    target->spriteA2[SPECIAL]->type = SPECIAL;
     target->collisionBox = target->spriteA2[MOVE] ->frameRec;
     
     target->collisionBox.x = initPos.x;
@@ -95,7 +95,7 @@ void drawActor(Actor* target){
             RED);
     target->collision = false;
 
-    updateAnimationFrame (target->spriteA2[target->action] );
+    if ( updateAnimationFrame (target->spriteA2[target->action] )) target->action = STOP; ;
     
 
 }
