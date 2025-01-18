@@ -1,5 +1,5 @@
 # Nome do executável
-TARGET = main
+TARGET = game
 
 # Arquivos com fonte
 SOURCES = src\animation.c src\actor.c src\itens.c src\lists.c src\maps.c src\main.c

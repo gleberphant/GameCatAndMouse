@@ -11,7 +11,7 @@
 #define ACTOR_DEFAULT_WIDTH 64
 #define ENEMY_DEFAULT_WIDTH 128
 #define ANIMATION_DEFAULT_TIME 0.5f
-#define GAME_DEFAULT_FPS 30
+#define GAME_DEFAULT_FPS 30.0f
 
 // ANIMAÇÃO
 typedef struct Animation{
@@ -21,14 +21,14 @@ typedef struct Animation{
     int frameCount;
     int frameDelay; // quantidade de frames para atualizar um frame da animação
     
-    float length; // duração da animaçãon em segundos
+    float length; // duração da animação em segundos
    
     Rectangle frameRec;
-    Texture2D spritesheet;
+    Texture2D* spritesheet;
 
 } Animation;
 
-Animation* getAnimation(const char* spritesheet);
+Animation* getAnimation(Texture2D* spritesheet);
 
 void updateAnimationFrame(Animation *self);
 

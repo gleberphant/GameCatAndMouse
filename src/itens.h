@@ -16,8 +16,10 @@ typedef enum ItemType { CHEESE, STROWBERRY, TRAP } ItemType;
 
 
 typedef struct Item{
+    bool collision;
+    Rectangle pointOfCollision; // onde foi que houve a colisão
     Vector2 position;
-    Rectangle box;
+    Rectangle collisionBox; // retângulo para verificar a colisão
     ItemType type;
     Texture2D sprite;
     int life;
@@ -25,7 +27,7 @@ typedef struct Item{
 
 
 // construtor
-Item* getItem(Vector2 initPos, char* sprite, ItemType type);
+Item* getItem(Vector2 initPos, const char* sprite, ItemType type);
 
 //desenhar
 void drawItem(Item* target);

@@ -24,7 +24,9 @@ typedef enum ActorType { PLAYER, ENEMY, ITEM } ActorType;
 typedef struct Actor{
     int life;
     float direction;
-    
+    bool collision;
+
+    Rectangle pointOfCollision;
     Vector2 position;
     Vector2 velocity;
     
@@ -36,7 +38,7 @@ typedef struct Actor{
 } Actor;
 
 
-void setActor(Actor* target, Vector2 initPos, char* sprite);
+void setActor(Actor* target, Vector2 initPos, Texture2D* sprite);
 
 void drawActor(Actor* target);
 

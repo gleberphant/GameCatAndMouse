@@ -3,14 +3,13 @@
 
 
 // inicia um ator
-void setActor(Actor* target, Vector2 initPos, char* sprite){
-    TraceLog(LOG_DEBUG, "-- Loading Object %s", sprite);
-            
-    target->spriteA2[MOVE]   = getAnimation( TextFormat("%s%s", sprite, "_walk.png") );
-    
-    target->spriteA2[STOP]   = getAnimation( TextFormat("%s%s", sprite, "_stop.png") );
+void setActor(Actor* target, Vector2 initPos, Texture2D* spritesheet){
+    TraceLog(LOG_DEBUG, "-- Loading Object");
 
-    target->spriteA2[SPECIAL] = getAnimation( TextFormat("%s%s", sprite, "_special.png") );
+
+    target->spriteA2[MOVE]    = getAnimation( &spritesheet[0] );
+    target->spriteA2[STOP]    = getAnimation( &spritesheet[1] );
+    target->spriteA2[SPECIAL] = getAnimation( &spritesheet[2] );
 
     target->collisionBox = target->spriteA2[MOVE] ->frameRec;
     
@@ -65,15 +64,7 @@ void drawActor(Actor* target){
     drawRect.x += (target->collisionBox.width)/2;
     drawRect.y += (target->collisionBox.height)/2;
 
-    DrawTexturePro(
-        target->spriteA2[target->action]->spritesheet,
-        target->spriteA2[target->action]->frameRec,
-        drawRect,
-        (Vector2){ drawRect.width/2, drawRect.height/2 },
-        target->direction, // angulo de rotação em graus
-        WHITE
-    );
-
+    // draw debug
     if(debugMode){
         // Código de depuração
         BeginBlendMode(BLEND_ADDITIVE);
@@ -83,6 +74,26 @@ void drawActor(Actor* target){
             Vector2Add(target->position, Vector2Scale(Vector2Normalize(target->velocity) , 30.0f)), WHITE);
         EndBlendMode();
     }
+
+
+    //DESENHA SPRITE
+    DrawTexturePro(
+        *target->spriteA2[target->action]->spritesheet,
+        target->spriteA2[target->action]->frameRec,
+        drawRect,
+        (Vector2){ drawRect.width/2, drawRect.height/2 },
+        target->direction, // angulo de rotação em graus
+        WHITE
+    );
+
+    // DESENHA SANGUE
+    if (target->collision == true)
+        DrawCircle(
+            (int)target->pointOfCollision.x,
+            (int)target->pointOfCollision.y,
+            10,
+            RED);
+    target->collision = false;
 
     updateAnimationFrame (target->spriteA2[target->action] );
     

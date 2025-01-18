@@ -24,12 +24,13 @@ typedef struct ItemNode{
 }ItemNode;
 
 
-ActorNode* initActorList( Vector2 initPosition[], char* sprite, short maxNodes);
+ActorNode* initActorList( Vector2 initPosition[], const char* sprite, short maxNodes);
 
 void drawActorList(ActorNode* targetList);
 
+void unloadActorList(ActorNode* targetList);
 
-ItemNode* initItemList( Vector2 initPosition[], char* sprite, short maxNodes);
+ItemNode* initItemList( Vector2 initPosition[], const char* sprite, short maxNodes);
 
 void drawItemList(ItemNode* targetList);
 

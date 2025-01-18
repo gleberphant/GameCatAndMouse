@@ -1,12 +1,12 @@
 #include "itens.h"
 
-Item* getItem(Vector2 initPos, char* sprite, ItemType type){
+Item* getItem(Vector2 initPos, const char* sprite, ItemType type){
     Texture2D temp = LoadTexture(sprite);
     Item* item = malloc(sizeof(Item));
 
     item->sprite = temp;
     item->position = initPos;
-    item->box = (Rectangle){initPos.x , initPos.y , temp.width, temp.height};
+    item->collisionBox = (Rectangle){initPos.x , initPos.y , temp.width, temp.height};
     item->type = type;
     item->life = ITEM_DEFAULT_LIFE;
 
@@ -15,5 +15,5 @@ Item* getItem(Vector2 initPos, char* sprite, ItemType type){
 
 void drawItem(Item* target){
 
-    DrawTexture(target->sprite, target->box.x, target->box.y, WHITE);
+    DrawTexture(target->sprite, target->collisionBox.x, target->collisionBox.y, WHITE);
 }

@@ -2,16 +2,14 @@
 
 
 
-Animation* getAnimation(const char* spritesheet){
+Animation* getAnimation(Texture2D* spritesheet){
 
-    Animation* spriteA;
+    Animation* spriteA = malloc(sizeof(Animation));
 
-    spriteA = malloc(sizeof(Animation));
-
-    spriteA->spritesheet = LoadTexture(spritesheet);
-    spriteA->totalFrames = ceil(spriteA->spritesheet.width / (float) ACTOR_DEFAULT_WIDTH);
+    spriteA->spritesheet = spritesheet;
+    spriteA->totalFrames = (int)ceilf((float)spriteA->spritesheet->width / ACTOR_DEFAULT_WIDTH);
     spriteA->length = ANIMATION_DEFAULT_TIME; // duração padra da animação
-    spriteA->frameDelay = (GAME_DEFAULT_FPS/spriteA->totalFrames) * spriteA->length ;
+    spriteA->frameDelay = (int)ceilf((GAME_DEFAULT_FPS/(float)spriteA->totalFrames) * spriteA->length);
     spriteA->currentFrame = 0;
     spriteA->frameCount = 0;
     spriteA->frameRec = (Rectangle)
@@ -19,7 +17,7 @@ Animation* getAnimation(const char* spritesheet){
         .x = 0, 
         .y = 0, 
         .width = ACTOR_DEFAULT_WIDTH, 
-        .height = spriteA->spritesheet.height 
+        .height = (float)spriteA->spritesheet->height
     };
 
     return spriteA;
@@ -41,6 +39,6 @@ void updateAnimationFrame(Animation *spriteA){
         }
     }
 
-    spriteA->frameRec.x = spriteA->frameRec.width * spriteA->currentFrame;
+    spriteA->frameRec.x = spriteA->frameRec.width * (float)spriteA->currentFrame;
 
 }
