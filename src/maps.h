@@ -1,0 +1,28 @@
+#ifndef MAPS_H_
+
+#define MAPS_H_
+
+
+#include "raylib.h"
+#include "raymath.h"
+
+
+#include "actor.h"
+#include "lists.h"
+
+// TODO : ESTRUTURA DE MAPA 
+typedef struct Map{
+    Rectangle area;
+    Color color;
+    ActorNode *enemyList;
+    ItemNode *itensList;
+} Map;
+
+
+bool isInside(Actor* target, Rectangle *arena);
+
+Vector2* getEnemysPosition();
+
+Vector2* getItensPosition();
+
+#endif
