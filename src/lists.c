@@ -1,19 +1,20 @@
-
 #include "lists.h"
+
+#include <stdlib.h>
 
 /*
 inicia uma lista de OBJETOS - inimigos ou itens
 recebe a posição inicial de cada objeto e o sprite dos objetos
 */ 
-ActorNode* initActorList( Vector2 initPosition[], const char* sprite, short maxNodes)
+ActorNode* getActorList( Vector2 initPosition[], const char* sprite, short maxNodes)
 {
     ActorNode *newListNode=NULL, *headListNode = NULL;
     Texture2D* spriteSheet = malloc( sizeof(Texture2D) * 4 );
 
-    spriteSheet[0] = LoadTexture( TextFormat("%s%s", sprite, "_walk.png"));
-    spriteSheet[1] = LoadTexture( TextFormat("%s%s", sprite, "_stop.png"));
-    spriteSheet[2] = LoadTexture( TextFormat("%s%s", sprite, "_special.png"));
-    spriteSheet[3] = (Texture2D)  { 0 };
+    spriteSheet[STOP]    = LoadTexture( TextFormat("%s%s", sprite, "_stop.png"));
+    spriteSheet[MOVE]    = LoadTexture( TextFormat("%s%s", sprite, "_walk.png"));
+    spriteSheet[SPECIAL] = LoadTexture( TextFormat("%s%s", sprite, "_special.png"));
+    spriteSheet[END]     = (Texture2D)  { 0 };
 
     for (int i = 0 ; i < maxNodes; i++){
         newListNode = malloc(sizeof(ActorNode));
@@ -22,6 +23,7 @@ ActorNode* initActorList( Vector2 initPosition[], const char* sprite, short maxN
         newListNode->next = headListNode;
         headListNode = newListNode;       
     }
+
     return headListNode;
 }
 
@@ -32,31 +34,49 @@ void drawActorList(ActorNode* targetList){
         if (currentNode->obj->life < 1){
                 continue;
         }
-
         drawActor(currentNode->obj);
     }
       
 }
 
-ItemNode* initItemList( Vector2 initPosition[], const char* sprite, short maxNodes)
+void unloadActorList(ActorNode* targetList) {
+    ActorNode *currentNode = targetList;
+    while(currentNode != NULL) {
+        ActorNode *nextNode = currentNode->next;
+        free(currentNode);
+        currentNode = nextNode;
+    }
+}
+
+
+ItemNode* getItemList( MapItens initItens[], Texture2D* spritesheet, short maxNodes)
 {
     ItemNode *newListNode=NULL, *headListNode = NULL;
-  
+
+
+    // criar nós
     for (int i = 0 ; i < maxNodes; i++){
         newListNode = malloc(sizeof(ItemNode));
         newListNode->obj = malloc(sizeof(Item));
-        newListNode->obj = getItem(initPosition[i], sprite, CHEESE);
+
+        newListNode->obj = getItem(
+            initItens[i].initPos,
+            &spritesheet[initItens[i].type],
+            initItens[i].type);
+
         newListNode->next = headListNode;
         headListNode = newListNode;       
     }
     return headListNode;
 }
 
+
 void addItemNode(ItemNode** target){
     ItemNode *newNode = malloc(sizeof(ItemNode));
     newNode->next= *target;
     *target = newNode;
 }
+
 
 void removeItemNode(ItemNode *target){
     ItemNode *oldNode=NULL;
@@ -68,21 +88,8 @@ void removeItemNode(ItemNode *target){
         
         free(oldNode);
     }
-
 }
 
-void unloadActorList(ActorNode* targetList) {
-    ActorNode *currentNode = targetList;
-    while(currentNode != NULL) {
-        ActorNode *nextNode = currentNode->next;
-        free(currentNode);
-        currentNode = nextNode;
-    }
-    // // Forma de fazer 2
-    // for(ActorNode *cur = targetList, *prev = NULL; cur != NULL; prev = cur, cur = cur->next){
-    //     free(prev);
-    // }
-}
 
 void drawItemList(ItemNode* targetList){
     for(ItemNode* currentNode = targetList; currentNode != NULL ; currentNode = currentNode->next)
@@ -93,5 +100,14 @@ void drawItemList(ItemNode* targetList){
 
         drawItem(currentNode->obj);
     }
-      
+}
+
+
+void unloadItemList(ItemNode* targetList) {
+    ItemNode *currentNode = targetList;
+    while(currentNode != NULL) {
+        ItemNode *nextNode = currentNode->next;
+        free(currentNode);
+        currentNode = nextNode;
+    }
 }

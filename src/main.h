@@ -3,15 +3,7 @@
 #define MAIN_H_
 
 #include "raylib.h"
-#include "raymath.h"
-
-
-
-#include "animation.h"
-#include "actor.h"
-#include "lists.h"
-#include "itens.h"
-#include "maps.h"
+#include <stdlib.h>
 
 // constantes
 #define W_WIDTH 800
@@ -44,5 +36,9 @@ extern int level;
 
 extern char textBuffer[100];
 
+int gameIntro();
+int gameLoop();
+int gameOver();
+bool loadMusic(Music* music, const char* filepath);
 
 #endif

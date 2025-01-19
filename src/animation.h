@@ -3,11 +3,6 @@
 #define ANIMATION_H_
 
 #include "raylib.h"
-#include "raymath.h"
-
-
-#include <math.h>
-#include <stdlib.h>
 
 
 #define ACTOR_DEFAULT_WIDTH 64
@@ -33,6 +28,5 @@ typedef struct Animation{
 Animation* getAnimation(Texture2D* spritesheet);
 
 bool updateAnimationFrame(Animation *self);
-
 
 #endif

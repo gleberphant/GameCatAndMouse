@@ -4,19 +4,16 @@
 
 
 #include "raylib.h"
-#include "raymath.h"
-
 
 #include "actor.h"
-#include "lists.h"
+#include "itens.h"
+
 
 // TODO : ESTRUTURA DE MAPA 
-typedef struct Map{
-    Rectangle area;
-    Color color;
-    ActorNode *enemyList;
-    ItemNode *itensList;
-} Map;
+typedef struct MapItens{
+    ItemType type;
+    Vector2 initPos;
+} MapItens;
 
 
 bool isInside(Actor* target, Rectangle *arena);

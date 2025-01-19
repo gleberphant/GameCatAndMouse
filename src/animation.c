@@ -1,5 +1,7 @@
 #include "animation.h"
 
+#include <math.h>
+#include <stdlib.h>
 
 Animation* getAnimation(Texture2D* spritesheet){
 

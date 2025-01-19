@@ -1,16 +1,15 @@
 #include "maps.h"
-#include <stdio.h>
-#include <stdint.h>
-#include <malloc.h>
 
 
-// verifica se um objeto esta dentro de outro
+
+
+// verifica se um objeto está dentro de um retangulo.
 bool isInside(Actor* target, Rectangle *arena){
         
-    if( target->position.x < arena->x || target->position.x + target->collisionBox.width > (arena->width + arena->x)){
+    if( target->position.x < arena->x || target->position.x > (arena->width + arena->x)){
         return false;
     }
-    if( target->position.y < arena->y || target->position.y + target->collisionBox.height > (arena->height + arena->y)){
+    if( target->position.y < arena->y || target->position.y > (arena->height + arena->y)){
         return false;
     }
     return true;

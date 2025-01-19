@@ -8,7 +8,7 @@
 
 #include "animation.h"
 
-#include <string.h>
+
 
 
 #define DEFAULT_LIFE 50
@@ -16,7 +16,7 @@
 #define ENEMY_DEFAULT_WIDTH 128
 
 // TIPOS 
-typedef enum ActionType { MOVE=0, STOP=1, SPECIAL=2  } ActionType;
+typedef enum ActionType { STOP=0, MOVE=1, SPECIAL=2, END=3  } ActionType;
 typedef enum DirectionType { UP=0, RIGHT=90, DOWN=180, LEFT=270 } DirectionType ;
 typedef enum ActorType { PLAYER, ENEMY, ITEM } ActorType;
 
@@ -39,9 +39,12 @@ typedef struct Actor{
 } Actor;
 
 
-void setActor(Actor* target, Vector2 initPos, Texture2D* sprite);
+void setActor(Actor* self, Vector2 initPos, Texture2D* spritesheet);
+void actionStop(Actor* self);
+void actionMove(Actor* self, Rectangle* arena) ;
+void actionSpecial(Actor* self, Actor* target);
 
-void drawActor(Actor* target);
+void drawActor(Actor* self);
 
 
 #endif

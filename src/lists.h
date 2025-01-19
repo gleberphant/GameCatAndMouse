@@ -5,8 +5,10 @@
 
 #include "raylib.h"
 
-#include "actor.h"
+
 #include "itens.h"
+#include "maps.h"
+#include "actor.h"
 
 
 // LINKED LIST DE ATORES
@@ -24,14 +26,19 @@ typedef struct ItemNode{
 }ItemNode;
 
 
-ActorNode* initActorList( Vector2 initPosition[], const char* sprite, short maxNodes);
+ActorNode* getActorList( Vector2 initPosition[], const char* sprite, short maxNodes);
 
 void drawActorList(ActorNode* targetList);
 
 void unloadActorList(ActorNode* targetList);
 
-ItemNode* initItemList( Vector2 initPosition[], const char* sprite, short maxNodes);
+// itens
 
+ItemNode* getItemList( MapItens initItens[], Texture2D* spritesheet, short maxNodes);
+void addItemNode(ItemNode** target);
+void removeItemNode(ItemNode *target);
 void drawItemList(ItemNode* targetList);
+void unloadItemList(ItemNode* targetList);
+
 
 #endif
