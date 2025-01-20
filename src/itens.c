@@ -3,6 +3,11 @@
 #include <math.h>
 #include "main.h"
 
+/*
+ * o spritesheet pode ter qualquer altura, desde que cada item seja separado por 64 pixels.
+ * a altura do spritesheet é o raio da area de colisão.
+ */
+
 Item* getItem(Vector2 initPos, Texture2D* spritesheet, ItemType type){
 
 
@@ -19,7 +24,7 @@ Item* getItem(Vector2 initPos, Texture2D* spritesheet, ItemType type){
         item->spriteFrame = (Rectangle){ (float)(64 * GetRandomValue(0, spriteCounts-1)), 0, 64, spritesheet->height };
     else item->spriteFrame = (Rectangle){ 0, 0, 64,  spritesheet->height };
 
-    item->spriteFrame = (Rectangle){ 0, 0, 64,  spritesheet->height };
+   //item->spriteFrame = (Rectangle){ 0, 0, 64,  spritesheet->height };
 
     // posição inicial
     item->position = initPos;
