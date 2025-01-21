@@ -439,7 +439,7 @@ int gameLoop() {
     //LIBERAR MEMORIA EFEITOS SONOROS
     TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA EFEITOS SONOROS");
     //UnloadSound(eatCheese);
-   // UnloadSound(getHit);
+    //UnloadSound(getHit);
     //UnloadSound(eatStrawberry);
 
     //LIBERAR MEMORIA MUSICA
