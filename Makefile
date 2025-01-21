@@ -20,7 +20,7 @@ LIBS = -lraylib -lopengl32 -lgdi32 -luser32 -lwinmm
 SRC_DIR = src
 
 # Diretório dos arquivos objeto
-OBJ_DIR = build
+OBJ_DIR = src/out
 
 # Arquivos com fonte
 SOURCES = $(wildcard $(SRC_DIR)/*.c)

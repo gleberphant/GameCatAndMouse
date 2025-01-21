@@ -1,84 +1,93 @@
-cmake_minimum_required(VERSION 3.14)
-project(GameCatAndMouse)
+   cmake_minimum_required(VERSION 3.20)
+   project(GameCatAndMouse)
 
-# --- Diretórios ---
-set(SOURCE_DIR src)
-set(BUILD_DIR build)
+   # Verifica se o raylib está instalado, caso contrário pede ao vcpkg para instalá-lo
+   set(RAYLIB_VERSION 5.5)
 
-# --- Arquivos Fonte ---
-file(GLOB_RECURSE SOURCES "${SOURCE_DIR}/*.c")
+   find_package(raylib ${RAYLIB_VERSION} QUIET) # QUIET or REQUIRED
 
-# --- Tenta encontrar uma raylib instalada localmente ---
-find_package(raylib 5.5)
+   if (NOT raylib_FOUND) # If there's none, fetch and build raylib
+       message(STATUS "Buscando Raylib Iniciado download pelo GITHUB...")
+       include(FetchContent)
+       FetchContent_Declare(
+               raylib
+               DOWNLOAD_EXTRACT_TIMESTAMP True
+               URL https://github.com/raysan5/raylib/archive/refs/tags/${RAYLIB_VERSION}.tar.gz
+       )
+       FetchContent_GetProperties(raylib)
+       if (NOT raylib_POPULATED) # Have we downloaded raylib yet?
+           set(FETCHCONTENT_QUIET NO)
+           FetchContent_MakeAvailable(raylib)
+           set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # don't build the supplied examples
+       endif()
 
-# --- Baixa a Raylib se não for encontrada ---
-include(FetchContent)
-if (NOT raylib_FOUND)
-    FetchContent_Declare(
-            raylib
-            URL https://github.com/raysan5/raylib/archive/refs/tags/5.5.tar.gz
-            DOWNLOAD_EXTRACT_TIMESTAMP True
-    )
-    FetchContent_MakeAvailable(raylib)
-endif()
+   endif()
 
-# --- Desativa a construção dos exemplos da Raylib ---
-set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
+   # --- Configuração do Projeto ---
+   message(STATUS "Configurando o projeto ...")
+   file(GLOB_RECURSE SOURCES "src/*.c")
+   add_executable(${PROJECT_NAME} ${SOURCES})
 
-# --- Executável ---
-add_executable(${PROJECT_NAME} ${SOURCES})
+   # --- Linkagem das Bibliotecas ---
+   if (WIN32)
+       message(STATUS "Linkando Bibliotecas para Windows...")
+       target_link_libraries(${PROJECT_NAME}
+               raylib
+               opengl32
+               gdi32
+               user32
+               winmm
+               mwindows
+       )
+   elseif (UNIX)
+       message(STATUS "Linkando Bibliotecas para Linux...")
+       find_package(OpenGL REQUIRED)
+       target_link_libraries(${PROJECT_NAME}
+               raylib
+               ${OPENGL_LIBRARIES}
+               m
+       )
+   endif()
 
-# --- Linkagem de Bibliotecas ---
-if (WIN32)
-    message(STATUS "Configurando para Windows...")
-    target_link_libraries(${PROJECT_NAME}
-            raylib
-            opengl32
-            gdi32
-            user32
-            winmm
-    )
-elseif (UNIX)
-    message(STATUS "Configurando para Linux...")
-    find_package(OpenGL REQUIRED) # Busca o OpenGL no Linux ou UNIX
-    target_link_libraries(${PROJECT_NAME}
-            raylib
-            ${OPENGL_LIBRARIES}
-            m # Para matemáticas, em sistemas Linux
-    )
-endif()
 
-# --- Diretório de Inclusão ---
-target_include_directories(${PROJECT_NAME} PUBLIC "${raylib_SOURCE_DIR}/src")
+   # --- Configurações de Output ---
+   set(BUILD_DIR "build")
+   set_target_properties(${PROJECT_NAME} PROPERTIES
+           RUNTIME_OUTPUT_DIRECTORY ${BUILD_DIR}
+           ARCHIVE_OUTPUT_DIRECTORY ${BUILD_DIR}
+           LIBRARY_OUTPUT_DIRECTORY ${BUILD_DIR}
+   )
 
-# --- Diretório de Saída para o Executável ---
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+   # Web Configurations
+   if (EMSCRIPTEN)
+       message(STATUS "CONFIGURANDO WEB ")
+       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Os -Wall --shell-file build/shell.html -s ALLOW_MEMORY_GROWTH=1 -s TOTAL_MEMORY=67108864 -sUSE_GLFW=3 -sASSERTIONS=1 -sWASM=1 -sASYNCIFY -sGL_ENABLE_GET_PROC_ADDRESS=1 --preload-file ../resources")
+       set(CMAKE_EXECUTABLE_SUFFIX ".html") # This line is used to set your executable to build with the emscripten html template so that you can directly open it.
 
-# --- Diretório de Saída para os Arquivos Objeto ---
-set_target_properties(${PROJECT_NAME} PROPERTIES ARCHIVE_OUTPUT_DIRECTORY ${BUILD_DIR})
-set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${BUILD_DIR})
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${BUILD_DIR})
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${BUILD_DIR})
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${BUILD_DIR})
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${BUILD_DIR})
+   else()
 
-# Diretório de origem das pastas
-set(RESOURCES_DIR "${CMAKE_SOURCE_DIR}/resources")
-set(SOUNDS_DIR "${CMAKE_SOURCE_DIR}/sounds")
+   # Copiando assets para o build
+   message(STATUS "Copiando assets ...  ")
+   set(RESOURCES_DIR "${CMAKE_SOURCE_DIR}/resources")
+   set(SOUNDS_DIR "${CMAKE_SOURCE_DIR}/sounds")
 
-# Diretório de destino - onde o executável será gerado
-set(OUTPUT_DIR "${BUILD_DIR}")
+   if (EXISTS ${RESOURCES_DIR})
+       add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+               COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCES_DIR} ${BUILD_DIR}/resources
+               COMMENT "-Copiando pasta 'resources' para o diretório do executável (${BUILD_DIR})")
+   else()
+       message(WARNING "Diretório 'resources' não encontrado! Ignorando cópia.")
+   endif()
 
-# Certifique-se de que a variável esteja configurada
-if (NOT OUTPUT_DIR)
-    set(OUTPUT_DIR "${CMAKE_BINARY_DIR}") # Fallback padrão
-endif()
+   if (EXISTS ${SOUNDS_DIR})
+       add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+               COMMAND ${CMAKE_COMMAND} -E copy_directory ${SOUNDS_DIR} ${BUILD_DIR}/sounds
+               COMMENT "-Copiando pasta 'sounds' para o diretório do executável (${BUILD_DIR})")
+   else()
+       message(WARNING "Diretório 'sounds' não encontrado! Ignorando cópia.")
+   endif()
 
-# Copiar as pastas para o mesmo diretório que o executável após a build
-add_custom_command(
-        TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${RESOURCES_DIR} ${OUTPUT_DIR}/resources
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${SOUNDS_DIR} ${OUTPUT_DIR}/sounds
-        COMMENT "Copiando pastas 'resources' e 'sounds' para o diretório do executável (${OUTPUT_DIR})"
-)
+   message(STATUS "${RESOURCES_DIR} ")
+   endif ()
+
+

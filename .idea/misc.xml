@@ -11,5 +11,11 @@
     <libraryRoots>
       <file path="$PROJECT_DIR$/raylib/lib" />
     </libraryRoots>
+    <excludeRoots>
+      <file path="$PROJECT_DIR$/cmake-build-debug-mingw" />
+      <file path="$PROJECT_DIR$/cmake-build-release-mingw" />
+      <file path="$PROJECT_DIR$/cmake-build-release-web" />
+      <file path="$PROJECT_DIR$/cmake-build-release-windows" />
+    </excludeRoots>
   </component>
 </project>

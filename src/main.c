@@ -1,6 +1,5 @@
 
 /* TODO
- *   - implementar sprites sortidos para os itens
  *   - MODULARIZAR A  manipular nodes. criação e exclusão de nós
  *   - compilar para navegador
  *   - IMPLEMENTAR STRUC DO MAPA
@@ -113,18 +112,18 @@ int gameLoop() {
 
     // CARREGAR EFEITOS SONOROS
     TraceLog(LOG_DEBUG, "== carregando EFEITOS SONOROS");
-    const Sound eatCheese = LoadSound("sounds/eat_cheese.mp3");
-    const Sound eatStrawberry = LoadSound("sounds/eat_strawberry.mp3");
+    //const Sound eatCheese = LoadSound("resources/sounds/eat_cheese.mp3");
+    //const Sound eatStrawberry = LoadSound("resources/sounds/eat_strawberry.mp3");
 
-    const Sound getHit = LoadSound("sounds/get_hit.mp3");
+    //const Sound getHit = LoadSound("resources/sounds/get_hit.mp3");
 
     Music bgMusic;
 
-    if (!loadMusic(&bgMusic, "sounds/game_music.mp3")) gameScene = EXIT;
+    //if (!loadMusic(&bgMusic, "resources/sounds/game_music.mp3")) gameScene = EXIT;
 
 
-    PlayMusicStream(bgMusic);
-    SetMusicVolume(bgMusic, volume);
+    //PlayMusicStream(bgMusic);
+    //SetMusicVolume(bgMusic, volume);
     SetExitKey(KEY_NULL);
     // GAME LOOP
     while (gameScene == GAME) {
@@ -196,7 +195,11 @@ int gameLoop() {
                 if (IsKeyDown(KEY_UP))player->direction += 45.0f;
             }
 
-            if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+            if (
+                IsMouseButtonDown(MOUSE_BUTTON_LEFT) &&
+                Vector2Distance(player->position, GetMousePosition()) > player->collisionBox.height
+                ) {
+
                 player->action = MOVE;
                 player->direction = Vector2LineAngle(
                                         player->position,
@@ -243,22 +246,23 @@ int gameLoop() {
         for (ItemNode *currentNode = itemListHead, *prev = NULL; currentNode != NULL;
              prev = currentNode, currentNode = currentNode->next) {
             currentItem = currentNode->obj;
+            currentItem->life--;
 
             // checa colisão com item
             if (CheckCollisionRecs(player->collisionBox, currentItem->collisionBox)) {
                 switch (currentItem->type) {
                     case CHEESE:
-                        PlaySound(eatCheese);
+                        //PlaySound(eatCheese);
                         currentItem->collision = true;
                         currentItem->life = -1;
                         score += 5;
                         break;
 
                     case STRAWBERRY:
-                        PlaySound(eatStrawberry);
+                        //PlaySound(eatStrawberry);
                         currentItem->collision = true;
                         currentItem->life = -1;
-                        player->life += 50;
+                        player->life += 10;
                         break;
 
                     case TRAP:
@@ -276,7 +280,7 @@ int gameLoop() {
             }
 
             // todo REFATORAR ESSE CÓDIGO PARA COLOCAR EM UMA FUNÇÃO
-            // criar intem novo e remover anterior
+            // criar item novo e remover anterior
             if (currentItem->life < 1) {
                 // REMOVER O NÓ
                 if (prev == NULL) {
@@ -293,12 +297,13 @@ int gameLoop() {
                 ItemNode *newNode = malloc(sizeof(ItemNode));;
                 newNode->obj = malloc(sizeof(Item));
 
+                ItemType newItemType = (ItemType) GetRandomValue(CHEESE, TRAP);
                 newNode->obj = getItem(
                     (Vector2){
                         (float) GetRandomValue(64, W_WIDTH - 64), (float) (float) GetRandomValue(64, W_HEIGHT - 64)
                     },
-                    &itemSpriteSheet[GetRandomValue(CHEESE, STRAWBERRY)],
-                    CHEESE
+                    &itemSpriteSheet[newItemType],
+                    newItemType
                 );
 
                 newNode->next = currentNode->next;
@@ -358,13 +363,12 @@ int gameLoop() {
             }
 
             if (CheckCollisionRecs(player->collisionBox, currentActor->collisionBox)) {
-                PlaySound(getHit);
+                //PlaySound(getHit);
                 currentActor->collision = true;
                 currentActor->pointOfCollision = GetCollisionRec(player->collisionBox, currentActor->collisionBox);
                 //player->action = SPECIAL;
 
                 if (!debugMode) {
-                    score--;
                     player->life--;
                 }
             }
@@ -434,9 +438,9 @@ int gameLoop() {
 
     //LIBERAR MEMORIA EFEITOS SONOROS
     TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA EFEITOS SONOROS");
-    UnloadSound(eatCheese);
-    UnloadSound(getHit);
-    UnloadSound(eatStrawberry);
+    //UnloadSound(eatCheese);
+   // UnloadSound(getHit);
+    //UnloadSound(eatStrawberry);
 
     //LIBERAR MEMORIA MUSICA
     TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA MUSICA");
@@ -452,7 +456,7 @@ int gameLoop() {
 int gameIntro() {
     // CARREGAR MUSICA
     TraceLog(LOG_DEBUG, " == CARREGANDO MUSICA ");
-    Music introMusic = LoadMusicStream("sounds/intro_music.mp3");
+    Music introMusic = LoadMusicStream("resources/sounds/intro_music.mp3");
     SetMusicVolume(introMusic, 1.0f);
     PlayMusicStream(introMusic);
 
@@ -517,7 +521,7 @@ int gameIntro() {
 int gameOver() {
     // CARREGAR MUSICA
     TraceLog(LOG_DEBUG, " == CARREGANDO MUSICA == ");
-    const Music gameoverMusic = LoadMusicStream("sounds/gameover.mp3");
+    const Music gameoverMusic = LoadMusicStream("resources/sounds/gameover.mp3");
     SetMusicVolume(gameoverMusic, volume);
     PlayMusicStream(gameoverMusic);
 

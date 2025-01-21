@@ -38,7 +38,7 @@ Item* getItem(Vector2 initPos, Texture2D* spritesheet, ItemType type){
 
     // seta o tipo de item e a vida inicial
     item->type = type;
-    item->life = ITEM_DEFAULT_LIFE;
+    item->life = 10*30; // tempo em segundos * media de fps
 
     // retorna o novo item
     return item;

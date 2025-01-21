@@ -5,7 +5,7 @@
 #include "raylib.h"
 
 
-#define ITEM_DEFAULT_LIFE 10
+#define ITEM_DEFAULT_LIFE 120
 #define ITEM_DEFAULT_WIDTH 32
 #define ITEM_DEFAULT CHEESE
 
