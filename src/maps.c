@@ -1,43 +1,54 @@
 #include "maps.h"
 
+int playerX = 0;
+int playerY = 0;
 
 
 
+int offSet = 15;
 // verifica se um objeto está dentro de um retangulo.
 bool isInside(Actor* target, Rectangle *arena){
-        
-    if( target->position.x < arena->x || target->position.x > (arena->width + arena->x)){
+
+    arena->height = MAP_TILE_HEIGHT*TILE_SIZE;
+    arena->width = MAP_TILE_WIDTH*TILE_SIZE;
+
+    playerX = (int) floorf((target->position.x-offSet )/TILE_SIZE);
+    playerY = (int) floorf((target->position.y-offSet )/TILE_SIZE);
+
+    if ((playerX) > MAP_TILE_WIDTH -1 ||
+        (playerX) < 0 ||
+        (playerY) > MAP_TILE_HEIGHT -1||
+        (playerY) < 0 ) {
         return false;
     }
-    if( target->position.y < arena->y || target->position.y > (arena->height + arena->y)){
-        return false;
-    }
+
     return true;
 }
 
 
-   Vector2* getEnemysPosition(){
 
+void drawMap() {
 
-    static Vector2 temp[3]; 
-
-    temp[0] = (Vector2){20.0f, 140.0f};
-    temp[1] = (Vector2){650.0f, 120.0f};
-    temp[2] = (Vector2){80.0f, 420.0f};
-    
-    return temp;
+    for (int i = 0; i < MAP_TILE_WIDTH; i++) {
+        for (int j = 0; j < MAP_TILE_HEIGHT; j++) {
+            if ( playerX == i && playerY == j) {
+                DrawRectangle(
+                    (i*TILE_SIZE)+offSet ,
+                    (j*TILE_SIZE)+offSet ,
+                    TILE_SIZE,
+                    TILE_SIZE,
+                    LIGHTGRAY
+                );
+            }
+            else {
+                DrawRectangleLines(
+                (i*TILE_SIZE)+offSet ,
+                (j*TILE_SIZE)+offSet ,
+                TILE_SIZE,
+                TILE_SIZE,
+                DARKBLUE
+                );
+            }
+        }
     }
-
-
-
-    Vector2* getItensPosition(){  
-
-    static Vector2 temp[3]; 
-    
-    temp[0] = (Vector2){100.0f, 120.0f};
-    temp[1] = (Vector2){100.0f, 120.0f};
-    temp[2] = (Vector2){300.0f, 400.0f};
-
-
-    return temp;
 }

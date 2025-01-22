@@ -2,6 +2,7 @@
 #include "maps.h"
 #include "main.h"
 
+
 // inicia um ator
 void setActor(Actor* self, Vector2 initPos, Texture2D* spritesheet){
     TraceLog(LOG_DEBUG, "-- Loading Object");
@@ -45,14 +46,11 @@ void actionMove(Actor* self, Rectangle* arena) {
     self->position = Vector2Add(self->position, self->velocity); //nova posição
 
     // VERIFICA SE JOGADOR DENTRO DA ARENA
-    if(isInside(self, arena)){
-
-        self->collisionBox.x = self->position.x-(self->collisionBox.width/2); //newPosX
-        self->collisionBox.y = self->position.y-(self->collisionBox.height/2); //newPosY
-
-    }else{
+    if(!isInside(self, arena)){
         self->position = Vector2Subtract(self->position, self->velocity); //nova posição
     }
+
+
 }
 
  void actionSpecial(Actor* self, Actor* target)  {
@@ -63,11 +61,10 @@ void actionMove(Actor* self, Rectangle* arena) {
 // desenhar ator
 void drawActor(Actor* self){
 
+    // atualiza altura e largura do box de colisão
     Rectangle drawRect = {
-        self->collisionBox.x,
-        self->collisionBox.y ,
-        self->spriteA2[self->action]->frameRec.width,
-        self->spriteA2[self->action]->frameRec.height
+        .width = self->spriteA2[self->action]->frameRec.width,
+        .height = self->spriteA2[self->action]->frameRec.height
     };
 
     if(self->direction == 90 || self->direction  == 270){
@@ -79,9 +76,12 @@ void drawActor(Actor* self){
         self->collisionBox.height = drawRect.height-20;
     }
 
-    drawRect.x += (self->collisionBox.width)/2;
-    drawRect.y += (self->collisionBox.height)/2;
+    // atualizar posição do collision box
+    self->collisionBox.x = self->position.x-(self->collisionBox.width/2); //newPosX
+    self->collisionBox.y = self->position.y-(self->collisionBox.height/2); //newPosY
 
+    drawRect.x = self->position.x;
+    drawRect.y = self->position.y;
 
 
     //DESENHA SPRITE
@@ -122,6 +122,13 @@ void drawActor(Actor* self){
         DrawLineV(
             self->position,
              GetMousePosition(), RED);
+
+        DrawGrid(64, 1.1);
+        DrawCircle(
+            (int)self->position.x,
+            (int)self->position.y,
+            5,
+            RED);
     }
 
 

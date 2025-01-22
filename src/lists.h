@@ -25,6 +25,11 @@ typedef struct ItemNode{
     struct ItemNode* prev;
 }ItemNode;
 
+typedef struct InitListItens{
+    ItemType type;
+    Vector2 initPos;
+
+}InitListItens;
 
 ActorNode* getActorList( Vector2 initPosition[], const char* sprite, short maxNodes);
 
@@ -34,7 +39,7 @@ void unloadActorList(ActorNode* targetList);
 
 // itens
 
-ItemNode* getItemList( MapItens initItens[], Texture2D* spritesheet, short maxNodes);
+ItemNode* getItemList(InitListItens initItens[], Texture2D* spritesheet, short maxNodes);
 void addItemNode(ItemNode** target);
 void removeItemNode(ItemNode *target);
 void drawItemList(ItemNode* targetList);

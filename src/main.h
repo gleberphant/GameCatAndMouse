@@ -6,8 +6,8 @@
 #include <stdlib.h>
 
 // constantes
-#define W_WIDTH 800
-#define W_HEIGHT 600
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
 #define MAP_BORDER 10
 #define FONT_SIZE 32
 #define FONT_SPACE 2.0f

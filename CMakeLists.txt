@@ -26,7 +26,13 @@
    # --- Configuração do Projeto ---
    message(STATUS "Configurando o projeto ...")
    file(GLOB_RECURSE SOURCES "src/*.c")
-   add_executable(${PROJECT_NAME} ${SOURCES})
+   add_executable(${PROJECT_NAME} ${SOURCES}
+           src/scene_intro.c
+           src/scene_intro.h
+           src/scene_game.c
+           src/scene_game.h
+           src/scene_over.c
+           src/scene_over.h)
 
    # --- Linkagem das Bibliotecas ---
    if (WIN32)
@@ -37,7 +43,6 @@
                gdi32
                user32
                winmm
-               mwindows
        )
    elseif (UNIX)
        message(STATUS "Linkando Bibliotecas para Linux...")
@@ -69,7 +74,6 @@
    # Copiando assets para o build
    message(STATUS "Copiando assets ...  ")
    set(RESOURCES_DIR "${CMAKE_SOURCE_DIR}/resources")
-   set(SOUNDS_DIR "${CMAKE_SOURCE_DIR}/sounds")
 
    if (EXISTS ${RESOURCES_DIR})
        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
@@ -77,14 +81,6 @@
                COMMENT "-Copiando pasta 'resources' para o diretório do executável (${BUILD_DIR})")
    else()
        message(WARNING "Diretório 'resources' não encontrado! Ignorando cópia.")
-   endif()
-
-   if (EXISTS ${SOUNDS_DIR})
-       add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-               COMMAND ${CMAKE_COMMAND} -E copy_directory ${SOUNDS_DIR} ${BUILD_DIR}/sounds
-               COMMENT "-Copiando pasta 'sounds' para o diretório do executável (${BUILD_DIR})")
-   else()
-       message(WARNING "Diretório 'sounds' não encontrado! Ignorando cópia.")
    endif()
 
    message(STATUS "${RESOURCES_DIR} ")

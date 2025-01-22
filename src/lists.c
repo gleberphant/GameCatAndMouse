@@ -49,7 +49,7 @@ void unloadActorList(ActorNode* targetList) {
 }
 
 
-ItemNode* getItemList( MapItens initItens[], Texture2D* spritesheet, short maxNodes)
+ItemNode* getItemList( InitListItens initItens[], Texture2D* spritesheet, short maxNodes)
 {
     ItemNode *newListNode=NULL, *headListNode = NULL;
 

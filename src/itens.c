@@ -26,9 +26,6 @@ Item* getItem(Vector2 initPos, Texture2D* spritesheet, ItemType type){
 
    //item->spriteFrame = (Rectangle){ 0, 0, 64,  spritesheet->height };
 
-    // posição inicial
-    item->position = initPos;
-
     // define a area de colisão centralizada
     item->collisionBox = (Rectangle){
         initPos.x - (item->spriteFrame.width/2) ,

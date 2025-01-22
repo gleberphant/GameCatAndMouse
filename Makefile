@@ -32,7 +32,7 @@ OBJECTS = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SOURCES))
 CFLAGS = -Wall -Wextra -g $(INCLUDE_DIRS)
 
 # Flags do linker
-LDFLAGS = $(LIB_DIRS) $(LIBS)
+LDFLAGS = $(LIB_DIRS) $(LIBS) -Wl,-subsystem,console
 
 # Regra padrão
 all: $(TARGET)
