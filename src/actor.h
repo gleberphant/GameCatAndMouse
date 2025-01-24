@@ -26,7 +26,8 @@ typedef struct Actor{
 
     Rectangle pointOfCollision;
     Vector2 position;
-    Vector2 velocity;
+    Vector2 oldPosition;
+    float speed;
     
     Rectangle collisionBox;
     ActorType type;

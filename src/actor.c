@@ -29,32 +29,36 @@ void setActor(Actor* self, Vector2 initPos, Texture2D* spritesheet){
     self->position.y += (self->collisionBox.height/2);
 
     // define valores default dos atributos
-    self->velocity = (Vector2){ 0.0f, 0.0f };
+    self->oldPosition = self->position;
     self->action = STOP;
+    self->speed = 4.0f;
     self->direction = 0.0f;
     self->life = DEFAULT_LIFE;
 }
 
 
 void actionStop(Actor* self)  {
-
+    return;
 }
 
 void actionMove(Actor* self, Rectangle* arena) {
 
-    self->velocity = Vector2Rotate((Vector2){0.0f,-10.0f}, self->direction*DEG2RAD);
-    self->position = Vector2Add(self->position, self->velocity); //nova posição
+    Vector2 movement = Vector2Rotate((Vector2){0.0f, -self->speed}, self->direction*DEG2RAD);
+
+    self->action = MOVE;
+    self->oldPosition = self->position;
+    self->position = Vector2Add(self->position, movement); //nova posição
 
     // VERIFICA SE JOGADOR DENTRO DA ARENA
     if(!isInside(self, arena)){
-        self->position = Vector2Subtract(self->position, self->velocity); //nova posição
+        self->position = Vector2Subtract(self->position, movement); //nova posição
     }
 
 
 }
 
  void actionSpecial(Actor* self, Actor* target)  {
-
+    return;
  }
 
 
@@ -68,21 +72,21 @@ void drawActor(Actor* self){
     };
 
     if(self->direction == 90 || self->direction  == 270){
-        self->collisionBox.width = drawRect.height-20;
-        self->collisionBox.height = drawRect.width-20;
+        self->collisionBox.width = drawRect.height - 20;
+        self->collisionBox.height = drawRect.width - 20;
     }
     else{
-        self->collisionBox.width  = drawRect.width-20;
-        self->collisionBox.height = drawRect.height-20;
+        self->collisionBox.width  = drawRect.width  - 20;
+        self->collisionBox.height = drawRect.height - 20;
     }
-
-    // atualizar posição do collision box
-    self->collisionBox.x = self->position.x-(self->collisionBox.width/2); //newPosX
-    self->collisionBox.y = self->position.y-(self->collisionBox.height/2); //newPosY
 
     drawRect.x = self->position.x;
     drawRect.y = self->position.y;
 
+
+    // atualizar posição do collision box
+    self->collisionBox.x = self->position.x-(self->collisionBox.width/2); //newPosX
+    self->collisionBox.y = self->position.y-(self->collisionBox.height/2); //newPosY
 
     //DESENHA SPRITE
     DrawTexturePro(
@@ -109,26 +113,26 @@ void drawActor(Actor* self){
     // DESENHOS DE DEPURAÇÃO
     if(debugMode){
         // ÁREA DE COLISÃO
-        DrawRectangleLinesEx(self->collisionBox,2.0f,DARKGREEN);
+        DrawRectangleLinesEx(self->collisionBox,5.0f,DARKGREEN);
+        DrawRectangleLinesEx(drawRect,2.0f,RED);
 
         // DIREÇÃO DO MOVIMENTO
         DrawLineEx(
          self->position,
-          Vector2Add(self->position, Vector2Scale(self->velocity, 5.0f)),
+          self->oldPosition,
           2.0f,
-          BLUE);
+          RED);
 
         // mouse
         DrawLineV(
             self->position,
              GetMousePosition(), RED);
 
-        DrawGrid(64, 1.1);
         DrawCircle(
             (int)self->position.x,
             (int)self->position.y,
             5,
-            RED);
+            BLUE);
     }
 
 

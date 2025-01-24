@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 /* TODO
+ *   - aperfeiçoar comportamento de perseguição e adotar comportamentos aleatorios.
  *   - REFATORAR. MODULARIZAR CENA GAME LOP
  *   - implementar MAP TILE para cenário.
  *   - salvar score em arquivo
@@ -27,28 +28,30 @@
 
 SceneData* currentScene;
 ScenesType currentSceneType = INTRO;
+
 Font gameFont;
-bool debugMode = false;
-float volumeMaster = 1.01f, angulo;
-int level, score;
 Actor *currentActor = NULL;
 Item *currentItem = NULL;
 Texture2D *itemSpriteSheet;
+
+bool debugMode = true;
+float volumeMaster = 1.01f, angulo;
+int level=0, score=0;
+
 
 typedef struct savefile{
     int score;
     int level;
 }savefile;
 
+
 // cena loop principal
 int gameLoop() {
-
-
 
     // SETAR VARIÁVEIS DO LOOP
     TraceLog(LOG_DEBUG, "== definindo GLOBAL VARIABLES");
     Rectangle arena;
-    volumeMaster = 1;
+    if (debugMode)volumeMaster = 0;
     int enemyVel = 4;
 
     // Carregar o mapa
@@ -116,6 +119,8 @@ int gameLoop() {
     );
 
     Actor *player = playerListHead->obj;
+
+    player->speed = 10;
 
     // Inicializar pontuação e nível
 
@@ -237,7 +242,7 @@ int gameLoop() {
 
         // Verifica o nível atual
         if (score > level * 20) {
-            enemyVel += 2;
+            enemyVel += 1;
             level++;
         }
 
@@ -290,8 +295,7 @@ int gameLoop() {
 
                     case TRAP:
 
-                        currentItem->collisionBox.x = (float) GetRandomValue(64, SCREEN_WIDTH  - 74) - currentItem->collisionBox.width / 2;
-                        currentItem->collisionBox.y = (float) GetRandomValue(64, SCREEN_HEIGHT - 74) - currentItem->collisionBox.height / 2;
+                        currentItem->life = -1;
                         player->life -= 10;
                         player->action = SPECIAL;
                         break;
@@ -341,51 +345,27 @@ int gameLoop() {
 
             // zera variáveis
             currentActor = currentNode->obj;
-            currentActor->action = STOP; // ação padrão
-            currentActor->velocity = Vector2Zero();
+            currentActor->action = STOP;
+            currentActor->speed = enemyVel;// ação padrão
+
 
             // se estiver distante do jogador então permanece parado
-            if (Vector2Distance(currentActor->position, player->position) > 300) continue;
+            if (Vector2Distance(currentActor->position, player->position) > 200 ) continue;
 
             // se estiver próximo do jogador então comportamento de perseguição
-            if ((currentActor->collisionBox.x < player->position.x) && currentActor->action == STOP) {
-                currentActor->action = MOVE;
-                currentActor->velocity.x += (float) GetRandomValue(0, enemyVel);
-            }
+            if (Vector2Distance(currentActor->position, player->position) > 64 && currentActor->action == STOP) {
 
-            if ((currentActor->collisionBox.x > player->position.x + 64) && currentActor->action == STOP) {
-                currentActor->action = MOVE;
-                currentActor->velocity.x -= (float) GetRandomValue(0, enemyVel);
-            }
-
-            if ((currentActor->collisionBox.y < player->position.y) && currentActor->action == STOP) {
-                currentActor->action = MOVE;
-                currentActor->velocity.y += (float) GetRandomValue(0, enemyVel);
-            }
-            if ((currentActor->collisionBox.y > player->position.y + 64) && currentActor->action == STOP) {
-                currentActor->action = MOVE;
-                currentActor->velocity.y -= (float) GetRandomValue(0, enemyVel);
+                currentActor->direction = Vector2LineAngle(
+                                        currentActor->position,
+                                        player->position) * RAD2DEG * -1;
+                currentActor->direction += 90.0f;
             }
 
             // move action
-
-            // obter o angulo do movimento
-            currentActor->direction = (float) (atan2((double) currentActor->velocity.y,
-                                                     (double) currentActor->velocity.x));
-            currentActor->direction = (currentActor->direction * RAD2DEG) + 90.0f;
-
-            // atualiza posição
-            currentActor->position = Vector2Add(currentActor->position, currentActor->velocity);
-
-            if (isInside(currentActor, &arena)) {
-                currentActor->collisionBox.x = currentActor->position.x;
-                currentActor->collisionBox.y = currentActor->position.y;
-            } else {
-                currentActor->position = (Vector2){currentActor->collisionBox.x, currentActor->collisionBox.y};
-            }
+            actionMove(currentActor,  &arena);
 
             if (CheckCollisionRecs(player->collisionBox, currentActor->collisionBox)) {
-                //PlaySound(getHit);
+                PlaySound(getHit);
                 currentActor->collision = true;
                 currentActor->pointOfCollision = GetCollisionRec(player->collisionBox, currentActor->collisionBox);
                 //player->action = SPECIAL;
@@ -439,6 +419,9 @@ int gameLoop() {
             DrawText( TextFormat("Mouse: %d %d", GetMouseX(), GetMouseY()), 20, 460, 18, BLACK);
             EndBlendMode();
         }
+
+
+        DrawGrid(12, 32);
         EndDrawing();
 
 

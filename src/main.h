@@ -14,7 +14,7 @@
 #define FONT_SPACE 2.0f
 #define PLAYER_INIT_POS (Vector2){ 380.0f, 300.0f }
 
-// declação forwad
+// declaração forwad
 typedef enum ScenesType ScenesType;  // Declaração forward
 typedef struct SceneData SceneData;  // Declaração forward
 

@@ -15,10 +15,10 @@
 #define NUM_TILES_HEIGHT (int)ceilf(SCREEN_HEIGHT/TILE_SIZE)
 
 
-// TODO : ESTRUTURA DE MAPA 
 typedef struct MapTile{
     Texture2D* spritesheet;
-    //int grid[MAP_TILE_WIDTH][MAP_TILE_WIDTH];
+    Rectangle arena;
+    int** grid;
 } MapTile;
 
 
