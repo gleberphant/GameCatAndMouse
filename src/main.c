@@ -418,9 +418,11 @@ int gameLoop() {
         //desenha player
         drawActorList(playerListHead);
 
-
+        DrawRectangle(150,20,player->life*2,20,LIME);
+        DrawRectangleLines(150,20,200,20,BLACK);
         DrawText(TextFormat("VIDA : %d", player->life), 20, 20, 20, BLACK);
         DrawText(TextFormat("PONTOS: %d", score), 20, 40, 20, BLACK);
+
         DrawText(TextFormat("NÍVEL: %d", level), 500, 20, 40, BLACK);
 
         DrawText(TextFormat("FPS: %d", GetFPS() ), 500, 570, 20, BLACK);
@@ -510,7 +512,7 @@ int gameLoop() {
     file = fopen("score.dat","wb");
     if (file == NULL) {
         TraceLog(LOG_ERROR, "Erro ao abrir arquivo");
-        return;
+        return 0;
     }
 
     fwrite(top_5, sizeof(top_5), 1, file);
