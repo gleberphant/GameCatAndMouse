@@ -62,9 +62,9 @@
 
    # --- Configurações de Output ---
    if (EMSCRIPTEN)
-       set(BUILD_DIR "../build_web")
+       set(BUILD_DIR "../build_CatAndMouse-WEB")
    else()
-       set(BUILD_DIR "../build")
+       set(BUILD_DIR "../build_CatAndMouse-Desktop")
    endif ()
 
    set_target_properties(${PROJECT_NAME} PROPERTIES
