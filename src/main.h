@@ -3,6 +3,7 @@
 #define MAIN_H_
 
 #include "raylib.h"
+#include "utils.h"
 #include <stdlib.h>
 
 // constantes
@@ -11,34 +12,28 @@
 #define MAP_BORDER 10
 #define FONT_SIZE 32
 #define FONT_SPACE 2.0f
-
 #define PLAYER_INIT_POS (Vector2){ 380.0f, 300.0f }
 
+// declação forwad
+typedef enum ScenesType ScenesType;  // Declaração forward
+typedef struct SceneData SceneData;  // Declaração forward
 
-// ENUMS
-typedef enum GameStatus{
-    INTRO,
-    MENU,
-    GAME,
-    OVER,
-    EXIT
-} GameStatus;
 
 // VARIÁVEIS GLOBAIS
-extern GameStatus gameScene;
+extern ScenesType currentSceneType;
+extern SceneData* currentScene;
 extern Font gameFont;
 
 
 extern bool debugMode;
-extern float volume;
+extern float volumeMaster;
 extern int score;
 extern int level;
 
-extern char textBuffer[100];
 
-int gameIntro();
 int gameLoop();
-int gameOver();
+
 bool loadMusic(Music* music, const char* filepath);
+void runSceneLoop();
 
 #endif

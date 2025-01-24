@@ -7,7 +7,10 @@
 
 #include "raylib.h"
 
+void initSceneOver();
+
 void loopSceneOver();
 
+void drawSceneOver();
 
 #endif //SCENE_OVER_H

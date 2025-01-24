@@ -11,8 +11,8 @@
 
 #define BORDER_SIZE 16
 #define TILE_SIZE 64
-#define MAP_TILE_WIDTH (int)ceilf(SCREEN_WIDTH/TILE_SIZE)
-#define MAP_TILE_HEIGHT (int)ceilf(SCREEN_HEIGHT/TILE_SIZE)
+#define NUM_TILES_WIDTH (int)ceilf(SCREEN_WIDTH/TILE_SIZE)
+#define NUM_TILES_HEIGHT (int)ceilf(SCREEN_HEIGHT/TILE_SIZE)
 
 
 // TODO : ESTRUTURA DE MAPA 
@@ -24,5 +24,6 @@ typedef struct MapTile{
 
 bool isInside(Actor* target, Rectangle *arena);
 void drawMap();
+void loadMap(const char* pathfile);
 
 #endif

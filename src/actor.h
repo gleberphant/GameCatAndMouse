@@ -8,9 +8,6 @@
 
 #include "animation.h"
 
-
-
-
 #define DEFAULT_LIFE 50
 #define PLAYER_DEFAULT_WIDTH 64
 #define ENEMY_DEFAULT_WIDTH 128
@@ -18,7 +15,7 @@
 // TIPOS 
 typedef enum ActionType { STOP=0, MOVE=1, SPECIAL=2, END=3  } ActionType;
 typedef enum DirectionType { UP=0, RIGHT=90, DOWN=180, LEFT=270 } DirectionType ;
-typedef enum ActorType { PLAYER, ENEMY, ITEM } ActorType;
+typedef enum ActorType { PLAYER=0, ENEMY=1, ITEM=2 } ActorType;
 
 
 // ATORES. SERVE PARA JOGADOR, INIMIGOS E ITENS

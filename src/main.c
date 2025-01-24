@@ -1,12 +1,12 @@
+#include <stdio.h>
 
 /* TODO
- *   - REFATORAR. MODULARIZAR CENAS
+ *   - REFATORAR. MODULARIZAR CENA GAME LOP
  *   - implementar MAP TILE para cenário.
  *   - salvar score em arquivo
  *   - IMPLEMENTAR STRUC DO MAPA
  *   - carregar mapa de arquivo
  *   - implementar uma load screen
- *   - criar uma estrutura para CENAS
  *   - aperfeiçoar para rodar em browser.
  */
 
@@ -25,23 +25,30 @@
 
 #include <math.h>
 
-
-GameStatus gameScene = INTRO;
+SceneData* currentScene;
+ScenesType currentSceneType = INTRO;
 Font gameFont;
 bool debugMode = false;
-float volume = 0.01f, angulo;
+float volumeMaster = 1.01f, angulo;
 int level, score;
 Actor *currentActor = NULL;
 Item *currentItem = NULL;
 Texture2D *itemSpriteSheet;
 
+typedef struct savefile{
+    int score;
+    int level;
+}savefile;
 
 // cena loop principal
 int gameLoop() {
+
+
+
     // SETAR VARIÁVEIS DO LOOP
     TraceLog(LOG_DEBUG, "== definindo GLOBAL VARIABLES");
     Rectangle arena;
-    volume = 1;
+    volumeMaster = 1;
     int enemyVel = 4;
 
     // Carregar o mapa
@@ -73,7 +80,7 @@ int gameLoop() {
 
     if (enemyListHead == NULL) {
         TraceLog(LOG_ERROR, " ::: ERROR ao carregar ENEMY LIST");
-        gameScene = EXIT;
+        currentSceneType = EXIT;
     }
 
     // CARREGAR LISTA DE ITENS
@@ -94,11 +101,12 @@ int gameLoop() {
 
     if (itemListHead == NULL) {
         TraceLog(LOG_ERROR, "::: ERROR ao carregar ITENS LIST");
-        gameScene = EXIT;
+        currentSceneType = EXIT;
     }
 
     // Carregar personagem do jogador
     TraceLog(LOG_DEBUG, "== carregando PLAYER");
+
 
 
     ActorNode *playerListHead = getActorList(
@@ -110,6 +118,9 @@ int gameLoop() {
     Actor *player = playerListHead->obj;
 
     // Inicializar pontuação e nível
+
+
+
     score = 0;
     level = 1;
 
@@ -123,29 +134,24 @@ int gameLoop() {
 
     Music bgMusic;
 
-    if (!loadMusic(&bgMusic, "resources/sounds/game_music.mp3")) gameScene = EXIT;
+    if (!loadMusic(&bgMusic, "resources/sounds/game_music.mp3")) currentSceneType = EXIT;
 
+    loadMap("resources/tileset.png");
 
     PlayMusicStream(bgMusic);
-    SetMusicVolume(bgMusic, volume);
+    SetMusicVolume(bgMusic, volumeMaster);
     SetExitKey(KEY_NULL);
     // GAME LOOP
-    while (gameScene == GAME) {
-        // VERIFICA NÍVEL
-        if (score > level * 20) {
-            enemyVel += 2;
-            level++;
-        }
-
+    while (currentSceneType == GAME) {
 
         // INPUT HANDLE
         if (IsKeyPressed(KEY_ESCAPE)) {
-            gameScene = INTRO;
+            currentSceneType = INTRO;
             break;
         }
 
         if (WindowShouldClose() || player == NULL) {
-            gameScene = EXIT;
+            currentSceneType = EXIT;
             break;
         }
 
@@ -162,35 +168,44 @@ int gameLoop() {
         }
 
         if (IsKeyReleased(KEY_KP_ADD)) {
-            volume += 0.05f;
-            SetMasterVolume(volume);
+            volumeMaster += 0.05f;
+            SetMasterVolume(volumeMaster);
         }
 
         if (IsKeyReleased(KEY_KP_SUBTRACT)) {
-            volume -= 0.05f;
-            SetMasterVolume(volume);
+            volumeMaster -= 0.05f;
+            SetMasterVolume(volumeMaster);
         }
 
         // CONTROL PLAYER
+        // Ação especial
+        if (IsKeyReleased(KEY_SPACE)) {
+            if (player->action == SPECIAL) player->action = STOP;
+            else player->action = SPECIAL;
+        }
 
-        //player->velocity = (Vector2){ 0.0f, 0.0f };
-        //player->direction = 0.0f;
+        // Movimento
         if (player->action == MOVE || player->action == STOP) {
+
             player->action = STOP;
 
+            // controle por teclado
             if (IsKeyDown(KEY_UP)) {
                 player->action = MOVE;
                 player->direction = 0.0f;
                 if (IsKeyDown(KEY_RIGHT))player->direction += 45.0f;
                 if (IsKeyDown(KEY_LEFT))player->direction -= 45.0f;
+
             } else if (IsKeyDown(KEY_RIGHT)) {
                 player->action = MOVE;
                 player->direction = 90.0f;
                 if (IsKeyDown(KEY_DOWN))player->direction += 45.0f;
+
             } else if (IsKeyDown(KEY_DOWN)) {
                 player->action = MOVE;
                 player->direction = 180.0f;
                 if (IsKeyDown(KEY_LEFT))player->direction += 45.0f;
+
             } else if (IsKeyDown(KEY_LEFT)) {
                 player->action = MOVE;
                 player->direction = 270.0f;
@@ -200,7 +215,7 @@ int gameLoop() {
             // controle por mouse
             if (
                 IsMouseButtonDown(MOUSE_BUTTON_LEFT) &&
-                Vector2Distance(player->position, GetMousePosition()) > player->collisionBox.height
+                Vector2Distance(player->position, GetMousePosition()) > player->collisionBox.width
                 ) {
 
                 player->action = MOVE;
@@ -212,17 +227,21 @@ int gameLoop() {
             }
         }
 
-        if (IsKeyReleased(KEY_SPACE)) {
-            if (player->action == SPECIAL) player->action = STOP;
-            else player->action = SPECIAL;
-        }
         // UPDATE
-        // Condições de vitória ou derrota
+
+        // Condições de vitória ou derrota.
         if (player->life < 1) {
-            gameScene = OVER;
+            currentSceneType = OVER;
             continue;
         }
 
+        // Verifica o nível atual
+        if (score > level * 20) {
+            enemyVel += 2;
+            level++;
+        }
+
+        // ações do jogador
         switch (player->action) {
             case STOP:
                 actionStop(player);
@@ -237,15 +256,16 @@ int gameLoop() {
                 break;
 
             case END:
-                TraceLog(LOG_DEBUG, "fim de linha");
+                TraceLog(LOG_DEBUG, "fim da linha");
                 break;
 
             default:
                 TraceLog(LOG_DEBUG, "item desconhecido");
                 break;
         }
-        //------------------------------------------------------------
-        // PERCORRE LISTA DE ITENS
+
+        // ------------------------------------------------------------
+        // "ações" dos itens
         for (ItemNode *currentNode = itemListHead, *prev = NULL; currentNode != NULL;
              prev = currentNode, currentNode = currentNode->next) {
             currentItem = currentNode->obj;
@@ -313,8 +333,8 @@ int gameLoop() {
             }
         }
 
-        //------------------------------------------------------------
-        //PERCORRE LISTA DE INIMIGOS
+        // ------------------------------------------------------------
+        // "ações" dos INIMIGOS
         for (ActorNode *currentNode = enemyListHead; currentNode != NULL; currentNode = currentNode->next) {
             // verifica se está vivo
             if (currentNode->obj->life < 1) continue;
@@ -384,11 +404,10 @@ int gameLoop() {
 
         //desenha mapa
 
-        DrawRectangleRec(arena,DARKGRAY);
+        //DrawRectangleRec(arena,DARKGRAY);
 
-        if (debugMode) {
-            drawMap();
-        }
+        drawMap(player);
+
 
         //desenha itens
         drawItemList(itemListHead);
@@ -402,17 +421,21 @@ int gameLoop() {
 
         DrawText(TextFormat("VIDA : %d", player->life), 20, 20, 20, BLACK);
         DrawText(TextFormat("PONTOS: %d", score), 20, 40, 20, BLACK);
-        DrawText(TextFormat("NÍVEL: %d", level), 500, 20, 20, BLACK);
+        DrawText(TextFormat("NÍVEL: %d", level), 500, 20, 40, BLACK);
+
+        DrawText(TextFormat("FPS: %d", GetFPS() ), 500, 570, 20, BLACK);
 
         // debug infor
         if (debugMode) {
-            DrawText( TextFormat("Player->direction: %f", player->direction), 500, 40, 18, BLACK);
-            DrawText( TextFormat("Player->Action: %d", player->action), 500, 60, 18, BLACK);
-            DrawText( TextFormat("SpriteA->repeat: %d", player->spriteA2[player->action]->repeat), 500, 80, 18, BLACK);
-            DrawText( TextFormat("Player Pos: x %d y %d", (int) player->position.x, (int) player->position.y ), 500, 100, 18, BLACK);
-            DrawText( TextFormat("GriMap Pos: i %d j %d", (int) floorf(player->position.x/TILE_SIZE), (int) floorf(player->position.y/TILE_SIZE)), 500, 120, 18,BLACK);
-            DrawText( TextFormat("Mouse: %d %d", GetMouseX(), GetMouseY()), 500, 140, 18, BLACK);
-
+            BeginBlendMode(BLEND_ALPHA);
+            DrawRectangle(15, 450, 270, 140, ColorAlpha(SKYBLUE, 0.5f));
+            DrawText( TextFormat("Player->direction: %f", player->direction), 20, 560, 18, BLACK);
+            DrawText( TextFormat("Player->Action: %d", player->action), 20, 540, 18, BLACK);
+            DrawText( TextFormat("SpriteA->repeat: %d", player->spriteA2[player->action]->repeat), 20, 520, 18, BLACK);
+            DrawText( TextFormat("Player Pos: x %d y %d", (int) player->position.x, (int) player->position.y ), 20, 500, 18, BLACK);
+            DrawText( TextFormat("GriMap Pos: i %d j %d", (int) floorf(player->position.x/TILE_SIZE), (int) floorf(player->position.y/TILE_SIZE)), 20, 480, 18,BLACK);
+            DrawText( TextFormat("Mouse: %d %d", GetMouseX(), GetMouseY()), 20, 460, 18, BLACK);
+            EndBlendMode();
         }
         EndDrawing();
 
@@ -420,6 +443,10 @@ int gameLoop() {
         UpdateMusicStream(bgMusic);
     }
 
+
+
+
+    //SaveFileData("score.dat", &score, sizeof(int));
 
     //LIBERAR MEMORIA PLAYER
     TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA PLAYER LIST");
@@ -452,123 +479,199 @@ int gameLoop() {
     StopMusicStream(bgMusic);
     UnloadMusicStream(bgMusic);
 
-    volume = 0.5f;
-    return 0;
-}
+    volumeMaster = 0.5f;
 
-//TODO centralizar intro e Gameove em uma mesma função passando como parâmetro uma flag
-// cena de introdução
-int gameIntro() {
-    // CARREGAR MUSICA
-    TraceLog(LOG_DEBUG, " == CARREGANDO MUSICA ");
-    Music introMusic = LoadMusicStream("resources/sounds/intro_music.mp3");
-    SetMusicVolume(introMusic, 1.0f);
-    PlayMusicStream(introMusic);
 
-    // CARREGAR IMAGENS DE FUNDO
-    TraceLog(LOG_DEBUG, " == CARREGANDO IMAGENS");
-    Texture2D backgroundTex = LoadTexture("resources/intro_bg.png");
+    // carregar pontuação salva
+    FILE* file = fopen("score.dat", "rb");
+    int top_5[5];
 
-    // SETAR TEXTOS
-    TraceLog(LOG_DEBUG, " == CARREGANDO FONTES ");
-    char *textIntro = "[ENTER] para jogar [ESC] para sair.";
-    gameFont = GetFontDefault();
-    Vector2 textMeasure = MeasureTextEx(gameFont, textIntro, FONT_SIZE, FONT_SPACE);
-    Rectangle textRec = {(SCREEN_WIDTH - textMeasure.x) / 2, 400, textMeasure.x, textMeasure.y};
-
-    SetExitKey(KEY_ESCAPE);
-    // INTRO LOOP
-    TraceLog(LOG_DEBUG, " == CARREGAMENTO CONCLUÍDO ");
-    while (gameScene == INTRO) {
-        // INPUT HANDLE
-        if (WindowShouldClose()) {
-            gameScene = EXIT;
-        }
-
-        if (IsKeyReleased(KEY_ENTER) || IsKeyReleased(KEY_KP_ENTER) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-            gameScene = GAME;
-        }
-
-        if (IsKeyReleased(KEY_KP_ADD)) {
-            volume += 0.05f;
-            SetMasterVolume(volume);
-        }
-
-        if (IsKeyReleased(KEY_KP_SUBTRACT)) {
-            volume -= 0.05f;
-            SetMasterVolume(volume);
-        }
-
-        //UPDATE
-        UpdateMusicStream(introMusic);
-
-        // DRAW
-        BeginDrawing();
-        ClearBackground(BLACK);
-        DrawTexture(backgroundTex, 0, 0, WHITE);
-        DrawRectangleRec(textRec, BLACK);
-        DrawTextEx(gameFont, textIntro, (Vector2){textRec.x, textRec.y}, FONT_SIZE, FONT_SPACE, WHITE);
-        EndDrawing();
+    if (file != NULL ) {
+        fread(top_5, sizeof(int), 5, file);
     }
 
-    // DESCARREGAR MUSICA
-    StopMusicStream(introMusic);
-    UnloadMusicStream(introMusic);
+    fclose(file);
 
-    // DESCARREGAR IMAGENS
-    UnloadTexture(backgroundTex);
+    // verifica os recordes
+    for (int i = 0; i < 5; i++) {
+        // o score é um novo record?
+        if (score > top_5[i]) {
+            // reordena os recordes anteriores
+            for (int j = 4; j > i; j--) {
+                top_5[j] = top_5[j-1];
+            }
+            //insere o novo recorde
+            top_5[i] = score;
+
+            break;
+        }
+    }
+     // salva o novo top 5
+    file = fopen("score.dat","wb");
+    if (file == NULL) {
+        TraceLog(LOG_ERROR, "Erro ao abrir arquivo");
+        return;
+    }
+
+    fwrite(top_5, sizeof(top_5), 1, file);
+
+    fclose(file);
 
     return 0;
 }
 
+//----------------------------------------------------------
 
-
-
-// carregar um objeto musica com tratamento de error
-bool loadMusic(Music *music, const char *filepath) {
-    *music = LoadMusicStream(filepath);
-    if (music->stream.buffer == NULL) {
-        TraceLog(LOG_ERROR, ":: ERRO AO CARREGAR A MUSICA");
-        return false;
-    }
-    return true;
+/**
+ * @brief Initializes a scene of the specified type by setting up its required resources and logic.
+ *
+ * This function determines the necessary initialization routine for the given scene type. It delegates
+ * the initialization to the appropriate function based on the specified scene type, ensuring that the
+ * corresponding scene is properly prepared for execution.
+ *
+ * @param sceneType The type of scene to initialize. Valid options include INTRO and OVER.
+ */
+void initializeScene(ScenesType sceneType) {
+    if (sceneType == INTRO) initSceneIntro();
+    else if (sceneType == OVER) initSceneOver();
 }
 
+/**
+ * @brief Manages the current scene's lifecycle, including initialization, execution, and cleanup.
+ *
+ * This function handles the full lifecycle of the active scene based on the current scene type.
+ * It initializes the scene, prepares its music stream for playback, and adjusts the music volume
+ * according to the master volume. The function then executes the main loop of the scene, which
+ * processes its logic and rendering. Once the scene's loop concludes, it performs cleanup by
+ * unloading scene resources and deallocating any associated memory to prevent leaks.
+ */
+void manageScene() {
+    // Inicializa a cena conforme o tipo atual
+    initializeScene(currentSceneType);
 
-int main() {
-    // Config Screen
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "CatAndMouse by Handerson Gleber (Gr4v4t1nh4)");
+    // Prepara a música para ser tocada
+    PlayMusicStream(currentScene->music);
+    SetMusicVolume(currentScene->music, volumeMaster);
 
-    InitAudioDevice();
+    // Executa o loop principal da cena
+    runSceneLoop();
 
-    SetTraceLogLevel(LOG_DEBUG);
+    // Finaliza a cena
+    unloadScene(currentScene);
 
-    TraceLog(LOG_DEBUG, "Iniciando raylib");
+    // Libera memória associada à cena
+    if (currentScene != NULL) {
+        free(currentScene);
+        currentScene = NULL;
+    }
+}
 
-    SetTargetFPS(30);
+/**
+ * @brief Executes the loop for the active scene, handling its logic and rendering.
+ *
+ * This function continuously processes the logic and rendering of the current scene
+ * until the type of the scene changes, indicating a transition. It handles user input,
+ * updates the scene's music stream to ensure smooth audio playback, and renders the
+ * scene's graphical elements. The loop only exits once the scene type is updated,
+ * signaling a transition to a new scene.
+ */
+void runSceneLoop() {
+    while (currentSceneType == currentScene->sceneType) {
+        sceneInputHandler(currentScene);
+        UpdateMusicStream(currentScene->music);
+        drawScene(currentScene);
+    }
+}
 
-    SetMasterVolume(volume);
-
-    gameFont = GetFontDefault();
-
-    gameScene = INTRO;
-
-    // ReSharper disable once CppDFALoopConditionNotUpdated
-    while (gameScene != EXIT) {
-        if (gameScene == INTRO) {
-            gameIntro();
-        }
-
-        if (gameScene == GAME) {
+/**
+ * @brief Executes the primary loop controlling the transitions between scenes in the application.
+ *
+ * This function manages the flow of the application's main logic by continuously checking
+ * the current scene type and performing actions based on the scene. It transitions between
+ * game scenes (GAME, OVER, etc.) and handles scene-specific logic until the application exits.
+ */
+void playMainLoop() {
+    while (currentSceneType != EXIT) {
+        if (currentSceneType == GAME) {
             gameLoop();
-        }
-
-        if (gameScene == OVER) {
-            loopSceneOver();
+            currentSceneType = OVER;
+        } else {
+            manageScene();
         }
     }
+}
+
+/**
+ * @brief Configures the display settings for the application.
+ *
+ * This function initializes the application window with the specified dimensions and title,
+ * and sets the target frames per second (FPS) for rendering. It prepares the screen for rendering
+ * and overall graphical display.
+ */
+void configureScreen() {
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "CatAndMouse by Handerson Gleber (Gr4v4t1nh4)");
+    SetTargetFPS(30);
+}
+
+
+/**
+ * @brief Configures the audio system and sets the master volume level.
+ *
+ * This function initializes the audio device to enable audio playback and adjusts
+ * the master volume to the specified level, preparing the audio system for use.
+ *
+ * @param masterVolume The desired master volume level, a float value typically between 0.0 (silent) and 1.0 (maximum volume).
+ */
+void configureAudio(float masterVolume) {
+    InitAudioDevice();
+    SetMasterVolume(masterVolume);
+}
+
+
+/**
+ * @brief Initializes the game resources and sets the initial game state.
+ *
+ * This function configures the game screen and audio settings, using the global
+ * variable volumeMaster to set the initial audio volume. It also sets the debugging
+ * log level, initializes the game font to the default font provided by the framework,
+ * and defines the initial scene type as INTRO. This prepares the game for execution.
+ */
+void initGame() {
+    configureScreen();
+    configureAudio(volumeMaster);  // Using global variable volumeMaster
+
+    SetTraceLogLevel(LOG_DEBUG);   // Set debugging level for logs
+    gameFont = GetFontDefault();   // Use the default font
+    currentSceneType = INTRO;      // Start with the INTRO scene
+}
+
+
+/**
+ * @brief Unloads game resources and closes the application.
+ *
+ * This function ensures that all game resources are released properly by
+ * closing the audio device and shutting down the game window. It prevents
+ * resource leaks and ensures a clean exit from the application.
+ */
+void unloadGame() {
     CloseAudioDevice();
     CloseWindow();
-    return 0;
+}
+
+
+/**
+ * @brief Entry point of the application.
+ *
+ * Initializes the game, executes the main game loop, and releases all resources.
+ * This function is responsible for managing the lifecycle of the game, ensuring
+ * proper initialization, execution, and cleanup of the game processes.
+ *
+ * @return An integer value, typically 0, indicating the successful execution of the program.
+ */
+int main() {
+    initGame();          // Inicializa o estado e os recursos do jogo
+    playMainLoop();      // Executa o loop principal do jogo
+    unloadGame();        // Libera os recursos utilizados no jogo
+    return 0;            // Retorna 0 para indicar execução bem-sucedida
 }
 

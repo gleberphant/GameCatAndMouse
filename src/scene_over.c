@@ -1,70 +1,37 @@
 #include "scene_over.h"
 #include "main.h"
 
-Music gameoverMusic;
-Texture2D backgroundTex;
-//Font gameFont;
-char *textOver = "GAME OVER";
-Rectangle textRec;
+static char *textBuffer = "GAME OVER";
+static Rectangle recText;
 
 void initSceneOver() {
+    // carregando a scene
+    currentScene = loadSceneData(
+        "resources/gameover.png",
+        "resources/sounds/gameover.mp3",
+        OVER,
+        &gameFont
+        );
 
-    TraceLog(LOG_DEBUG, " == CARREGANDO IMAGENS ==");
-    backgroundTex = LoadTexture("resources/gameover.png");
+    // setando a função de desenho
+    currentScene->draw = drawSceneOver;
 
-    TraceLog(LOG_DEBUG, " == CARREGANDO TEXTOS == ");
-    gameFont = GetFontDefault();
-    Vector2 textMeasure = MeasureTextEx(gameFont, textOver, FONT_SIZE, FONT_SPACE);
-    textRec = (Rectangle){(SCREEN_WIDTH - textMeasure.x) / 2, 400, textMeasure.x, textMeasure.y};
+    // configurando texto de fundo;
+    recText = getTextRect(textBuffer, *currentScene->font, FONT_SIZE, FONT_SPACE);
 
-    TraceLog(LOG_DEBUG, " == CARREGANDO MUSICA == ");
-    gameoverMusic = LoadMusicStream("resources/sounds/gameover.mp3");
-    SetMusicVolume(gameoverMusic, volume);
-    PlayMusicStream(gameoverMusic);
-}
-
-void closeSceneOver() {
-    // DESCARREGAR MUSICA
-    StopMusicStream(gameoverMusic);
-    UnloadMusicStream(gameoverMusic);
-
-    // DESCARREGAR IMAGENS
-    UnloadTexture(backgroundTex);
+    // configurando tecla para sair.
+    SetExitKey(KEY_ESCAPE);
 }
 
 
-void inputSceneOver() {
-    //INPUT HANDLE
-    if (IsKeyReleased(KEY_ESCAPE) || WindowShouldClose()) {
-        gameScene = EXIT;
-    }
-
-    if (IsKeyReleased(KEY_ENTER) || IsKeyReleased(KEY_KP_ENTER)) {
-        gameScene = INTRO;
-    }
-}
-
+/* função de desenho da cena intro */
 void drawSceneOver() {
     BeginDrawing();
-    ClearBackground(BLACK);
-    DrawTexture(backgroundTex, 0, 0, WHITE);
-    DrawRectangleRec(textRec, BLACK);
-    DrawTextEx(gameFont, textOver, (Vector2){textRec.x, textRec.y}, FONT_SIZE, FONT_SPACE, WHITE);
+        ClearBackground(BLACK);
+        DrawTexture(currentScene->background, 0, 0, WHITE);
+        DrawRectangleRec(recText, BLACK);
+        DrawTextEx(gameFont, textBuffer, (Vector2){recText.x, recText.y}, FONT_SIZE, FONT_SPACE, WHITE);
     EndDrawing();
 }
 
-// cena de game over
-void loopSceneOver() {
 
-    initSceneOver();
-
-    while (gameScene == OVER) {
-        inputSceneOver();
-
-        UpdateMusicStream(gameoverMusic);
-
-        drawSceneOver();
-    }
-
-    closeSceneOver();
-}

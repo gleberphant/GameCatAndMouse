@@ -5,3 +5,6 @@ main.code-workspace
 .vscode/launch.json
 .vscode/c_cpp_properties.json
 GameCatAndMouse.zip
+cmake-build-release-web
+cmake-build-debug
+cmake-build-release-windows
