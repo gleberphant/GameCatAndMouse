@@ -23,14 +23,10 @@ Gostou do projeto? Por favor, considere fazer uma doação para ajudar a melhor�
 
 Jogo Cat And Mouse feito em C/Cpp utilizando a biblioteca  `RAYLIB` em 2024.
 
-#### ▶️Comandos
+## ▶ Instruções 
 
 ```
-O rato precisa comer queijo e se for pego pelos GATOS, perde.
-```
-
-```
-Setas direcionais para mover o rato
+Versao compilada do jogo se encontra na pasta Build correspondente
 ```
 
 ## 💻 Pré-requisitos
@@ -49,13 +45,12 @@ git clone https://github.com/gleberphant/GameCatAndMouse.git
 
 ## 💾 Compilação do projeto
 
-```
-make
-```
+Utilize o comando cmake ou make para compilar
+
 
 ## Execução
 
-Utilize o comando make run ou execute o aplicativo 'main.exe'
+Versão compilada se encontra na pasta build_CatAndMouse- correspondente
 
 
 <br>
