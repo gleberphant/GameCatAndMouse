@@ -49,19 +49,8 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="- implementacao  de maptile">
+    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="- lifebar">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/GameCatAndMouse" beforeDir="false" afterPath="$PROJECT_DIR$/build/GameCatAndMouse" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/resources/tileset.png" beforeDir="false" afterPath="$PROJECT_DIR$/build/resources/tileset.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/score.dat" beforeDir="false" afterPath="$PROJECT_DIR$/build/score.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game.exe" beforeDir="false" afterPath="$PROJECT_DIR$/game.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/tileset.png" beforeDir="false" afterPath="$PROJECT_DIR$/resources/tileset.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/maps.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/maps.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/out/main.o" beforeDir="false" afterPath="$PROJECT_DIR$/src/out/main.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/out/maps.o" beforeDir="false" afterPath="$PROJECT_DIR$/src/out/maps.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/out/scene_intro.o" beforeDir="false" afterPath="$PROJECT_DIR$/src/out/scene_intro.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/out/scene_over.o" beforeDir="false" afterPath="$PROJECT_DIR$/src/out/scene_over.o" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +60,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Release-windows" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -112,37 +101,37 @@
     <option name="sortByType" value="true" />
     <option name="sortKey" value="BY_TYPE" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "C/C++ File.debug.executor": "Run",
-    "CMake Application.GameCatAndMouse.executor": "Debug",
-    "CMake Application.raylib.executor": "Run",
-    "CMake Application.uninstall.executor": "Run",
-    "CMake Debug.GameCatAndMouse.executor": "Debug",
-    "Makefile Target.all.executor": "Run",
-    "Makefile Target.clean.executor": "Run",
-    "Makefile Target.run.executor": "Run",
-    "Native Application.GameCatAndMouse.executor": "Debug",
-    "RunOnceActivity.RadMigrateCodeStyle": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "RunOnceActivity.west.config.association.type.startup.service": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "E:/PROGRAMAS_C/GameCatAndMouse/build/resources",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "ml.llm.AIAssistantPromptsLibrary",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;C/C++ File.debug.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.GameCatAndMouse.executor&quot;: &quot;Debug&quot;,
+    &quot;CMake Application.raylib.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.uninstall.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Debug.GameCatAndMouse.executor&quot;: &quot;Debug&quot;,
+    &quot;Makefile Target.all.executor&quot;: &quot;Run&quot;,
+    &quot;Makefile Target.clean.executor&quot;: &quot;Run&quot;,
+    &quot;Makefile Target.run.executor&quot;: &quot;Run&quot;,
+    &quot;Native Application.GameCatAndMouse.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.west.config.association.type.startup.service&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/PROGRAMAS_C/GameCatAndMouse/build/resources&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;ml.llm.AIAssistantPromptsLibrary&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\PROGRAMAS_C\GameCatAndMouse\build\resources" />
