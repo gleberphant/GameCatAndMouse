@@ -152,11 +152,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="raylib" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameCatAndMouse" TARGET_NAME="raylib" CONFIG_NAME="Release-web">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -192,12 +187,12 @@
     </configuration>
     <list>
       <item itemvalue="CMake Application.GameCatAndMouse" />
-      <item itemvalue="CMake Application.uninstall" />
       <item itemvalue="CMake Application.raylib" />
+      <item itemvalue="CMake Application.uninstall" />
       <item itemvalue="CMake Application.update_mappings" />
-      <item itemvalue="Makefile Target.run" />
       <item itemvalue="Makefile Target.all" />
       <item itemvalue="Makefile Target.clean" />
+      <item itemvalue="Makefile Target.run" />
     </list>
     <recent_temporary>
       <list>
@@ -222,7 +217,8 @@
       <workItem from="1737502243964" duration="17437000" />
       <workItem from="1737520663457" duration="226000" />
       <workItem from="1737590884480" duration="19997000" />
-      <workItem from="1737664479534" duration="21996000" />
+      <workItem from="1737664479534" duration="22303000" />
+      <workItem from="1737697321482" duration="4000" />
     </task>
     <task id="LOCAL-00001" summary="CMAKE para compilar windows e linux">
       <option name="closed" value="true" />
@@ -264,7 +260,23 @@
       <option name="project" value="LOCAL" />
       <updated>1737695819974</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="- lifebar">
+      <option name="closed" value="true" />
+      <created>1737697208703</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1737697208703</updated>
+    </task>
+    <task id="LOCAL-00007" summary="- lifebar">
+      <option name="closed" value="true" />
+      <created>1737697224621</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1737697224621</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -280,7 +292,8 @@
     <MESSAGE value="- cmake agora compila para WEB ASSEMBLY &#10;- correção do efeito do morango&#10;- tempo para itens respawmar" />
     <MESSAGE value="- implementacao prelimnar de maptile" />
     <MESSAGE value="- implementacao  de maptile" />
-    <option name="LAST_COMMIT_MESSAGE" value="- implementacao  de maptile" />
+    <MESSAGE value="- lifebar" />
+    <option name="LAST_COMMIT_MESSAGE" value="- lifebar" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
