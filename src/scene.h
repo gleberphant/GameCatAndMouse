@@ -22,7 +22,7 @@ typedef struct SceneData {
     Music music;
     Texture2D background;
     Font* font;
-    ScenesType sceneType, nextScene;
+    ScenesType type, nextScene;
     void (*draw)();
 } SceneData;
 
@@ -40,5 +40,6 @@ void playSceneLoop(SceneData *scene);
 void unloadScene(SceneData* scene);
 
 Rectangle getTextRect(const char *text, Font font, const float fontSize, const float space);
-bool loadMusic(Music *music, const char *filepath);
+
+
 #endif //UTILS_H

@@ -19,21 +19,25 @@ typedef enum ScenesType ScenesType;  // Declaração forward
 typedef struct SceneData SceneData;  // Declaração forward
 
 
+typedef struct savefile{
+    int score, level;
+} savefile;
+
+
 // VARIÁVEIS GLOBAIS
 extern ScenesType currentSceneType;
 extern SceneData* currentScene;
 extern Font gameFont;
-
-
 extern bool debugMode;
 extern float volumeMaster;
 extern int score;
 extern int level;
 
-
-int gameLoop();
-
-bool loadMusic(Music* music, const char* filepath);
-void runSceneLoop();
+void runGame();
+void configureScreen();
+void configureAudio();
+void initGame();
+void saveGame();
+void closeGame();
 
 #endif

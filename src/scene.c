@@ -1,23 +1,70 @@
-//
-// Created by glebe on 22/01/2025.
-//
-
-//
-// Created by gleber on 22/01/2025.
-//
-
 #include "scene.h"
 #include "main.h"
 
 
-// ---- utils
-Rectangle getTextRect(const char *text, Font font, const float fontSize, const float space) {
-    const Vector2 textMeasure = MeasureTextEx(font, text, fontSize, space);
-    return (Rectangle){(SCREEN_WIDTH - textMeasure.x) / 2, 400, textMeasure.x, textMeasure.y};
+void initScene(ScenesType sceneType){
+
+    // Inicializa a cena conforme o tipo atual.
+    switch (sceneType ) {
+        case INTRO:
+            initSceneIntro();
+            break;
+        case OVER:
+            initSceneOver();
+            break;
+        case GAME:
+            initSceneGame();
+            break;
+        default:
+            break;
+    }
 }
 
+
+/**
+ * @brief Manages the current scene's lifecycle, including initialization, execution, and cleanup.
+ */
+void runScene(ScenesType sceneType) {
+    // Carrega a cena conforme o tipo atual.
+    initScene(sceneType);    
+
+    // Prepara a música para ser tocada
+    PlayMusicStream(currentScene->music);
+    SetMusicVolume(currentScene->music, volumeMaster);
+
+    // Executa o loop principal da cena
+    sceneLoop();
+
+    // Finaliza a cena
+    unloadScene(currentScene);
+
+    // Libera memória associada à cena
+    if (currentScene != NULL) {
+        free(currentScene);
+        currentScene = NULL;
+    }
+}
+
+
+/**
+ * @brief Executes the loop for the active scene, handling its logic and rendering.
+ */
+void sceneLoop() {
+
+    while (currentSceneType == currentScene->type) {
+
+        sceneInputHandler(currentScene);
+        UpdateMusicStream(currentScene->music);
+        drawScene(currentScene);
+
+    }
+}
+
+
 SceneData* loadSceneData(const char* backgroundPath, const char* musicPath, ScenesType type, Font* font) {
+
     TraceLog(LOG_DEBUG, " == CARREGANDO SCENE ");
+
     SceneData* scene = malloc(sizeof(SceneData));
 
     if (scene == NULL) {
@@ -28,15 +75,15 @@ SceneData* loadSceneData(const char* backgroundPath, const char* musicPath, Scen
     scene->music = LoadMusicStream(musicPath);
     scene->background = LoadTexture(backgroundPath);
     scene->font = font;
-    scene->sceneType = type;
+    scene->type = type;
 
     SetMusicVolume(scene->music, 1.0f);
 
     return scene;
 }
 
+
 void sceneInputHandler(SceneData *scene) {
-    // INPUT HANDLE
     if (WindowShouldClose()) {
         currentSceneType = EXIT;
         return;
@@ -44,7 +91,7 @@ void sceneInputHandler(SceneData *scene) {
 
     if (IsKeyReleased(KEY_ENTER) || IsKeyReleased(KEY_KP_ENTER) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         // seleciona a proxima cena
-        switch (scene->sceneType) {
+        switch (scene->type) {
             case INTRO:
                 currentSceneType = GAME;
             break;
@@ -55,7 +102,7 @@ void sceneInputHandler(SceneData *scene) {
                 currentSceneType = INTRO;
             break;
             default:
-                currentSceneType = scene->sceneType;
+                currentSceneType = scene->type;
             break;
 
         }
@@ -74,14 +121,6 @@ void sceneInputHandler(SceneData *scene) {
 
 }
 
-
-void drawScene(SceneData *scene) {
-
-    scene->draw();
-
-}
-
-
 void playSceneLoop(SceneData *scene) {
 
     // preparação da cena
@@ -89,35 +128,27 @@ void playSceneLoop(SceneData *scene) {
     SetMusicVolume(scene->music, volumeMaster);
 
     // loop cena
-    while (currentSceneType == scene->sceneType) {
+    while (currentSceneType == scene->type) {
 
         sceneInputHandler(scene);
 
         UpdateMusicStream(scene->music);
 
-        drawScene(scene);
+        scene->draw();
 
     }
-
     // fechar cena
+    StopMusicStream(scene->music);
     unloadScene(scene);
 }
 
 void unloadScene(SceneData* scene) {
-    // DESCARREGAR MUSICA
-    StopMusicStream(scene->music);
     UnloadMusicStream(scene->music);
-
-    // DESCARREGAR IMAGENS
     UnloadTexture(scene->background);
 }
 
-// carregar um objeto musica com tratamento de error
-bool loadMusic(Music *music, const char *filepath) {
-    *music = LoadMusicStream(filepath);
-    if (music->stream.buffer == NULL) {
-        TraceLog(LOG_ERROR, ":: ERRO AO CARREGAR A MUSICA");
-        return false;
-    }
-    return true;
+// utils
+Rectangle getTextRect(const char *text, Font font, const float fontSize, const float space) {
+    const Vector2 textMeasure = MeasureTextEx(font, text, fontSize, space);
+    return (Rectangle){(SCREEN_WIDTH - textMeasure.x) / 2, 400, textMeasure.x, textMeasure.y};
 }
