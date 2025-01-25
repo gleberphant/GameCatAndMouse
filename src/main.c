@@ -201,7 +201,7 @@ bool handlePlayerInput(){
         player->action = MOVE;
         vectorDirection.y +=  -1.0f;    
     }  
-    
+
     if (IsKeyDown(KEY_RIGHT)) {
         player->action = MOVE;
         vectorDirection.x +=  1.0f;    
@@ -389,7 +389,6 @@ void updateEnemies(){
             }
         }
 }
-
 
 
 void updateGameScene(){
