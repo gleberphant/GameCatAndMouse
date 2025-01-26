@@ -37,7 +37,8 @@ void initSceneGame(){
     TraceLog(LOG_DEBUG, "== carregando MAPAS");
     Vector2 mapEnemies[] = {
         (Vector2){20.0f, 140.0f},
-        (Vector2){650.0f, 120.0f}
+        (Vector2){650.0f, 120.0f},
+        (Vector2){60.0f, 520.0f}
     };
 
     InitListItens initItens[] = {
@@ -133,10 +134,11 @@ bool handlePlayerInput(){
     }
 
     // DEBUG OPTIONS
+    if (IsKeyReleased(KEY_F1)) {
+        debugMode = !debugMode;
+    }
     if(debugMode){
-        if (IsKeyReleased(KEY_F1)) {
-            debugMode = !debugMode;
-        }
+            SetMasterVolume(0.0f);
 
         if (IsKeyDown(KEY_L)) {
             enemyVel++;
@@ -167,47 +169,47 @@ bool handlePlayerInput(){
     if(player->action == SPECIAL) return true;
 
     player->action = STOP;
-    Vector2 vectorDirection = Vector2Zero();
+    Vector2 moveTarget = Vector2Zero();
 
     // controle por teclado
     if (IsKeyDown(KEY_UP)) {
         player->action = MOVE;
-        vectorDirection.y +=  -1.0f;    
+        moveTarget.y +=  -1.0f;    
     }  
 
     if (IsKeyDown(KEY_RIGHT)) {
         player->action = MOVE;
-        vectorDirection.x +=  1.0f;    
+        moveTarget.x +=  1.0f;    
     }  
     
     if (IsKeyDown(KEY_DOWN)) {
         player->action = MOVE;
-        vectorDirection.y +=  1.0f;    
+        moveTarget.y +=  1.0f;    
     }  
     
     if (IsKeyDown(KEY_LEFT)) {
         player->action = MOVE;
-        vectorDirection.x +=  -1.0f;    
+        moveTarget.x +=  -1.0f;    
     }
 
 
     // controle por mouse
     if (
-        IsMouseButtonDown(MOUSE_BUTTON_LEFT) &&
-        Vector2Distance(player->position, GetMousePosition()) > player->collisionBox.width
-        ) {
+    IsMouseButtonDown(MOUSE_BUTTON_LEFT) &&
+    Vector2Distance(player->position, GetMousePosition()) > player->collisionBox.width
+    ) {
 
         player->action = MOVE;
-        vectorDirection = Vector2Subtract(GetMousePosition(), player->position);   
-        }
+        moveTarget = Vector2Subtract(GetMousePosition(), player->position);   
+    }
+
     if (player->action == MOVE){
         player->direction = Vector2LineAngle(
                                 Vector2Zero(),
-                                vectorDirection
-                            ) * RAD2DEG * -1.0f;
-        player->direction += 90.0f;
+                                moveTarget
+                            ) * -1.0f;
+        
     }
-
 
 return true;
 }
@@ -322,34 +324,86 @@ void updateItens(){
         }
 
 }
-
+short enemyType = 0, enemyCount = 0;
+Vector2 targetPosition;
 void updateEnemies(){
         // ------------------------------------------------------------
+        enemyCount = 0;
         // "ações" dos INIMIGOS
         for (ActorNode *currentNode = enemyListHead; currentNode != NULL; currentNode = currentNode->next) {
             // verifica se está vivo
             if (currentNode->obj->life < 1) continue;
+            else enemyCount++;
+            
+            // seleciona tipo de inimigo
+            if(enemyCount > 3 ) enemyCount  = 0;
+            
+            enemyType = enemyCount;
 
             // zera variáveis
             currentActor = currentNode->obj;
             currentActor->action = STOP;
-            currentActor->speed = enemyVel;// ação padrão
+
+            switch (enemyType){
+            case 1: // comportamento perseguição se estiver proximo
+                // se estiver proximo persegue
+                if (Vector2Distance(currentActor->position, player->position) < 200 ) {
+                
+                    currentActor->action = MOVE;
+                    targetPosition = player->position;
+                    currentActor->speed =  GetRandomValue(0 ,  enemyVel);// velocidade variavel    
+                }
+                break;
+            case 2: // comportamento perseguição se estiver longe
+                // se estiver proximo persegue
+                if (Vector2Distance(currentActor->position, player->position) > 200 || player->action == SPECIAL) {
+                
+                    currentActor->action = MOVE;
+                    targetPosition = player->position;
+                    currentActor->speed =  GetRandomValue(0 ,  enemyVel);// velocidade variavel    
+                }
+                break;
+            default:// comportamento de patrulha 
+                // se o item estiver proximo o player
+                
+                if ( Vector2Distance(currentActor->position, player->position) < 128 ){
+                    targetPosition = player->position;
+                    currentActor->speed =  GetRandomValue(0 ,  enemyVel-1);
+                    currentActor->action = MOVE;
+                }else{
+
+                // seleciona como alvo o primeiro queijo ou morango disponível
+                    for (ItemNode *currentItem = itemListHead; currentItem != NULL; currentItem = currentItem->next) {
+                        targetPosition = player->position;
+                        if (currentItem->obj->type == CHEESE || currentItem->obj->type == STRAWBERRY) {
+                            targetPosition = currentItem->obj->position;
+                            
+                            currentActor->speed =   enemyVel;
+                            break;
+                        }
+                    }
 
 
-            // se estiver distante do jogador então permanece parado
-            if (Vector2Distance(currentActor->position, player->position) > 200 ) continue;
+                }
+                currentActor->action =  Vector2Distance(currentActor->position, targetPosition) > 64 ?MOVE:STOP;
+            };
 
-            // se estiver próximo do jogador então comportamento de perseguição
-            if (Vector2Distance(currentActor->position, player->position) > 64 && currentActor->action == STOP) {
-
-                currentActor->direction = Vector2LineAngle(
-                                        currentActor->position,
-                                        player->position) * RAD2DEG * -1;
-                currentActor->direction += 90.0f;
-            }
 
             // move action
-            actionMove(currentActor,  &arena);
+            switch(currentActor->action){
+                case MOVE:
+                    currentActor->direction = 
+                    Vector2Distance(currentActor->position, targetPosition) > 64 ? Vector2LineAngle(
+                                currentActor->position,
+                                targetPosition) * -1: currentActor->direction;
+                                        
+                    actionMove(currentActor,  &arena);
+                    break;
+                
+                default:
+                    actionStop(currentActor);
+                    break;
+            };
 
             if (CheckCollisionRecs(player->collisionBox, currentActor->collisionBox)) {
                 PlaySound(getHit);

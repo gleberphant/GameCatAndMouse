@@ -15,6 +15,7 @@ typedef enum ItemType { CHEESE=0, STRAWBERRY=1, TRAP=2, END_ITEM=3 } ItemType;
 
 typedef struct Item{
     Rectangle collisionBox; // retângulo para verificar a colisão
+    Vector2 position; // posição do item
     ItemType type;
     Texture2D *spritesheet;
     Rectangle spriteFrame;

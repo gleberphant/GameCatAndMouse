@@ -43,7 +43,14 @@ void actionStop(Actor* self)  {
 
 void actionMove(Actor* self, Rectangle* arena) {
 
-    Vector2 movement = Vector2Rotate((Vector2){0.0f, -self->speed}, self->direction*DEG2RAD);
+    //Vector2 movement = Vector2Rotate((Vector2){0.0f, -self->speed}, self->direction*DEG2RAD);
+
+    Vector2 movement = (Vector2)
+    {
+        self->speed*cosf((self->direction)), 
+        self->speed*sinf((self->direction))
+        }; 
+
 
     self->action = MOVE;
     self->oldPosition = self->position;
@@ -51,9 +58,8 @@ void actionMove(Actor* self, Rectangle* arena) {
 
     // VERIFICA SE JOGADOR DENTRO DA ARENA
     if(!isInside(self, arena)){
-        self->position = Vector2Subtract(self->position, movement); //nova posição
+        self->position = self->oldPosition; //nova posição
     }
-
 
 }
 
@@ -71,7 +77,7 @@ void drawActor(Actor* self){
         .height = self->spriteA2[self->action]->frameRec.height
     };
 
-    if(self->direction == 90 || self->direction  == 270){
+    if(self->direction*RAD2DEG == 0  || self->direction*RAD2DEG == 180 ){
         self->collisionBox.width = drawRect.height - 20;
         self->collisionBox.height = drawRect.width - 20;
     }
@@ -83,7 +89,6 @@ void drawActor(Actor* self){
     drawRect.x = self->position.x;
     drawRect.y = self->position.y;
 
-
     // atualizar posição do collision box
     self->collisionBox.x = self->position.x-(self->collisionBox.width/2); //newPosX
     self->collisionBox.y = self->position.y-(self->collisionBox.height/2); //newPosY
@@ -94,7 +99,7 @@ void drawActor(Actor* self){
         self->spriteA2[self->action]->frameRec,
         drawRect,
         (Vector2){ drawRect.width/2, drawRect.height/2 },
-        self->direction, // angulo de rotação em graus
+        (self->direction*RAD2DEG)+90, // angulo de rotação em graus
         WHITE
     );
 

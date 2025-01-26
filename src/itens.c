@@ -24,12 +24,15 @@ Item* getItem(Vector2 initPos, Texture2D* spritesheet, ItemType type){
         item->spriteFrame = (Rectangle){ (float)(64 * GetRandomValue(0, spriteCounts-1)), 0, 64, spritesheet->height };
     else item->spriteFrame = (Rectangle){ 0, 0, 64,  spritesheet->height };
 
-   //item->spriteFrame = (Rectangle){ 0, 0, 64,  spritesheet->height };
-
+    //item->spriteFrame = (Rectangle){ 0, 0, 64,  spritesheet->height };
+    
+    // posição do item
+    item->position = initPos;
+    
     // define a area de colisão centralizada
     item->collisionBox = (Rectangle){
-        initPos.x - (item->spriteFrame.width/2) ,
-        initPos.y - (item->spriteFrame.height/2),
+        item->position.x - (item->spriteFrame.width/2) ,
+        item->position.y - (item->spriteFrame.height/2),
         item->spriteFrame.width,
         item->spriteFrame.height};
 

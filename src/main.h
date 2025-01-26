@@ -18,11 +18,9 @@
 typedef enum ScenesType ScenesType;  // Declaração forward
 typedef struct SceneData SceneData;  // Declaração forward
 
-
 typedef struct savefile{
     int score, level;
 } savefile;
-
 
 // VARIÁVEIS GLOBAIS
 extern ScenesType currentSceneType;

@@ -68,7 +68,7 @@ void drawSceneIntro() {
         DrawRectangleRec(
                 (Rectangle){580, 20, 200, 220},
                 ColorAlpha(DARKGRAY, 0.8f)
-                );
+        );
 
         DrawText("RECORDES", 590, 25, 30, RAYWHITE);
 
