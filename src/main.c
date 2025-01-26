@@ -3,7 +3,6 @@
 /* TODO
  *   - aperfeiçoar comportamento de perseguição e adotar comportamentos aleatorios.
  *   - carregar mapa de arquivo
- *   - implementar uma load screen
  *   - aperfeiçoar para rodar em browser.
  */
 
