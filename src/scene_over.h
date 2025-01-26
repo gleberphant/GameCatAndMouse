@@ -7,10 +7,10 @@
 
 #include "raylib.h"
 
-void initSceneOver();
+struct SceneData* initSceneOver();
 
-void loopSceneOver();
-
+void inputSceneOver();
+void updateSceneOver();
 void drawSceneOver();
 
 #endif //SCENE_OVER_H

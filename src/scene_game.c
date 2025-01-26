@@ -1,4 +1,5 @@
 #include "scene_game.h"
+#include "scene.h"
 #include "main.h"
 #include "actor.h"
 #include "itens.h"
@@ -363,7 +364,7 @@ void updateEnemies(){
 }
 
 
-void updateGameScene(){
+void updateSceneGame(){
 
     updatePlayer();
     updateEnemies();
@@ -454,7 +455,7 @@ void saveGame(){
     fclose(file);
 }
 
-void closeGameScene(){
+void closeSceneGame(){
 
     //LIBERAR MEMORIA PLAYER
     TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA PLAYER LIST");
@@ -492,25 +493,33 @@ void closeGameScene(){
     return;
 
 }
-// cena loop principal
-int gameLoop() {
-    initSceneGame();
-    // GAME LOOP
+
+void loopSceneGame(){
     while (currentSceneType == GAME) {
         if (!handlePlayerInput()) {
             currentSceneType = INTRO;
             break;
         }
 
-        updateGameScene();
+        updateSceneGame();
 
         drawSceneGame();
 
         UpdateMusicStream(bgMusic);
     }
 
+
+}
+// cena loop principal
+void runSceneGame() {
+
+    initSceneGame();
+    
+    loopSceneGame();
+
     saveGame();
-    closeGameScene();
+
+    closeSceneGame();
 
 }
 //----------------------------------------------------------

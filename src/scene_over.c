@@ -1,26 +1,46 @@
 #include "scene_over.h"
+#include "scene.h"
 #include "main.h"
 
 static char *textBuffer = "GAME OVER";
 static Rectangle recText;
 
-void initSceneOver() {
+
+SceneData* initSceneOver() {
+    TraceLog(LOG_DEBUG, " == INICIANDO SCENE_OVER");
+    SceneData* scene;
     // carregando a scene
-    currentScene = loadSceneData(
+    scene = loadSceneData(
         "resources/gameover.png",
         "resources/sounds/gameover.mp3",
         OVER,
         &gameFont
         );
+    
+    // define proxima cena
+    scene->nextScene = INTRO;
 
     // setando a função de desenho
-    currentScene->draw = drawSceneOver;
-
+    scene->draw = drawSceneOver;
+    scene->input = inputSceneOver;
+    scene->update = updateSceneOver;
+    
     // configurando texto de fundo;
     recText = getTextRect(textBuffer, *currentScene->font, FONT_SIZE, FONT_SPACE);
 
     // configurando tecla para sair.
     SetExitKey(KEY_ESCAPE);
+
+    return scene;
+}
+
+
+void inputSceneOver() {
+    return;
+}
+
+void updateSceneOver() {
+    return;
 }
 
 

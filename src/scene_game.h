@@ -10,11 +10,14 @@ void initSceneGame();
 
 void loopSceneGame();
 
+void runSceneGame();
+
 void inputSceneGame();
 
 void updateSceneGame();
 
 void drawSceneGame();
 
+void saveGame();
 
 #endif //SCENE_GAME_H

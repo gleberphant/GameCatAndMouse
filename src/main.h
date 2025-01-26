@@ -33,11 +33,9 @@ extern float volumeMaster;
 extern int score;
 extern int level;
 
-void runGame();
-void configureScreen();
-void configureAudio();
 void initGame();
-void saveGame();
+void gameLoop();
 void closeGame();
+
 
 #endif

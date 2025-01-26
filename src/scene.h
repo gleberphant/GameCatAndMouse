@@ -24,20 +24,28 @@ typedef struct SceneData {
     Font* font;
     ScenesType type, nextScene;
     void (*draw)();
+    void (*update)();
+    void (*input)();
+
 } SceneData;
 
+SceneData* initScene(ScenesType sceneType);
 
-// ---- utils
+void inputScene(SceneData *scene);
 
-SceneData* loadSceneData(const char* backgroundPath, const char* musicPath, ScenesType type, Font* font);
-
-void sceneInputHandler();
+void updateScene(SceneData *scene);
 
 void drawScene(SceneData *scene);
 
-void playSceneLoop(SceneData *scene);
+void loopScene(SceneData *scene);
 
-void unloadScene(SceneData* scene);
+void unloadScene(SceneData *scene);
+
+void runScene(ScenesType sceneType);
+
+//--------- UTILS -------------------------------------
+
+SceneData* loadSceneData(const char* backgroundPath, const char* musicPath, ScenesType type, Font* font);
 
 Rectangle getTextRect(const char *text, Font font, const float fontSize, const float space);
 

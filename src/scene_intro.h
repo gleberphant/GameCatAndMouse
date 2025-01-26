@@ -1,25 +1,17 @@
-//
-// Created by gleber on 22/01/2025.
-//
 
 #ifndef SCENE_INTRO_H
 #define SCENE_INTRO_H
 
 
 #include <raylib.h>
+#include "scene.h"
 
+struct SceneData* initSceneIntro();
 
-
-void initSceneIntro();
-
-void loopSceneIntro();
 
 void inputSceneIntro();
-
+void updateSceneIntro();
 void drawSceneIntro();
-
-
-
 
 
 #endif //SCENE_INTRO_H
