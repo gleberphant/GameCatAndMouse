@@ -22,6 +22,7 @@
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppIncludesOrderOptions" type="string" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
   </component>
   <component name="CMakePresetLoader">{
   &quot;useNewFormat&quot;: true
@@ -49,16 +50,14 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="- README.md">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="Enhance gameplay dynamics and optimize actor behavior.&#10;&#10;Adjusted enemy movement behaviors for improved pursuit mechanics. Refactored key actor attributes and actions, optimizing collision handling and rendering. Introduced debugging upgrades and minor fixes for scene updates and file management.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/GameCatAndMouse.exe" beforeDir="false" afterPath="$PROJECT_DIR$/build_CatAndMouse-Desktop/GameCatAndMouse.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/score.dat" beforeDir="false" afterPath="$PROJECT_DIR$/build_CatAndMouse-Desktop/score.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/actor.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/actor.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/actor.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/actor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/maps.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/maps.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scene_game.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_game.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,7 +111,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "C/C++ File.debug.executor": "Run",
-    "CMake Application.GameCatAndMouse.executor": "Debug",
+    "CMake Application.GameCatAndMouse.executor": "Run",
     "CMake Application.raylib.executor": "Run",
     "CMake Application.uninstall.executor": "Run",
     "CMake Debug.GameCatAndMouse.executor": "Debug",
@@ -136,7 +135,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -232,6 +231,8 @@
       <workItem from="1737590884480" duration="19997000" />
       <workItem from="1737664479534" duration="22303000" />
       <workItem from="1737697321482" duration="4000" />
+      <workItem from="1737753495408" duration="8000" />
+      <workItem from="1737940411311" duration="2539000" />
     </task>
     <task id="LOCAL-00001" summary="CMAKE para compilar windows e linux">
       <option name="closed" value="true" />
@@ -313,7 +314,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737747802379</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Enhance gameplay dynamics and optimize actor behavior.&#10;&#10;Adjusted enemy movement behaviors for improved pursuit mechanics. Refactored key actor attributes and actions, optimizing collision handling and rendering. Introduced debugging upgrades and minor fixes for scene updates and file management.">
+      <option name="closed" value="true" />
+      <created>1737753322205</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1737753322205</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -336,6 +345,7 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="CMAKE para compilar windows e linux" />
     <MESSAGE value="- cmake agora compila para WEB ASSEMBLY &#10;- correção do efeito do morango&#10;- tempo para itens respawmar" />
     <MESSAGE value="- implementacao prelimnar de maptile" />
@@ -343,7 +353,8 @@
     <MESSAGE value="- lifebar" />
     <MESSAGE value="- rebase" />
     <MESSAGE value="- README.md" />
-    <option name="LAST_COMMIT_MESSAGE" value="- README.md" />
+    <MESSAGE value="Enhance gameplay dynamics and optimize actor behavior.&#10;&#10;Adjusted enemy movement behaviors for improved pursuit mechanics. Refactored key actor attributes and actions, optimizing collision handling and rendering. Introduced debugging upgrades and minor fixes for scene updates and file management." />
+    <option name="LAST_COMMIT_MESSAGE" value="Enhance gameplay dynamics and optimize actor behavior.&#10;&#10;Adjusted enemy movement behaviors for improved pursuit mechanics. Refactored key actor attributes and actions, optimizing collision handling and rendering. Introduced debugging upgrades and minor fixes for scene updates and file management." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

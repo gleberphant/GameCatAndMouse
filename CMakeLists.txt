@@ -28,16 +28,7 @@
    # --- Configuração do Projeto ---
    message(STATUS "Configurando o projeto ...")
    file(GLOB_RECURSE SOURCES "src/*.c")
-   add_executable(${PROJECT_NAME} ${SOURCES}
-           src/scene_intro.c
-           src/scene_intro.h
-           src/scene_game.c
-           src/scene_game.h
-           src/scene_over.c
-           src/scene_over.h
-           src/utils.h
-           src/utils.c
-   )
+   add_executable(${PROJECT_NAME} ${SOURCES})
 
    # --- Linkagem das Bibliotecas ---
    if (WIN32)

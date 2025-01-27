@@ -3,7 +3,6 @@
 #define MAIN_H_
 
 #include "raylib.h"
-#include "scene.h"
 #include <stdlib.h>
 
 // constantes

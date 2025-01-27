@@ -1,21 +1,11 @@
-#include <stdio.h>
-
 /* TODO
  *   - carregar mapa de arquivo
  *   - aperfeiçoar para rodar em browser.
  */
 
 #include "main.h"
-#include "raymath.h"
-
-
 #include "animation.h"
-#include "actor.h"
-#include "lists.h"
-#include "itens.h"
-#include "maps.h"
-#include "scene_over.h"
-#include "scene_intro.h"
+#include "scene.h"
 #include "scene_game.h"
 
 SceneData* currentScene;
@@ -63,7 +53,6 @@ void gameLoop() {
         }
     }
 }
-
 
 
 

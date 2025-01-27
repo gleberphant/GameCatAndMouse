@@ -342,50 +342,49 @@ void updateEnemies(){
 
             // zera variáveis
             currentActor = currentNode->obj;
-            currentActor->action = STOP;
+            //currentActor->action = STOP;
+
+            currentActor->action = MOVE;
+            targetPosition = player->position;
+            currentActor->speed =  GetRandomValue(1 ,  enemyVel);// velocidade variavel
 
             switch (enemyType){
-            case 1: // comportamento perseguição se estiver proximo
-                // se estiver proximo persegue
-                if (Vector2Distance(currentActor->position, player->position) < 200 ) {
-                
-                    currentActor->action = MOVE;
-                    targetPosition = player->position;
-                    currentActor->speed =  GetRandomValue(0 ,  enemyVel);// velocidade variavel    
-                }
-                break;
-            case 2: // comportamento perseguição se estiver longe
-                // se estiver proximo persegue
-                if (Vector2Distance(currentActor->position, player->position) > 200 || player->action == SPECIAL) {
-                
-                    currentActor->action = MOVE;
-                    targetPosition = player->position;
-                    currentActor->speed =  GetRandomValue(0 ,  enemyVel);// velocidade variavel    
-                }
-                break;
-            default:// comportamento de patrulha 
-                // se o item estiver proximo o player
-                
-                if ( Vector2Distance(currentActor->position, player->position) < 128 ){
-                    targetPosition = player->position;
-                    currentActor->speed =  GetRandomValue(0 ,  enemyVel-1);
-                    currentActor->action = MOVE;
-                }else{
-
-                // seleciona como alvo o primeiro queijo ou morango disponível
+            case 1:
+                // protege o queijo quando jogador não estiver muito próximo.
+                if ( Vector2Distance(currentActor->position, player->position) > 128 && player->action != SPECIAL ){
                     for (ItemNode *currentItem = itemListHead; currentItem != NULL; currentItem = currentItem->next) {
-                        targetPosition = player->position;
-                        if (currentItem->obj->type == CHEESE || currentItem->obj->type == STRAWBERRY) {
+                        if (currentItem->obj->type == CHEESE ) {
                             targetPosition = currentItem->obj->position;
-                            
                             currentActor->speed =   enemyVel;
+                            currentActor->action =  Vector2Distance(currentActor->position, targetPosition) < 64 ? STOP : MOVE;
                             break;
                         }
                     }
-
-
                 }
-                currentActor->action =  Vector2Distance(currentActor->position, targetPosition) > 64 ?MOVE:STOP;
+                break;
+
+
+            case 2:
+                // protege o morando quando jogador não estiver muito próximo.
+                if ( Vector2Distance(currentActor->position, player->position) > 128 && player->action != SPECIAL ){
+                    for (ItemNode *currentItem = itemListHead; currentItem != NULL; currentItem = currentItem->next) {
+                        if ( currentItem->obj->type == STRAWBERRY) {
+                            targetPosition = currentItem->obj->position;
+                            currentActor->speed =   enemyVel;
+                            currentActor->action =  Vector2Distance(currentActor->position, targetPosition) < 64 ? STOP : MOVE;
+                            break;
+                        }
+                    }
+                }
+                break;
+
+                default:// comportamento de dormir se jogador estiver longe
+                    if (Vector2Distance(currentActor->position, player->position) > 250 && player->action != SPECIAL ) {
+                            currentActor->action = STOP;
+                        }
+                    break;
+
+
             };
 
 
