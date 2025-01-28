@@ -22,7 +22,6 @@
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppIncludesOrderOptions" type="string" />
-    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
   </component>
   <component name="CMakePresetLoader">{
   &quot;useNewFormat&quot;: true
@@ -50,13 +49,14 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="Enhance gameplay dynamics and optimize actor behavior.&#10;&#10;Adjusted enemy movement behaviors for improved pursuit mechanics. Refactored key actor attributes and actions, optimizing collision handling and rendering. Introduced debugging upgrades and minor fixes for scene updates and file management.">
+    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="comportamentos inimigos. proteger queijo e proteegr morando">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/GameCatAndMouse.exe" beforeDir="false" afterPath="$PROJECT_DIR$/build_CatAndMouse-Desktop/GameCatAndMouse.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/score.dat" beforeDir="false" afterPath="$PROJECT_DIR$/build_CatAndMouse-Desktop/score.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/actor.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/actor.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itens.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/itens.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itens.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/itens.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/maps.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/maps.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/scene_game.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_game.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -84,15 +84,11 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/animation.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/main.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/scene_intro.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/scene_over.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/utils.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="Make.Settings">
     <option name="path" value="E:\w64devkit\bin\mingw32-make.exe" />
@@ -154,12 +150,12 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.GameCatAndMouse">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration name="GameCatAndMouse" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameCatAndMouse" TARGET_NAME="GameCatAndMouse" CONFIG_NAME="Release-web" RUN_TARGET_PROJECT_NAME="GameCatAndMouse" RUN_TARGET_NAME="GameCatAndMouse">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="GameCatAndMouse" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameCatAndMouse" TARGET_NAME="GameCatAndMouse" CONFIG_NAME="Release-web" RUN_TARGET_PROJECT_NAME="GameCatAndMouse" RUN_TARGET_NAME="GameCatAndMouse">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -232,7 +228,8 @@
       <workItem from="1737664479534" duration="22303000" />
       <workItem from="1737697321482" duration="4000" />
       <workItem from="1737753495408" duration="8000" />
-      <workItem from="1737940411311" duration="2539000" />
+      <workItem from="1737940411311" duration="3868000" />
+      <workItem from="1738018215323" duration="7405000" />
     </task>
     <task id="LOCAL-00001" summary="CMAKE para compilar windows e linux">
       <option name="closed" value="true" />
@@ -322,7 +319,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737753322205</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="comportamentos inimigos. proteger queijo e proteegr morando">
+      <option name="closed" value="true" />
+      <created>1737943104635</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1737943104635</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -354,7 +359,8 @@
     <MESSAGE value="- rebase" />
     <MESSAGE value="- README.md" />
     <MESSAGE value="Enhance gameplay dynamics and optimize actor behavior.&#10;&#10;Adjusted enemy movement behaviors for improved pursuit mechanics. Refactored key actor attributes and actions, optimizing collision handling and rendering. Introduced debugging upgrades and minor fixes for scene updates and file management." />
-    <option name="LAST_COMMIT_MESSAGE" value="Enhance gameplay dynamics and optimize actor behavior.&#10;&#10;Adjusted enemy movement behaviors for improved pursuit mechanics. Refactored key actor attributes and actions, optimizing collision handling and rendering. Introduced debugging upgrades and minor fixes for scene updates and file management." />
+    <MESSAGE value="comportamentos inimigos. proteger queijo e proteegr morando" />
+    <option name="LAST_COMMIT_MESSAGE" value="comportamentos inimigos. proteger queijo e proteegr morando" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

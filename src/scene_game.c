@@ -31,14 +31,14 @@ void initSceneGame(){
     // SETAR VARIÁVEIS DO LOOP
     TraceLog(LOG_DEBUG, "== definindo GLOBAL VARIABLES");
     if (debugMode)volumeMaster = 0;
-    enemyVel = 4;
+    enemyVel = 3;
 
     // Carregar o mapa
     TraceLog(LOG_DEBUG, "== carregando MAPAS");
     Vector2 mapEnemies[] = {
-        (Vector2){20.0f, 140.0f},
-        (Vector2){650.0f, 120.0f},
-        (Vector2){60.0f, 520.0f}
+        (Vector2){128.0f, 140.0f},
+        (Vector2){650.0f, 120.0f}
+
     };
 
     InitListItens initItens[] = {
@@ -260,7 +260,7 @@ void updateItens(){
         for (ItemNode *currentNode = itemListHead, *prev = NULL; currentNode != NULL;
              prev = currentNode, currentNode = currentNode->next) {
             currentItem = currentNode->obj;
-            currentItem->life--;
+            currentItem->life-= 1 / GetFPS();
 
             // checa colisão com item
             if (CheckCollisionRecs(player->collisionBox, currentItem->collisionBox)) {
@@ -336,7 +336,7 @@ void updateEnemies(){
             else enemyCount++;
             
             // seleciona tipo de inimigo
-            if(enemyCount > 3 ) enemyCount  = 0;
+            if(enemyCount > 2 ) enemyCount  = 0;
             
             enemyType = enemyCount;
 
@@ -425,6 +425,32 @@ void updateSceneGame(){
 
 }
 
+void drawHud() {
+    DrawRectangle(20, 20, 380, 50, ColorAlpha(SKYBLUE, 0.5f));
+    DrawRectangle(150,20,player->life*2,20,LIME);
+    DrawRectangleLines(150,20,200,20,BLACK);
+    DrawText(TextFormat("VIDA : %d", player->life), 20, 20, 20, BLACK);
+    DrawText(TextFormat("PONTOS: %d", score), 20, 40, 20, BLACK);
+    DrawText(TextFormat("NÍVEL: %d", level), 500, 20, 40, BLACK);
+}
+
+void drawDebug() {
+    BeginBlendMode(BLEND_ALPHA);
+    DrawRectangle(15, 420, 270, 160, ColorAlpha(SKYBLUE, 0.5f));
+
+
+    DrawText( TextFormat("PlayerSize: %.2f x %.2f", player->collisionBox.width, player->collisionBox.height), 20, 440, 18, BLACK);
+    DrawText( TextFormat("Mouse: %d %d", GetMouseX(), GetMouseY()), 20, 460, 18, BLACK);
+    DrawText( TextFormat("GriMap Pos: i %d j %d", (int) floorf(player->position.x/TILE_SIZE), (int) floorf(player->position.y/TILE_SIZE)), 20, 480, 18,BLACK);
+    DrawText( TextFormat("Player Pos: x %d y %d", (int) player->position.x, (int) player->position.y ), 20, 500, 18, BLACK);
+    DrawText( TextFormat("SpriteA->repeat: %d", player->spriteA2[player->action]->repeat), 20, 520, 18, BLACK);
+    DrawText( TextFormat("Player->Action: %d", player->action), 20, 540, 18, BLACK);
+    DrawText( TextFormat("Player->direction: %f", player->direction), 20, 560, 18, BLACK);
+    DrawText(TextFormat("FPS: %d", GetFPS() ), 500, 570, 20, BLACK);
+    EndBlendMode();
+
+}
+
 void drawSceneGame(){
 
     BeginDrawing();
@@ -445,24 +471,11 @@ void drawSceneGame(){
         drawActorList(playerListHead);
 
         //desenha HUD
-        DrawRectangle(150,20,player->life*2,20,LIME);
-        DrawRectangleLines(150,20,200,20,BLACK);
-        DrawText(TextFormat("VIDA : %d", player->life), 20, 20, 20, BLACK);
-        DrawText(TextFormat("PONTOS: %d", score), 20, 40, 20, BLACK);
-        DrawText(TextFormat("NÍVEL: %d", level), 500, 20, 40, BLACK);
+        drawHud();
 
         // debug infor
         if (debugMode) {
-            BeginBlendMode(BLEND_ALPHA);
-            DrawRectangle(15, 450, 270, 140, ColorAlpha(SKYBLUE, 0.5f));
-            DrawText( TextFormat("Player->direction: %f", player->direction), 20, 560, 18, BLACK);
-            DrawText( TextFormat("Player->Action: %d", player->action), 20, 540, 18, BLACK);
-            DrawText( TextFormat("SpriteA->repeat: %d", player->spriteA2[player->action]->repeat), 20, 520, 18, BLACK);
-            DrawText( TextFormat("Player Pos: x %d y %d", (int) player->position.x, (int) player->position.y ), 20, 500, 18, BLACK);
-            DrawText( TextFormat("GriMap Pos: i %d j %d", (int) floorf(player->position.x/TILE_SIZE), (int) floorf(player->position.y/TILE_SIZE)), 20, 480, 18,BLACK);
-            DrawText( TextFormat("Mouse: %d %d", GetMouseX(), GetMouseY()), 20, 460, 18, BLACK);
-            DrawText(TextFormat("FPS: %d", GetFPS() ), 500, 570, 20, BLACK);
-            EndBlendMode();
+            drawDebug();
         }
 
          EndDrawing();

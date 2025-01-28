@@ -11,9 +11,27 @@ Rectangle tileRec = {0, 0, TILE_SIZE, TILE_SIZE};
 int atlasNumCol = ATLAS_NUM_COL, atlasNumRow = ATLAS_NUM_ROW;
 int tileIndex = 0, indexX=0, indexY=0;
 
+int map[NUM_TILES_HEIGHT+1] [NUM_TILES_WIDTH+1]= {
+{0,1,1,1,1,1,1,1,1,1,1,2},
+{8,9,9,9,9,9,9,9,9,9,9,10},
+{8,9,9,9,9,9,9,9,9,9,9,10},
+{8,9,9,9,9,9,9,9,9,9,9,10},
+{8,9,9,9,9,9,9,9,9,9,9,10},
+{8,9,9,9,9,9,9,9,9,9,9,10},
+{8,9,9,9,9,9,9,9,9,9,9,10},
+{8,9,9,9,9,9,9,9,9,9,9,10},
+{16,17,17,17,17,17,17,17,17,17,17,18}
+};
+
 // carrega mapa
 void loadMap(const char* pathfile) {
     atlas = LoadTexture(pathfile);
+    // for (int i = 0; i < NUM_TILES_WIDTH; i++) {
+    //     for (int j = 0; j < NUM_TILES_HEIGHT; j++) {
+    //         map[i][j] = 9;
+    //     }
+    // }
+    //
 }
 
 
@@ -26,12 +44,14 @@ bool isInside(Actor* target, Rectangle *arena){
     playerX = (int) floorf((target->position.x-offSetX )/TILE_SIZE);
     playerY = (int) floorf((target->position.y-offSetY )/TILE_SIZE);
 
-    if ((playerX) > NUM_TILES_WIDTH - 1 ||
-        (playerX) < 0 ||
-        (playerY) > NUM_TILES_HEIGHT - 1||
-        (playerY) < 0 ) {
-        return false;
-    }
+    if (map[playerY][playerX]!=9){ return false;}
+
+    // if ((playerX) > NUM_TILES_WIDTH - 1 ||
+    //     (playerX) < 0 ||
+    //     (playerY) > NUM_TILES_HEIGHT - 1||
+    //     (playerY) < 0 ) {
+    //     return false;
+    // }
 
     return true;
 }
@@ -46,7 +66,7 @@ void drawMap(Actor* target ) {
     for (int i = 0; i < NUM_TILES_WIDTH; i++) {
         for (int j = 0; j < NUM_TILES_HEIGHT; j++) {
 
-            tileIndex = 9;
+            tileIndex = map[j][i];
 
 
             indexY = (int)floorf( tileIndex/atlasNumCol );

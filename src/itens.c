@@ -8,9 +8,7 @@
  * a altura do spritesheet é o raio da area de colisão.
  */
 
-Item* getItem(Vector2 initPos, Texture2D* spritesheet, ItemType type){
-
-
+Item* getItem(Vector2 initPos, Texture2D* spritesheet, ItemType type) {
     Item* item = malloc(sizeof(Item));
 
     // define o spritesheet
@@ -30,15 +28,18 @@ Item* getItem(Vector2 initPos, Texture2D* spritesheet, ItemType type){
     item->position = initPos;
     
     // define a area de colisão centralizada
-    item->collisionBox = (Rectangle){
-        item->position.x - (item->spriteFrame.width/2) ,
-        item->position.y - (item->spriteFrame.height/2),
-        item->spriteFrame.width,
-        item->spriteFrame.height};
+
+    item->collisionBox.width  = 40;//item->spriteFrame.width -32;
+    item->collisionBox.height = 40;//item->spriteFrame.height;
+    item->collisionBox.x = item->position.x - (item->collisionBox.width/2);
+    item->collisionBox.y = item->position.y - (item->collisionBox.height/2);
+
+
+
 
     // seta o tipo de item e a vida inicial
     item->type = type;
-    item->life = 10*30; // tempo em segundos * media de fps
+    item->life = 10; // tempo em segundos (segundos = life/30)
 
     // retorna o novo item
     return item;
@@ -49,8 +50,8 @@ void drawItem(Item* self){
     DrawTexturePro(
         *self->spritesheet,
         self->spriteFrame,
-        self->collisionBox,
-        (Vector2){0,0},
+        (Rectangle){ self->position.x, self->position.y, self->spriteFrame.width, self->spriteFrame.height},
+        (Vector2){(self->spriteFrame.width/2), (self->spriteFrame.height/2)},
         0.0f,
         WHITE
     );

@@ -18,8 +18,8 @@ void setActor(Actor* self, Vector2 initPos, Texture2D* spritesheet){
     // retângulo de colisão
     self->collisionBox.x = initPos.x;
     self->collisionBox.y = initPos.y;
-    self->collisionBox.width  = self->spriteA2[STOP]->frameRec.width;
-    self->collisionBox.height = self->spriteA2[STOP]->frameRec.height;
+    self->collisionBox.width  = 64;//self->spriteA2[STOP]->frameRec.width;
+    self->collisionBox.height = 64;//self->spriteA2[STOP]->frameRec.height;
 
     // centraliza posição no sprite
     self->position = initPos;
@@ -77,14 +77,10 @@ void drawActor(Actor* self){
         .height = self->spriteA2[self->action]->frameRec.height
     };
 
-    if(self->direction*RAD2DEG == 0  || self->direction*RAD2DEG == 180 ){
-        self->collisionBox.width = drawRect.height - 20;
-        self->collisionBox.height = drawRect.width - 20;
-    }
-    else{
-        self->collisionBox.width  = drawRect.width  - 20;
-        self->collisionBox.height = drawRect.height - 20;
-    }
+    // Vector2 size = Vector2Rotate((Vector2){drawRect.width-32, drawRect.height-3}, self->direction - (90 * DEG2RAD));
+    //self->collisionBox.width     = fmax( abs(size.x), 32);
+    //self->collisionBox.height    =  fmax( abs(size.y), 32);
+
 
     drawRect.x = self->position.x;
     drawRect.y = self->position.y;

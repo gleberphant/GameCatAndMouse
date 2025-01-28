@@ -19,7 +19,7 @@ typedef struct Item{
     ItemType type;
     Texture2D *spritesheet;
     Rectangle spriteFrame;
-    int life;
+    float life;
 } Item;
 
 
