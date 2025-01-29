@@ -22,6 +22,7 @@
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppIncludesOrderOptions" type="string" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
   </component>
   <component name="CMakePresetLoader">{
   &quot;useNewFormat&quot;: true
@@ -49,15 +50,34 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="comportamentos inimigos. proteger queijo e proteegr morando">
+    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="colisao com itens&#10;mapa de matrix">
+      <change afterPath="$PROJECT_DIR$/resources/map01.data" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/GameCatAndMouse.exe" beforeDir="false" afterPath="$PROJECT_DIR$/build_CatAndMouse-Desktop/GameCatAndMouse.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/actor.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/actor.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/GameCatAndMouse.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/score.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/01_cheese.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/02_cheese.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/face_cat.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/face_mouse.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/gameover.png" beforeDir="false" afterPath="$PROJECT_DIR$/resources/gameover.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/intro_bg.png" beforeDir="false" afterPath="$PROJECT_DIR$/resources/intro_bg.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/mapPack_spritesheet.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/score.dat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/actor.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/actor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/itens.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/itens.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/itens.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/itens.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lists.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/lists.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lists.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/lists.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/maps.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/maps.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/out/actor.o" beforeDir="false" afterPath="$PROJECT_DIR$/src/out/actor.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/out/itens.o" beforeDir="false" afterPath="$PROJECT_DIR$/src/out/itens.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/out/main.o" beforeDir="false" afterPath="$PROJECT_DIR$/src/out/main.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scene.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/scene_game.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_game.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scene_intro.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_intro.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scene_over.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_over.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,7 +151,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "settings.editor.selected.configurable": "preferences.fileTypes",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -150,12 +170,12 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.GameCatAndMouse">
-    <configuration name="GameCatAndMouse" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameCatAndMouse" TARGET_NAME="GameCatAndMouse" CONFIG_NAME="Release-web" RUN_TARGET_PROJECT_NAME="GameCatAndMouse" RUN_TARGET_NAME="GameCatAndMouse">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration name="GameCatAndMouse" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameCatAndMouse" TARGET_NAME="GameCatAndMouse" CONFIG_NAME="Release-web" RUN_TARGET_PROJECT_NAME="GameCatAndMouse" RUN_TARGET_NAME="GameCatAndMouse">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -229,7 +249,9 @@
       <workItem from="1737697321482" duration="4000" />
       <workItem from="1737753495408" duration="8000" />
       <workItem from="1737940411311" duration="3868000" />
-      <workItem from="1738018215323" duration="7405000" />
+      <workItem from="1738018215323" duration="7568000" />
+      <workItem from="1738098458887" duration="607000" />
+      <workItem from="1738106457453" duration="13060000" />
     </task>
     <task id="LOCAL-00001" summary="CMAKE para compilar windows e linux">
       <option name="closed" value="true" />
@@ -327,7 +349,15 @@
       <option name="project" value="LOCAL" />
       <updated>1737943104635</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="colisao com itens&#10;mapa de matrix">
+      <option name="closed" value="true" />
+      <created>1738027233849</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1738027233849</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -360,7 +390,8 @@
     <MESSAGE value="- README.md" />
     <MESSAGE value="Enhance gameplay dynamics and optimize actor behavior.&#10;&#10;Adjusted enemy movement behaviors for improved pursuit mechanics. Refactored key actor attributes and actions, optimizing collision handling and rendering. Introduced debugging upgrades and minor fixes for scene updates and file management." />
     <MESSAGE value="comportamentos inimigos. proteger queijo e proteegr morando" />
-    <option name="LAST_COMMIT_MESSAGE" value="comportamentos inimigos. proteger queijo e proteegr morando" />
+    <MESSAGE value="colisao com itens&#10;mapa de matrix" />
+    <option name="LAST_COMMIT_MESSAGE" value="colisao com itens&#10;mapa de matrix" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

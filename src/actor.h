@@ -20,7 +20,7 @@ typedef enum ActorType { PLAYER=0, ENEMY=1, ITEM=2 } ActorType;
 
 // ATORES. SERVE PARA JOGADOR, INIMIGOS E ITENS
 typedef struct Actor{
-    int life;
+    int life, count, behavior;
     float direction;
     bool collision;
 

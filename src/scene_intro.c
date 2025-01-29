@@ -27,14 +27,11 @@ SceneData* initSceneIntro() {
     scene->update = updateSceneIntro;
     scene->draw = drawSceneIntro;
 
-    // configurando texto de fundo;
-    recText = getTextRect(textIntro, gameFont, FONT_SIZE, FONT_SPACE);
-
     // configurando tecla de escape
     SetExitKey(KEY_ESCAPE);
 
     // carregar recorde de pontuação
-    FILE* file = fopen("score.dat", "rb");
+    FILE* file = fopen("resources/score.data", "rb");
 
     if (file != NULL ) {
 
@@ -48,6 +45,14 @@ SceneData* initSceneIntro() {
 
 
 void inputSceneIntro() {
+
+    if (IsKeyReleased(KEY_ENTER) || IsKeyReleased(KEY_KP_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT) ) {
+        // seleciona a proxima cena
+        currentSceneType = currentScene->nextScene;
+        return;
+    }
+
+
     return;
  }
 
@@ -62,24 +67,27 @@ void drawSceneIntro() {
         ClearBackground(BLACK);
 
         // desenha background
-        DrawTexture(currentScene->background, 0, 0, WHITE);
+    DrawTexturePro(currentScene->background,
+        (Rectangle){0, 0, currentScene->background.width, currentScene->background.height},
+        (Rectangle){0, 0, SCREEN_WIDTH, SCREEN_HEIGHT},
+        (Vector2){ 0, 0 },
+        0,
+        WHITE);
+
         
         // desenha recorders
         DrawRectangleRec(
-                (Rectangle){580, 20, 200, 220},
+                (Rectangle){780, 220, 200, 220},
                 ColorAlpha(DARKGRAY, 0.8f)
         );
 
-        DrawText("RECORDES", 590, 25, 30, RAYWHITE);
+        DrawText("RECORDES", 790, 225, 30, RAYWHITE);
 
         for (int i = 0; i < sizeof(records)/sizeof(records[0]); i++) {
-            DrawText(TextFormat(" + %03d pts", records[i]), 590, 70+(i*25), 20, RAYWHITE);
+            DrawText(TextFormat(" + %03d pts", records[i]), 790, 275+(i*25), 20, RAYWHITE);
         }
 
-        DrawRectangleRec(recText, ColorAlpha(DARKGRAY, 0.8f));
 
-        // desenha texto titulo  
-        DrawTextEx(gameFont, textIntro, (Vector2){recText.x, recText.y}, FONT_SIZE, FONT_SPACE, WHITE);
 
     EndDrawing();
 }

@@ -31,19 +31,17 @@ typedef struct InitListItens{
 
 }InitListItens;
 
-ActorNode* getActorList( Vector2 initPosition[], const char* sprite, short maxNodes);
-
+// atores
+ActorNode* getActorList( Vector2 initPosition[], Texture2D* spriteSheet, short maxNodes);
 void drawActorList(ActorNode* targetList);
-
 void unloadActorList(ActorNode* targetList);
 
 // itens
-
 ItemNode* getItemList(InitListItens initItens[], Texture2D* spritesheet, short maxNodes);
 void addItemNode(ItemNode** target);
 void removeItemNode(ItemNode *target);
 void drawItemList(ItemNode* targetList);
 void unloadItemList(ItemNode* targetList);
-
+Texture2D* getSpriteSheet( const char* sprite);
 
 #endif

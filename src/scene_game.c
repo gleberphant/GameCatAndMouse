@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+
 Actor *player, *currentActor = NULL;
 Item *currentItem = NULL;
 
@@ -20,10 +21,13 @@ Rectangle arena;
 float volumeMaster = 1.01f, angulo;
 int level=0, score=0, enemyVel=0;
 
-Texture2D *itemSpriteSheet;
+Texture2D *itemSpriteSheetArray, *catSpriteSheet;
 Sound eatCheese, eatStrawberry, getHit;
 
 Music bgMusic;
+
+short enemyType = 0, enemyCount = 0;
+Vector2 targetPosition;
 
 
 void initSceneGame(){
@@ -37,7 +41,7 @@ void initSceneGame(){
     TraceLog(LOG_DEBUG, "== carregando MAPAS");
     Vector2 mapEnemies[] = {
         (Vector2){128.0f, 140.0f},
-        (Vector2){650.0f, 120.0f}
+        (Vector2){250.0f, 420.0f}
 
     };
 
@@ -56,9 +60,11 @@ void initSceneGame(){
 
     // CARREGAR LISTA DE INIMIGOS
     TraceLog(LOG_DEBUG, "== carregando ENEMY LIST");
+
+    catSpriteSheet = getSpriteSheet("resources/catA");
     enemyListHead = getActorList(
         mapEnemies,
-        "resources/catA",
+        catSpriteSheet,
         sizeof(mapEnemies) / sizeof(Vector2)
     );
 
@@ -69,17 +75,20 @@ void initSceneGame(){
 
     // CARREGAR LISTA DE ITENS
     TraceLog(LOG_DEBUG, "== carregando ITENS LIST");
-    itemSpriteSheet = malloc(sizeof(Texture2D) * 4);
 
-    itemSpriteSheet[CHEESE] = LoadTexture("resources/item_cheese.png");
-    itemSpriteSheet[STRAWBERRY] = LoadTexture("resources/item_strawberry.png");
-    itemSpriteSheet[TRAP] = LoadTexture("resources/item_trap.png");
-    itemSpriteSheet[END_ITEM] = (Texture2D){0};
+    const char *spritepathList[] = {
+    "resources/item_cheese.png",
+    "resources/item_strawberry.png",
+    "resources/item_trap.png"
+    };
+
+
+    itemSpriteSheetArray = getItemSpriteSheetArray(spritepathList);
 
 
     itemListHead = getItemList(
         initItens,
-        itemSpriteSheet,
+        itemSpriteSheetArray,
         sizeof(initItens) / sizeof(InitListItens)
     );
 
@@ -93,7 +102,7 @@ void initSceneGame(){
 
     playerListHead = getActorList(
         (Vector2[]){PLAYER_INIT_POS},
-        "resources/mouseA",
+        getSpriteSheet("resources/mouseA"),
         1
     );
 
@@ -122,21 +131,13 @@ void initSceneGame(){
 
 bool handlePlayerInput(){
 
-    // EXIT SCENE
-    if (WindowShouldClose()) {
-        currentSceneType = EXIT;
-        return false;
-    }
-
     if (IsKeyPressed(KEY_ESCAPE)) {
         currentSceneType = INTRO;
         return false;
     }
 
-    // DEBUG OPTIONS
-    if (IsKeyReleased(KEY_F1)) {
-        debugMode = !debugMode;
-    }
+    inputScene(currentScene);
+
     if(debugMode){
             SetMasterVolume(0.0f);
 
@@ -214,18 +215,37 @@ bool handlePlayerInput(){
 return true;
 }
 
+
+void updateMap() {
+    // Verifica o nível atual
+    if (score > level * 20) {
+        enemyVel += 1;
+        level++;
+
+
+        Vector2 newEnemyPos[] = {
+        (Vector2){250.0f, 420.0f}
+        };
+
+        ActorNode* newCatNode = getActorList(
+        newEnemyPos,
+        catSpriteSheet,
+        sizeof(newEnemyPos) / sizeof(Vector2)
+        );
+
+        newCatNode->next = enemyListHead;
+        enemyListHead = newCatNode;
+
+    }
+
+}
+
 void updatePlayer(){
 
 // Condições de vitória ou derrota.
         if (player->life < 1) {
             currentSceneType = OVER;
             return;
-        }
-
-        // Verifica o nível atual
-        if (score > level * 20) {
-            enemyVel += 1;
-            level++;
         }
 
         // ações do jogador
@@ -260,7 +280,7 @@ void updateItens(){
         for (ItemNode *currentNode = itemListHead, *prev = NULL; currentNode != NULL;
              prev = currentNode, currentNode = currentNode->next) {
             currentItem = currentNode->obj;
-            currentItem->life-= 1 / GetFPS();
+
 
             // checa colisão com item
             if (CheckCollisionRecs(player->collisionBox, currentItem->collisionBox)) {
@@ -290,9 +310,9 @@ void updateItens(){
                         break;
                 }
             }
+       // criar item novo e remover anterior
+            currentItem->life--;
 
-            // todo REFATORAR ESSE CÓDIGO PARA COLOCAR EM UMA FUNÇÃO
-            // criar item novo e remover anterior
             if (currentItem->life < 1) {
                 // REMOVER O NÓ
                 if (prev == NULL) {
@@ -309,14 +329,25 @@ void updateItens(){
                 ItemNode *newNode = malloc(sizeof(ItemNode));;
                 newNode->obj = malloc(sizeof(Item));
 
-                ItemType newItemType = (ItemType) GetRandomValue(CHEESE, TRAP);
+
                 newNode->obj = getItem(
                     (Vector2){
                         (float) GetRandomValue(64, SCREEN_WIDTH - 64), (float) (float) GetRandomValue(64, SCREEN_HEIGHT - 64)
                     },
-                    &itemSpriteSheet[newItemType],
-                    newItemType
+                    itemSpriteSheetArray,
+                    GetRandomValue(CHEESE, TRAP)
                 );
+
+                currentItem = newNode->obj;
+
+                if (CheckCollisionRecs(player->collisionBox, currentItem->collisionBox)) {
+                    currentItem->collisionBox = getCollisionBox(
+                        (Vector2){(float) GetRandomValue(64, SCREEN_WIDTH - 64), (float) (float) GetRandomValue(64, SCREEN_HEIGHT - 64)}
+                    );
+
+                }
+
+
 
                 newNode->next = currentNode->next;
                 currentNode->next = newNode;
@@ -324,8 +355,7 @@ void updateItens(){
         }
 
 }
-short enemyType = 0, enemyCount = 0;
-Vector2 targetPosition;
+
 void updateEnemies(){
         // ------------------------------------------------------------
         enemyCount = 0;
@@ -335,34 +365,33 @@ void updateEnemies(){
             if (currentNode->obj->life < 1) continue;
             else enemyCount++;
             
-            // seleciona tipo de inimigo
-            if(enemyCount > 2 ) enemyCount  = 0;
-            
-            enemyType = enemyCount;
-
             // zera variáveis
             currentActor = currentNode->obj;
-            //currentActor->action = STOP;
 
             currentActor->action = MOVE;
+            currentActor->speed =  GetRandomValue(0 ,  enemyVel);// velocidade variavel
+            currentActor->count++;
             targetPosition = player->position;
-            currentActor->speed =  GetRandomValue(1 ,  enemyVel);// velocidade variavel
 
-            switch (enemyType){
+            if (currentActor->count > 90){
+                currentActor->behavior = GetRandomValue(0, 2);
+                currentActor->count = 0 ;
+            }
+
+            switch (currentActor->behavior){
             case 1:
                 // protege o queijo quando jogador não estiver muito próximo.
                 if ( Vector2Distance(currentActor->position, player->position) > 128 && player->action != SPECIAL ){
                     for (ItemNode *currentItem = itemListHead; currentItem != NULL; currentItem = currentItem->next) {
                         if (currentItem->obj->type == CHEESE ) {
                             targetPosition = currentItem->obj->position;
-                            currentActor->speed =   enemyVel;
+                            //currentActor->speed =   enemyVel;
                             currentActor->action =  Vector2Distance(currentActor->position, targetPosition) < 64 ? STOP : MOVE;
                             break;
                         }
                     }
                 }
                 break;
-
 
             case 2:
                 // protege o morando quando jogador não estiver muito próximo.
@@ -370,7 +399,7 @@ void updateEnemies(){
                     for (ItemNode *currentItem = itemListHead; currentItem != NULL; currentItem = currentItem->next) {
                         if ( currentItem->obj->type == STRAWBERRY) {
                             targetPosition = currentItem->obj->position;
-                            currentActor->speed =   enemyVel;
+                            //currentActor->speed =   enemyVel;
                             currentActor->action =  Vector2Distance(currentActor->position, targetPosition) < 64 ? STOP : MOVE;
                             break;
                         }
@@ -378,11 +407,11 @@ void updateEnemies(){
                 }
                 break;
 
-                default:// comportamento de dormir se jogador estiver longe
-                    if (Vector2Distance(currentActor->position, player->position) > 250 && player->action != SPECIAL ) {
-                            currentActor->action = STOP;
-                        }
-                    break;
+            default:// comportamento de dormir se jogador estiver longe
+                if (Vector2Distance(currentActor->position, player->position) > 400 && player->action != SPECIAL ) {
+                        currentActor->action = STOP;
+                }
+                break;
 
 
             };
@@ -397,6 +426,7 @@ void updateEnemies(){
                                 targetPosition) * -1: currentActor->direction;
                                         
                     actionMove(currentActor,  &arena);
+
                     break;
                 
                 default:
@@ -419,6 +449,7 @@ void updateEnemies(){
 
 void updateSceneGame(){
 
+    updateMap();
     updatePlayer();
     updateEnemies();
     updateItens();
@@ -431,7 +462,7 @@ void drawHud() {
     DrawRectangleLines(150,20,200,20,BLACK);
     DrawText(TextFormat("VIDA : %d", player->life), 20, 20, 20, BLACK);
     DrawText(TextFormat("PONTOS: %d", score), 20, 40, 20, BLACK);
-    DrawText(TextFormat("NÍVEL: %d", level), 500, 20, 40, BLACK);
+    DrawText(TextFormat("NÍVEL: %d", level), 750, 20, 50, BLACK);
 }
 
 void drawDebug() {
@@ -486,8 +517,8 @@ void drawSceneGame(){
 void saveGame(){
 
     // carregar pontuação salva
-    FILE* file = fopen("score.dat", "rb");
-    int top_5[5];
+    FILE* file = fopen("resources/score.data", "rb");
+    int top_5[5] ={0,0,0,0,0};
 
     if (file != NULL ) {
         fread(top_5, sizeof(int), 5, file);
@@ -510,7 +541,7 @@ void saveGame(){
         }
     }
      // salva o novo top 5
-    file = fopen("score.dat","wb");
+    file = fopen("resources/score.data","wb");
     if (file == NULL) {
         TraceLog(LOG_ERROR, "Erro ao abrir arquivo");
         return;
@@ -538,7 +569,7 @@ void closeSceneGame(){
     for (ItemNode *temp = itemListHead, *prev = NULL; temp != NULL; prev = temp, temp = temp->next) {
         free(prev);
     }
-    free(itemSpriteSheet);
+    free(itemSpriteSheetArray);
 
     //LIBERAR MEMORIA MAPA
     TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA MAPA");

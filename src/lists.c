@@ -6,15 +6,9 @@
 inicia uma lista de OBJETOS - inimigos ou itens
 recebe a posição inicial de cada objeto e o sprite dos objetos
 */ 
-ActorNode* getActorList( Vector2 initPosition[], const char* sprite, short maxNodes)
+ActorNode* getActorList( Vector2 initPosition[], Texture2D* spriteSheet, short maxNodes)
 {
     ActorNode *newListNode=NULL, *headListNode = NULL;
-    Texture2D* spriteSheet = malloc( sizeof(Texture2D) * 4 );
-
-    spriteSheet[STOP]    = LoadTexture( TextFormat("%s%s", sprite, "_stop.png"));
-    spriteSheet[MOVE]    = LoadTexture( TextFormat("%s%s", sprite, "_walk.png"));
-    spriteSheet[SPECIAL] = LoadTexture( TextFormat("%s%s", sprite, "_special.png"));
-    spriteSheet[END]     = (Texture2D)  { 0 };
 
     for (int i = 0 ; i < maxNodes; i++){
         newListNode = malloc(sizeof(ActorNode));
@@ -27,6 +21,19 @@ ActorNode* getActorList( Vector2 initPosition[], const char* sprite, short maxNo
     return headListNode;
 }
 
+
+Texture2D* getSpriteSheet( const char* sprite){
+
+    Texture2D* spriteSheet = malloc( sizeof(Texture2D) * 4 );
+
+    spriteSheet[STOP]    = LoadTexture( TextFormat("%s%s", sprite, "_stop.png"));
+    spriteSheet[MOVE]    = LoadTexture( TextFormat("%s%s", sprite, "_walk.png"));
+    spriteSheet[SPECIAL] = LoadTexture( TextFormat("%s%s", sprite, "_special.png"));
+    spriteSheet[END]     = (Texture2D)  { 0 };
+
+    return spriteSheet;
+
+}
 
 void drawActorList(ActorNode* targetList){
     for(ActorNode* currentNode = targetList; currentNode != NULL ; currentNode = currentNode->next)
@@ -61,7 +68,7 @@ ItemNode* getItemList( InitListItens initItens[], Texture2D* spritesheet, short 
 
         newListNode->obj = getItem(
             initItens[i].initPos,
-            &spritesheet[initItens[i].type],
+            spritesheet,
             initItens[i].type);
 
         newListNode->next = headListNode;

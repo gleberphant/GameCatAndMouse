@@ -24,9 +24,7 @@ SceneData* initSceneOver() {
     scene->draw = drawSceneOver;
     scene->input = inputSceneOver;
     scene->update = updateSceneOver;
-    
-    // configurando texto de fundo;
-    recText = getTextRect(textBuffer, *currentScene->font, FONT_SIZE, FONT_SPACE);
+
 
     // configurando tecla para sair.
     SetExitKey(KEY_ESCAPE);
@@ -36,6 +34,13 @@ SceneData* initSceneOver() {
 
 
 void inputSceneOver() {
+
+    if (IsKeyReleased(KEY_ENTER) || IsKeyReleased(KEY_KP_ENTER) ) {
+        // seleciona a proxima cena
+        currentSceneType = currentScene->nextScene;
+        return;
+    }
+
     return;
 }
 
@@ -47,10 +52,15 @@ void updateSceneOver() {
 /* função de desenho da cena intro */
 void drawSceneOver() {
     BeginDrawing();
+
         ClearBackground(BLACK);
-        DrawTexture(currentScene->background, 0, 0, WHITE);
-        DrawRectangleRec(recText, BLACK);
-        DrawTextEx(gameFont, textBuffer, (Vector2){recText.x, recText.y}, FONT_SIZE, FONT_SPACE, WHITE);
+        DrawTexturePro(currentScene->background,
+        (Rectangle){0, 0, currentScene->background.width, currentScene->background.height},
+        (Rectangle){0, 0, SCREEN_WIDTH, SCREEN_HEIGHT},
+        (Vector2){ 0, 0 },
+        0,
+        WHITE);
+
     EndDrawing();
 }
 

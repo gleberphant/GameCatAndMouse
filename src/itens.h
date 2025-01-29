@@ -19,15 +19,17 @@ typedef struct Item{
     ItemType type;
     Texture2D *spritesheet;
     Rectangle spriteFrame;
-    float life;
+    int life;
 } Item;
 
 
-// construtor
-Item* getItem(Vector2 initPos, Texture2D* spritesheet, ItemType type);
 
-//desenhar
+
+Item* getItem(Vector2 initPos, Texture2D* spritesheetArray, ItemType type);
+
+Rectangle getCollisionBox(Vector2 pos);
+
 void drawItem(Item* self);
 
-
+Texture2D* getItemSpriteSheetArray(const char *spritepathList[]);
 #endif

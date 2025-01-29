@@ -69,7 +69,7 @@ void closeGame() {
  * @brief Entry point of the application.
  * @return An integer value, typically 0, indicating the successful execution of the program.
  */
-int main() {
+int main(int argc , char *argv[]) {
  
     initGame();          // Inicializa o estado e os recursos do jogo
  

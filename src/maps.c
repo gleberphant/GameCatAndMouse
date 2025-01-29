@@ -1,4 +1,6 @@
 #include "maps.h"
+
+#include <stdio.h>
 #define ATLAS_NUM_COL 8
 #define ATLAS_NUM_ROW 4
 int playerX = 0;
@@ -6,52 +8,63 @@ int playerY = 0;
 
 Texture2D atlas;
 
-float offSetX = 16, offSetY = 12;
+
+float offSetX = 0, offSetY = 0;
 Rectangle tileRec = {0, 0, TILE_SIZE, TILE_SIZE};
 int atlasNumCol = ATLAS_NUM_COL, atlasNumRow = ATLAS_NUM_ROW;
+const int maxTilesHeight = (int)ceilf((float)SCREEN_HEIGHT/TILE_SIZE)+1, maxTilesWidth = (int)ceilf((float)SCREEN_WIDTH/TILE_SIZE)+1;
 int tileIndex = 0, indexX=0, indexY=0;
 
-int map[NUM_TILES_HEIGHT+1] [NUM_TILES_WIDTH+1]= {
-{0,1,1,1,1,1,1,1,1,1,1,2},
-{8,9,9,9,9,9,9,9,9,9,9,10},
-{8,9,9,9,9,9,9,9,9,9,9,10},
-{8,9,9,9,9,9,9,9,9,9,9,10},
-{8,9,9,9,9,9,9,9,9,9,9,10},
-{8,9,9,9,9,9,9,9,9,9,9,10},
-{8,9,9,9,9,9,9,9,9,9,9,10},
-{8,9,9,9,9,9,9,9,9,9,9,10},
-{16,17,17,17,17,17,17,17,17,17,17,18}
-};
+// carrega mapa com valores default
+int map[13] [17]= {
+    {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2},
+    {8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10},
+    {8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10},
+    {8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10},
+    {8,9,9,9,9,0,2,9,9,9,9,9,9,9,9,10},
+    {8,9,9,9,9,16,18,9,9,9,9,9,9,9,9,10},
+    {8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10},
+    {8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10},
+    {8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10},
+    {8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10},
+    {8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10},
+    {16,17,17,17,17,17,17,17,17,17,17,17,17,17,17,18}
+};;
+
 
 // carrega mapa
 void loadMap(const char* pathfile) {
+    // carrega tileset
     atlas = LoadTexture(pathfile);
-    // for (int i = 0; i < NUM_TILES_WIDTH; i++) {
-    //     for (int j = 0; j < NUM_TILES_HEIGHT; j++) {
-    //         map[i][j] = 9;
-    //     }
-    // }
-    //
+
+    // carregar tile map do arquivo
+    FILE* filemap = fopen("resources/map01.data", "r");
+
+    if (filemap == NULL) {
+        TraceLog(LOG_DEBUG, "Failed to load map\n");
+    }
+    for (int row = 0; row < NUM_TILES_HEIGHT; row++){
+        for (int col = 0; col < NUM_TILES_WIDTH; col++) {
+            fscanf(filemap, "%d,", &map[row][col]);
+        }
+    }
+
+    fclose(filemap);
+
 }
 
 
 // verifica se um objeto está dentro de um retangulo.
 bool isInside(Actor* target, Rectangle *arena){
 
-    arena->height= (float) NUM_TILES_HEIGHT * TILE_SIZE;
-    arena->width = (float) NUM_TILES_WIDTH  * TILE_SIZE;
+    arena->height= (float) maxTilesWidth * TILE_SIZE;
+    arena->width = (float) maxTilesHeight  * TILE_SIZE;
 
     playerX = (int) floorf((target->position.x-offSetX )/TILE_SIZE);
     playerY = (int) floorf((target->position.y-offSetY )/TILE_SIZE);
 
-    if (map[playerY][playerX]!=9){ return false;}
+    if (map[playerY][playerX]!=9 && map[playerY][playerX]!=4){ return false;}
 
-    // if ((playerX) > NUM_TILES_WIDTH - 1 ||
-    //     (playerX) < 0 ||
-    //     (playerY) > NUM_TILES_HEIGHT - 1||
-    //     (playerY) < 0 ) {
-    //     return false;
-    // }
 
     return true;
 }
@@ -63,8 +76,8 @@ void drawMap(Actor* target ) {
     playerY = (int) floorf((target->position.y-offSetY )/TILE_SIZE);
 
     // DRAW TILES
-    for (int i = 0; i < NUM_TILES_WIDTH; i++) {
-        for (int j = 0; j < NUM_TILES_HEIGHT; j++) {
+    for (int i = 0; i < maxTilesWidth; i++) {
+        for (int j = 0; j < maxTilesHeight; j++) {
 
             tileIndex = map[j][i];
 
@@ -86,13 +99,6 @@ void drawMap(Actor* target ) {
                 WHITE
             );
 
-            // DrawRectangleLines(
-            //      (i*TILE_SIZE) + offSetX ,
-            //      (j*TILE_SIZE) + offSetY ,
-            //      TILE_SIZE,
-            //      TILE_SIZE,
-            //      BROWN
-            //  );
         }
     }
 
@@ -103,7 +109,7 @@ void drawMap(Actor* target ) {
             (playerX * TILE_SIZE)+offSetX+32 ,
             (playerY * TILE_SIZE)+offSetY+32 ,
             TILE_SIZE/2,
-            ColorAlpha(LIGHTGRAY, 0.5f)
+            ColorAlpha(RED, 0.5f)
         );
         EndBlendMode();
         //desenha linhas

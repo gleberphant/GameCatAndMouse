@@ -34,10 +34,9 @@ void inputScene(SceneData *scene) {
         return;
     }
 
-    if (IsKeyReleased(KEY_ENTER) || IsKeyReleased(KEY_KP_ENTER) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-        // seleciona a proxima cena
-        currentSceneType = scene->nextScene;
-        return;
+    // DEBUG OPTIONS
+    if (IsKeyReleased(KEY_F1)) {
+        debugMode = !debugMode;
     }
 
     if (IsKeyReleased(KEY_KP_ADD)) {
@@ -49,6 +48,8 @@ void inputScene(SceneData *scene) {
         volumeMaster -= 0.05f;
         SetMasterVolume(volumeMaster);
     }
+
+    scene->input();
 }
 
 void updateScene(SceneData *scene) {
