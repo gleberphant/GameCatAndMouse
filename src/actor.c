@@ -34,6 +34,7 @@ void setActor(Actor* self, Vector2 initPos, Texture2D* spritesheet){
     self->speed = 4.0f;
     self->direction = 0.0f;
     self->life = DEFAULT_LIFE;
+    self->behavior = SLEEPER;
 }
 
 

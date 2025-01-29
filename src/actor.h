@@ -15,22 +15,22 @@
 // TIPOS 
 typedef enum ActionType { STOP=0, MOVE=1, SPECIAL=2, END=3  } ActionType;
 typedef enum DirectionType { UP=0, RIGHT=90, DOWN=180, LEFT=270 } DirectionType ;
-typedef enum ActorType { PLAYER=0, ENEMY=1, ITEM=2 } ActorType;
+typedef enum ActorType { PLAYER=0, ATTACK=1, GUARD_CHEESE=2, GUARD_STRAW=3, SLEEPER=4, CRAZY=5 } ActorType;
 
 
 // ATORES. SERVE PARA JOGADOR, INIMIGOS E ITENS
 typedef struct Actor{
-    int life, count, behavior;
+    int life, count;
     float direction;
     bool collision;
 
     Rectangle pointOfCollision;
     Vector2 position;
     Vector2 oldPosition;
-    float speed;
+    int speed;
     
     Rectangle collisionBox;
-    ActorType type;
+    ActorType behavior;
     ActionType action;
     Animation* spriteA2[3];
     

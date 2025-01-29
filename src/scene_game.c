@@ -368,56 +368,74 @@ void updateEnemies(){
             // zera variáveis
             currentActor = currentNode->obj;
 
-            currentActor->action = MOVE;
-            currentActor->speed =  GetRandomValue(0 ,  enemyVel);// velocidade variavel
-            currentActor->count++;
+            currentActor->action = STOP;
+            currentActor->speed =  GetRandomValue(1 ,  enemyVel); // velocidade variável
+            currentActor->count +=  GetRandomValue(1 ,  3);
             targetPosition = player->position;
 
             if (currentActor->count > 90){
-                currentActor->behavior = GetRandomValue(0, 2);
+                currentActor->behavior = GetRandomValue(ATTACK, CRAZY);
                 currentActor->count = 0 ;
+                TraceLog(LOG_DEBUG, "trocou comportamento para %d", currentActor->behavior);
             }
 
+            // chose behavior
             switch (currentActor->behavior){
-            case 1:
-                // protege o queijo quando jogador não estiver muito próximo.
-                if ( Vector2Distance(currentActor->position, player->position) > 128 && player->action != SPECIAL ){
-                    for (ItemNode *currentItem = itemListHead; currentItem != NULL; currentItem = currentItem->next) {
-                        if (currentItem->obj->type == CHEESE ) {
-                            targetPosition = currentItem->obj->position;
-                            //currentActor->speed =   enemyVel;
-                            currentActor->action =  Vector2Distance(currentActor->position, targetPosition) < 64 ? STOP : MOVE;
-                            break;
+                case ATTACK:
+
+                    currentActor->action = MOVE;
+
+                break;
+                case GUARD_CHEESE:
+                    // protege o queijo quando jogador não estiver muito próximo.
+                    if ( Vector2Distance(currentActor->position, player->position) > 128 && player->action != SPECIAL ){
+                        for (ItemNode *currentItem = itemListHead; currentItem != NULL; currentItem = currentItem->next) {
+                            if (currentItem->obj->type == CHEESE ) {
+                                targetPosition = currentItem->obj->position;
+                                currentActor->action =  Vector2Distance(currentActor->position, targetPosition) < 64 ? STOP : MOVE;
+                                break;
+                            }
                         }
                     }
-                }
                 break;
 
-            case 2:
-                // protege o morando quando jogador não estiver muito próximo.
-                if ( Vector2Distance(currentActor->position, player->position) > 128 && player->action != SPECIAL ){
-                    for (ItemNode *currentItem = itemListHead; currentItem != NULL; currentItem = currentItem->next) {
-                        if ( currentItem->obj->type == STRAWBERRY) {
-                            targetPosition = currentItem->obj->position;
-                            //currentActor->speed =   enemyVel;
-                            currentActor->action =  Vector2Distance(currentActor->position, targetPosition) < 64 ? STOP : MOVE;
-                            break;
+                case GUARD_STRAW:
+                    // protege o morando quando jogador não estiver muito próximo.
+                    if ( Vector2Distance(currentActor->position, player->position) > 128 && player->action != SPECIAL ){
+                        for (ItemNode *currentItem = itemListHead; currentItem != NULL; currentItem = currentItem->next) {
+                            if ( currentItem->obj->type == STRAWBERRY) {
+                                targetPosition = currentItem->obj->position;
+                                currentActor->action =  Vector2Distance(currentActor->position, targetPosition) < 64 ? STOP : MOVE;
+                                break;
+                            }
                         }
                     }
-                }
                 break;
 
-            default:// comportamento de dormir se jogador estiver longe
-                if (Vector2Distance(currentActor->position, player->position) > 400 && player->action != SPECIAL ) {
-                        currentActor->action = STOP;
-                }
-                break;
 
+                case CRAZY:
+                    // protege o morando quando jogador não estiver muito próximo.
+                        if ( Vector2Distance(currentActor->position, player->position) > 128 && player->action != SPECIAL ){
+                            for (ItemNode *currentItem = itemListHead; currentItem != NULL; currentItem = currentItem->next) {
+                                if ( currentItem->obj->type == CHEESE) {
+                                    targetPosition = currentItem->obj->position;
+                                    currentActor->action =  Vector2Distance(currentActor->position, targetPosition) < 64 ? STOP : MOVE;
+
+                                }
+                            }
+                        }
+                break;
+                case SLEEPER:
+                default:// comportamento de dormir se jogador estiver longe
+                    if (Vector2Distance(currentActor->position, player->position) < 400 && player->action != SPECIAL ) {
+                        currentActor->action = MOVE;
+                    }
+                    break;
 
             };
 
 
-            // move action
+            // do actions
             switch(currentActor->action){
                 case MOVE:
                     currentActor->direction = 
@@ -434,6 +452,7 @@ void updateEnemies(){
                     break;
             };
 
+            // Check collisions
             if (CheckCollisionRecs(player->collisionBox, currentActor->collisionBox)) {
                 PlaySound(getHit);
                 currentActor->collision = true;
