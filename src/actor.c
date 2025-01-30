@@ -4,8 +4,36 @@
 
 
 // inicia um ator
+
+Actor* loadNewActor(Vector2 initPos, Texture2D* spritesheet) {
+    TraceLog(LOG_DEBUG, "== Iniciando novo ACTOR");
+    Actor* newActor = malloc(sizeof(Actor));
+    setActor(newActor, initPos, spritesheet);
+    return newActor;
+}
+
+Texture2D* loadActorSpriteSheetArray( const char* sprite){
+
+    Texture2D* spriteSheetArray = malloc( sizeof(Texture2D) * 4 );
+
+    spriteSheetArray[STOP]    = LoadTexture( TextFormat("%s%s", sprite, "_stop.png"));
+    spriteSheetArray[MOVE]    = LoadTexture( TextFormat("%s%s", sprite, "_walk.png"));
+    spriteSheetArray[SPECIAL] = LoadTexture( TextFormat("%s%s", sprite, "_special.png"));
+    spriteSheetArray[END]     = (Texture2D)  { 0 };
+
+    return spriteSheetArray;
+
+}
+
+void unloadActorSpriteSheet(Texture2D *actorSpriteSheetArray) {
+    UnloadTexture(actorSpriteSheetArray[STOP]);
+    UnloadTexture(actorSpriteSheetArray[MOVE]);
+    UnloadTexture(actorSpriteSheetArray[SPECIAL]);
+    free(actorSpriteSheetArray);
+}
+
+
 void setActor(Actor* self, Vector2 initPos, Texture2D* spritesheet){
-    TraceLog(LOG_DEBUG, "-- Loading Object");
 
     // carrega os spritesheet com animação de cada ação
     self->spriteA2[STOP]    = getAnimation( &spritesheet[STOP] );
@@ -15,58 +43,87 @@ void setActor(Actor* self, Vector2 initPos, Texture2D* spritesheet){
     self->spriteA2[SPECIAL] = getAnimation( &spritesheet[SPECIAL] );
     self->spriteA2[SPECIAL]->type = SPECIAL;
 
-    // retângulo de colisão
-    self->collisionBox.x = initPos.x;
-    self->collisionBox.y = initPos.y;
-    self->collisionBox.width  = 64;//self->spriteA2[STOP]->frameRec.width;
-    self->collisionBox.height = 64;//self->spriteA2[STOP]->frameRec.height;
-
-    // centraliza posição no sprite
-    self->position = initPos;
-
-    // centraliza posição no sprite
-    self->position.x += (self->collisionBox.width/2);
-    self->position.y += (self->collisionBox.height/2);
+    // define posição e colission box
+    setActorPosition(self, initPos);
 
     // define valores default dos atributos
-    self->oldPosition = self->position;
+
     self->action = STOP;
-    self->speed = 4.0f;
+    self->speed = 5.0f;
     self->direction = 0.0f;
     self->life = DEFAULT_LIFE;
-    self->behavior = SLEEPER;
+    self->behavior = GetRandomValue(ATTACK, CRAZY);
 }
 
+void setActorPosition(Actor* self, Vector2 position) {
+    // retângulo de colisão
+    self->collisionBox = (Rectangle){
+        .x = position.x,
+        .y = position.y,
+        .width  = 64, //self->spriteA2[STOP]->frameRec.width;
+        .height = 64 //self->spriteA2[STOP]->frameRec.height;
+    };
 
+    // centraliza posição no sprite
+    self->position = (Vector2){
+       .x = position.x + (self->collisionBox.width/2),
+       .y = position.y + (self->collisionBox.height/2)
+    };
+
+    // old pos
+    self->oldPosition = self->position;
+}
+
+// obter o retângulo de colisão a partir de uma posição
+Rectangle getActorCollisionBox(Vector2 position) {
+    return (Rectangle)  {
+        .width = 64,
+        .height = 64,
+        .x = position.x - 32,
+        .y = position.y - 32,
+    };
+
+}
+
+// obtêm a posição centralizada a partir de um retangulo
+Vector2 getActorPosition(Rectangle box) {
+    return (Vector2){
+        .x = box.x + box.width / 2,
+        .y = box.y + box.height / 2,
+        };
+}
+
+//------
 void actionStop(Actor* self)  {
+    self->action = STOP;
     return;
 }
 
-void actionMove(Actor* self, Rectangle* arena) {
-
-    //Vector2 movement = Vector2Rotate((Vector2){0.0f, -self->speed}, self->direction*DEG2RAD);
-
-    Vector2 movement = (Vector2)
-    {
-        self->speed*cosf((self->direction)), 
-        self->speed*sinf((self->direction))
-        }; 
-
+void actionMove(Actor* self) {
 
     self->action = MOVE;
     self->oldPosition = self->position;
-    self->position = Vector2Add(self->position, movement); //nova posição
+
+    // calcula nova posição
+    self->position = Vector2Add(
+        self->position,
+        (Vector2){
+            .x = self->speed * cosf(self->direction),
+            .y = self->speed * sinf(self->direction)
+        }
+    );
 
     // VERIFICA SE JOGADOR DENTRO DA ARENA
-    if(!isInside(self, arena)){
+    if(checkMapCollision(self)){
         self->position = self->oldPosition; //nova posição
     }
 
 }
 
  void actionSpecial(Actor* self, Actor* target)  {
-    return;
- }
+    self->action = SPECIAL;
+
+}
 
 
 // desenhar ator

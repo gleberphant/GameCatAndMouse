@@ -1,39 +1,57 @@
 #include "lists.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 
 /*
 inicia uma lista de OBJETOS - inimigos ou itens
 recebe a posição inicial de cada objeto e o sprite dos objetos
 */ 
-ActorNode* getActorList( Vector2 initPosition[], Texture2D* spriteSheet, short maxNodes)
+ActorNode* loadActorList(const char* mapfilePath, Texture2D* spriteSheet)
 {
-    ActorNode *newListNode=NULL, *headListNode = NULL;
+    ActorNode *headListNode = NULL;
 
-    for (int i = 0 ; i < maxNodes; i++){
-        newListNode = malloc(sizeof(ActorNode));
-        newListNode->obj = malloc(sizeof(Actor));
-        setActor(newListNode->obj, initPosition[i], spriteSheet);
-        newListNode->next = headListNode;
-        headListNode = newListNode;       
+    FILE *filemap = fopen(mapfilePath, "r");
+    if (filemap == NULL) {
+        TraceLog(LOG_DEBUG, "Failed to load enemy layer \n");
+        return headListNode;
     }
 
+    char tileValue;
+    for (int row=0; row< NUM_TILES_HEIGHT; row++) {
+        for (int col=0; col< NUM_TILES_WIDTH; col++) {
+
+            fscanf(filemap, "%c,", &tileValue );
+
+            if (tileValue == '1') {
+                headListNode = addActorNode(headListNode);
+                headListNode->obj = loadNewActor(
+                    (Vector2){(float) col * TILE_SIZE, (float) row * TILE_SIZE},
+                    spriteSheet
+                );
+            }
+        }
+    }
+    fclose(filemap);
     return headListNode;
 }
 
 
-Texture2D* getSpriteSheet( const char* sprite){
+ActorNode* addActorNode(ActorNode *oldHead) {
 
-    Texture2D* spriteSheet = malloc( sizeof(Texture2D) * 4 );
+    ActorNode *newHead = malloc(sizeof(ActorNode));
 
-    spriteSheet[STOP]    = LoadTexture( TextFormat("%s%s", sprite, "_stop.png"));
-    spriteSheet[MOVE]    = LoadTexture( TextFormat("%s%s", sprite, "_walk.png"));
-    spriteSheet[SPECIAL] = LoadTexture( TextFormat("%s%s", sprite, "_special.png"));
-    spriteSheet[END]     = (Texture2D)  { 0 };
+    if (newHead == NULL) {
+        TraceLog(LOG_ERROR, "::: Falha ao alocar memoria para ACTOR NODE \n");
+        return oldHead;
+    }
 
-    return spriteSheet;
+    newHead->next = oldHead;
 
+    return newHead;
 }
+
+
 
 void drawActorList(ActorNode* targetList){
     for(ActorNode* currentNode = targetList; currentNode != NULL ; currentNode = currentNode->next)
@@ -50,39 +68,67 @@ void unloadActorList(ActorNode* targetList) {
     ActorNode *currentNode = targetList;
     while(currentNode != NULL) {
         ActorNode *nextNode = currentNode->next;
+        free(currentNode->obj);
+        free(currentNode);
+        currentNode = nextNode;
+    }
+}
+
+ItemNode* addItemNode(ItemNode* oldHead){
+    ItemNode *newHead = malloc( sizeof(ItemNode) );
+    newHead->next = oldHead;
+
+    return newHead;
+}
+
+
+ItemNode* loadItemList(Texture2D* spritesheet)
+{
+    ItemNode *headListNode = NULL;
+
+    // carregar tile map do arquivo
+    FILE* filemap = fopen("resources/itemLayer01.data", "r");
+
+    if (filemap == NULL) {
+        TraceLog(LOG_DEBUG, "Failed to load map\n");
+    }
+
+    int tileValue;
+    for (int row = 0; row < NUM_TILES_HEIGHT; row++){
+        for (int col = 0; col < NUM_TILES_WIDTH; col++) {
+            fscanf(filemap, "%d,", &tileValue);
+
+            if (tileValue != 9) {
+
+                headListNode = addItemNode(headListNode);
+
+                headListNode->obj = loadNewItem(
+                    (Vector2){col*TILE_SIZE, row*TILE_SIZE},
+                    spritesheet,
+                    tileValue);
+            }
+        }
+    }
+
+    fclose(filemap);
+
+    return headListNode;
+
+}
+
+
+
+void unloadItemList(ItemNode* targetList) {
+    ItemNode *currentNode = targetList;
+    while(currentNode != NULL) {
+        ItemNode *nextNode = currentNode->next;
+        free(currentNode->obj);
         free(currentNode);
         currentNode = nextNode;
     }
 }
 
 
-ItemNode* getItemList( InitListItens initItens[], Texture2D* spritesheet, short maxNodes)
-{
-    ItemNode *newListNode=NULL, *headListNode = NULL;
-
-
-    // criar nós
-    for (int i = 0 ; i < maxNodes; i++){
-        newListNode = malloc(sizeof(ItemNode));
-        newListNode->obj = malloc(sizeof(Item));
-
-        newListNode->obj = getItem(
-            initItens[i].initPos,
-            spritesheet,
-            initItens[i].type);
-
-        newListNode->next = headListNode;
-        headListNode = newListNode;       
-    }
-    return headListNode;
-}
-
-
-void addItemNode(ItemNode** target){
-    ItemNode *newNode = malloc(sizeof(ItemNode));
-    newNode->next= *target;
-    *target = newNode;
-}
 
 
 void removeItemNode(ItemNode *target){
@@ -109,12 +155,3 @@ void drawItemList(ItemNode* targetList){
     }
 }
 
-
-void unloadItemList(ItemNode* targetList) {
-    ItemNode *currentNode = targetList;
-    while(currentNode != NULL) {
-        ItemNode *nextNode = currentNode->next;
-        free(currentNode);
-        currentNode = nextNode;
-    }
-}

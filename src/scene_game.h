@@ -4,9 +4,10 @@
 
 #ifndef SCENE_GAME_H
 #define SCENE_GAME_H
+#include "scene.h"
 
 
-void initSceneGame();
+SceneData* initSceneGame();
 
 void loopSceneGame();
 

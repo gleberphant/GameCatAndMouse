@@ -9,7 +9,6 @@ const char *textIntro = "[ENTER] para jogar [ESC] para sair.";
 Rectangle recText;
 int records[5];
 
-SceneData* initSceneIntro();
 
 SceneData* initSceneIntro() {
     SceneData* scene;
@@ -49,15 +48,11 @@ void inputSceneIntro() {
     if (IsKeyReleased(KEY_ENTER) || IsKeyReleased(KEY_KP_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT) ) {
         // seleciona a proxima cena
         currentSceneType = currentScene->nextScene;
-        return;
     }
-
-
-    return;
  }
 
 void updateSceneIntro() {
-    return;
+
  }
 
 /* função de desenho da cena intro */

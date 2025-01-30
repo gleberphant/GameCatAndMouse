@@ -10,11 +10,11 @@
 
 // ENUMS
 typedef enum ScenesType{
-    INTRO,
-    MENU,
-    GAME,
-    OVER,
-    EXIT
+    INTRO=0,
+    MENU=1,
+    GAME=2,
+    OVER=3,
+    EXIT=4
 } ScenesType;
 
 

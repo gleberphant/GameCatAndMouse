@@ -48,8 +48,11 @@ void gameLoop() {
         if (currentSceneType == GAME) {
             runSceneGame();
             currentSceneType = OVER;
+            TraceLog(LOG_INFO, "Game Over");
         } else {
+            TraceLog(LOG_DEBUG, "Iniciando Cena %d", currentSceneType);
             runScene(currentSceneType);
+            TraceLog(LOG_DEBUG, "proxima cena = %d", currentSceneType);
         }
     }
 }

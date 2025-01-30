@@ -50,12 +50,24 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="CARREGAR FILE MAP">
+    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="comportamento variados">
+      <change afterPath="$PROJECT_DIR$/resources/enemyLayer01.data" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/itemLayer01.data" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/map01.data" beforeDir="false" afterPath="$PROJECT_DIR$/resources/map01.data" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/actor.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/actor.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/actor.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/actor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itens.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/itens.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itens.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/itens.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lists.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/lists.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lists.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/lists.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/maps.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/maps.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/maps.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/maps.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scene.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scene.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/scene_game.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_game.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scene_game.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_game.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scene_intro.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_intro.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,6 +75,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="ClangdSettings">
+    <option name="clangTidyViaClangd" value="false" />
     <option name="formatViaClangd" value="false" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Release-windows" />
@@ -102,39 +115,40 @@
     <option name="sortByType" value="true" />
     <option name="sortKey" value="BY_TYPE" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;C/C++ File.debug.executor&quot;: &quot;Run&quot;,
-    &quot;CMake Application.GameCatAndMouse.executor&quot;: &quot;Run&quot;,
-    &quot;CMake Application.raylib.executor&quot;: &quot;Run&quot;,
-    &quot;CMake Application.uninstall.executor&quot;: &quot;Run&quot;,
-    &quot;CMake Debug.GameCatAndMouse.executor&quot;: &quot;Debug&quot;,
-    &quot;Makefile Target.all.executor&quot;: &quot;Run&quot;,
-    &quot;Makefile Target.clean.executor&quot;: &quot;Run&quot;,
-    &quot;Makefile Target.run.executor&quot;: &quot;Run&quot;,
-    &quot;Native Application.GameCatAndMouse.executor&quot;: &quot;Debug&quot;,
-    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.west.config.association.type.startup.service&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/PROGRAMAS_C/GameCatAndMouse/build/resources&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.fileTypes&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "C/C++ File.debug.executor": "Run",
+    "CMake Application.GameCatAndMouse.executor": "Run",
+    "CMake Application.raylib.executor": "Run",
+    "CMake Application.uninstall.executor": "Run",
+    "CMake Debug.GameCatAndMouse.executor": "Debug",
+    "Makefile Target.all.executor": "Run",
+    "Makefile Target.clean.executor": "Run",
+    "Makefile Target.run.executor": "Run",
+    "Native Application.GameCatAndMouse.executor": "Debug",
+    "RunOnceActivity.RadMigrateCodeStyle": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.west.config.association.type.startup.service": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "E:/PROGRAMAS_C/GameCatAndMouse/resources",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.fileTypes",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\PROGRAMAS_C\GameCatAndMouse\resources" />
       <recent name="E:\PROGRAMAS_C\GameCatAndMouse\build\resources" />
       <recent name="E:\PROGRAMAS_C\GameCatAndMouse" />
       <recent name="E:\PROGRAMAS_C\GameCatAndMouse\cmake-build-release-web\build" />
@@ -148,12 +162,12 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.GameCatAndMouse">
-    <configuration name="GameCatAndMouse" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameCatAndMouse" TARGET_NAME="GameCatAndMouse" CONFIG_NAME="Release-web" RUN_TARGET_PROJECT_NAME="GameCatAndMouse" RUN_TARGET_NAME="GameCatAndMouse">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration name="GameCatAndMouse" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameCatAndMouse" TARGET_NAME="GameCatAndMouse" CONFIG_NAME="Release-web" RUN_TARGET_PROJECT_NAME="GameCatAndMouse" RUN_TARGET_NAME="GameCatAndMouse">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -230,7 +244,8 @@
       <workItem from="1738018215323" duration="7568000" />
       <workItem from="1738098458887" duration="607000" />
       <workItem from="1738106457453" duration="13842000" />
-      <workItem from="1738159780401" duration="1498000" />
+      <workItem from="1738159780401" duration="1548000" />
+      <workItem from="1738183118980" duration="24125000" />
     </task>
     <task id="LOCAL-00001" summary="CMAKE para compilar windows e linux">
       <option name="closed" value="true" />
@@ -344,7 +359,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738121150380</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="comportamento variados">
+      <option name="closed" value="true" />
+      <created>1738161323952</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1738161323952</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -379,7 +402,8 @@
     <MESSAGE value="comportamentos inimigos. proteger queijo e proteegr morando" />
     <MESSAGE value="colisao com itens&#10;mapa de matrix" />
     <MESSAGE value="CARREGAR FILE MAP" />
-    <option name="LAST_COMMIT_MESSAGE" value="CARREGAR FILE MAP" />
+    <MESSAGE value="comportamento variados" />
+    <option name="LAST_COMMIT_MESSAGE" value="comportamento variados" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

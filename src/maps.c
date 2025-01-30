@@ -16,7 +16,7 @@ const int maxTilesHeight = (int)ceilf((float)SCREEN_HEIGHT/TILE_SIZE)+1, maxTile
 int tileIndex = 0, indexX=0, indexY=0;
 
 // carrega mapa com valores default
-int map[13] [17]= {
+int map[13][17]= {
     {0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2},
     {8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10},
     {8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10},
@@ -29,7 +29,7 @@ int map[13] [17]= {
     {8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10},
     {8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10},
     {16,17,17,17,17,17,17,17,17,17,17,17,17,17,17,18}
-};;
+};
 
 
 // carrega mapa
@@ -53,20 +53,22 @@ void loadMap(const char* pathfile) {
 
 }
 
+void unloadMap() {
+    UnloadTexture(atlas);
+}
 
 // verifica se um objeto está dentro de um retangulo.
-bool isInside(Actor* target, Rectangle *arena){
-
-    arena->height= (float) maxTilesWidth * TILE_SIZE;
-    arena->width = (float) maxTilesHeight  * TILE_SIZE;
+bool checkMapCollision(Actor* target){
 
     playerX = (int) floorf((target->position.x-offSetX )/TILE_SIZE);
     playerY = (int) floorf((target->position.y-offSetY )/TILE_SIZE);
 
-    if (map[playerY][playerX]!=9 && map[playerY][playerX]!=4){ return false;}
+    if (map[playerY][playerX] != 9 && map[playerY][playerX] != 4) {
+        return true;
+    }
 
 
-    return true;
+    return false;
 }
 
 
@@ -81,14 +83,12 @@ void drawMap(Actor* target ) {
 
             tileIndex = map[j][i];
 
-
             indexY = (int)floorf( tileIndex/atlasNumCol );
 
             indexX = (int)floorf( tileIndex - (indexY  * atlasNumCol) );
 
             tileRec.x = indexX * TILE_SIZE;
             tileRec.y = indexY * TILE_SIZE;
-
 
             DrawTexturePro(
                 atlas,

@@ -11,85 +11,74 @@
 #include <stdio.h>
 
 
-Actor *player, *currentActor = NULL;
-Item *currentItem = NULL;
-
+Actor *player = NULL;
 ActorNode *enemyListHead = NULL, *playerListHead = NULL;
 ItemNode *itemListHead = NULL;
 
-Rectangle arena;
-float volumeMaster = 1.01f, angulo;
-int level=0, score=0, enemyVel=0;
+float volumeMaster = 1.00f;
+int level=0, score=0, enemyVel=4;
 
-Texture2D *itemSpriteSheetArray, *catSpriteSheet;
+Texture2D *itemSpriteSheetArray, *catSpriteSheetArray, *mouseSpriteSheetArray;
 Sound eatCheese, eatStrawberry, getHit;
-
-Music bgMusic;
 
 short enemyType = 0, enemyCount = 0;
 Vector2 targetPosition;
 
 
-void initSceneGame(){
-
-    // SETAR VARIÁVEIS DO LOOP
-    TraceLog(LOG_DEBUG, "== definindo GLOBAL VARIABLES");
-    if (debugMode)volumeMaster = 0;
-    enemyVel = 3;
-
-    // Carregar o mapa
-    TraceLog(LOG_DEBUG, "== carregando MAPAS");
-    Vector2 mapEnemies[] = {
-        (Vector2){128.0f, 140.0f},
-        (Vector2){250.0f, 420.0f}
-
-    };
-
-    InitListItens initItens[] = {
-        (InitListItens){.type = CHEESE, .initPos = (Vector2){100.0f, 120.0f} },
-        (InitListItens){.type = CHEESE, .initPos = (Vector2){600.0f, 500.0f} },
-        (InitListItens){.type = TRAP,   .initPos = (Vector2){300.0f, 300.0f} }
-    };
-
-    arena = (Rectangle){
-        .x = MAP_BORDER,
-        .y = MAP_BORDER,
-        .width = SCREEN_WIDTH - (MAP_BORDER * 2),
-        .height = SCREEN_HEIGHT - (MAP_BORDER * 2)
-    };
+SceneData* initSceneGame(){
 
     // CARREGAR LISTA DE INIMIGOS
     TraceLog(LOG_DEBUG, "== carregando ENEMY LIST");
 
-    catSpriteSheet = getSpriteSheet("resources/catA");
-    enemyListHead = getActorList(
-        mapEnemies,
-        catSpriteSheet,
-        sizeof(mapEnemies) / sizeof(Vector2)
-    );
+    catSpriteSheetArray = loadActorSpriteSheetArray("resources/catA");
+
+    enemyListHead = loadActorList( "resources/enemyLayer01.data", catSpriteSheetArray);
 
     if (enemyListHead == NULL) {
         TraceLog(LOG_ERROR, " ::: ERROR ao carregar ENEMY LIST");
         currentSceneType = EXIT;
     }
 
+    // Carregar personagem do jogador
+    TraceLog(LOG_DEBUG, "== carregando PLAYER");
+
+    mouseSpriteSheetArray = loadActorSpriteSheetArray("resources/mouseA");
+
+    playerListHead = addActorNode(playerListHead);
+
+    if (playerListHead == NULL) {
+        TraceLog(LOG_ERROR, " ::: ERROR ao carregar PLAYER list");
+        currentSceneType = EXIT;
+        return NULL;
+    }
+
+    playerListHead->obj = loadNewActor(
+        (Vector2){(float) 4 * TILE_SIZE, (float) 4 * TILE_SIZE},
+        mouseSpriteSheetArray
+    );
+    player = playerListHead->obj;
+
+    if (player == NULL) {
+        TraceLog(LOG_ERROR, " ::: ERROR ao carregar PLAYER list");
+        currentSceneType = EXIT;
+        return NULL;
+    }
+
+    player->speed = 10;
+
+
     // CARREGAR LISTA DE ITENS
     TraceLog(LOG_DEBUG, "== carregando ITENS LIST");
-
-    const char *spritepathList[] = {
-    "resources/item_cheese.png",
-    "resources/item_strawberry.png",
-    "resources/item_trap.png"
+    const char *itemSpritePathList[] = {
+        "resources/item_cheese.png",
+        "resources/item_strawberry.png",
+        "resources/item_trap.png"
     };
 
+    itemSpriteSheetArray = loadItemSpriteSheetArray(itemSpritePathList);
 
-    itemSpriteSheetArray = getItemSpriteSheetArray(spritepathList);
-
-
-    itemListHead = getItemList(
-        initItens,
-        itemSpriteSheetArray,
-        sizeof(initItens) / sizeof(InitListItens)
+    itemListHead = loadItemList(
+        itemSpriteSheetArray
     );
 
     if (itemListHead == NULL) {
@@ -97,21 +86,11 @@ void initSceneGame(){
         currentSceneType = EXIT;
     }
 
-    // Carregar personagem do jogador
-    TraceLog(LOG_DEBUG, "== carregando PLAYER");
 
-    playerListHead = getActorList(
-        (Vector2[]){PLAYER_INIT_POS},
-        getSpriteSheet("resources/mouseA"),
-        1
-    );
-
-    playerListHead->obj->speed = 10;
-
-    player = playerListHead->obj;
     // Inicializar pontuação e nível
     score = 0;
     level = 1;
+    enemyVel = 5;
 
 
     // CARREGAR EFEITOS SONOROS
@@ -119,13 +98,26 @@ void initSceneGame(){
     eatCheese = LoadSound("resources/sounds/eat_cheese.mp3");
     eatStrawberry = LoadSound("resources/sounds/eat_strawberry.mp3");
     getHit = LoadSound("resources/sounds/get_hit.mp3");
-    bgMusic = LoadMusicStream("resources/sounds/game_music.mp3");    
- 
+
+
+    TraceLog(LOG_DEBUG, "== carregando MAPA TLESET");
     loadMap("resources/tileset.png");
 
-    PlayMusicStream(bgMusic);
-    SetMusicVolume(bgMusic, volumeMaster);
+    TraceLog(LOG_DEBUG, "== INICIANDO MUSICA");
+    SceneData *scene = loadSceneData(
+    "resources/bg.png",
+    "resources/sounds/game_music.mp3",
+    GAME,
+    &gameFont
+    );
+
+    PlayMusicStream(scene->music);
+    SetMusicVolume(scene->music, volumeMaster);
+
     SetExitKey(KEY_NULL);
+
+    return scene;
+
 
 }
 
@@ -136,7 +128,21 @@ bool handlePlayerInput(){
         return false;
     }
 
-    inputScene(currentScene);
+    // DEBUG OPTIONS
+    if (IsKeyReleased(KEY_F1)) {
+        debugMode = !debugMode;
+    }
+
+    if (IsKeyReleased(KEY_KP_ADD)) {
+        volumeMaster += 0.05f;
+        SetMasterVolume(volumeMaster);
+    }
+
+    if (IsKeyReleased(KEY_KP_SUBTRACT)) {
+        volumeMaster -= 0.05f;
+        SetMasterVolume(volumeMaster);
+    }
+
 
     if(debugMode){
             SetMasterVolume(0.0f);
@@ -219,25 +225,19 @@ return true;
 void updateMap() {
     // Verifica o nível atual
     if (score > level * 20) {
-        enemyVel += 1;
+        enemyVel = enemyVel > 8 ? 8: enemyVel++;
         level++;
 
 
-        Vector2 newEnemyPos[] = {
-        (Vector2){250.0f, 420.0f}
-        };
-
-        ActorNode* newCatNode = getActorList(
-        newEnemyPos,
-        catSpriteSheet,
-        sizeof(newEnemyPos) / sizeof(Vector2)
-        );
-
+        ActorNode* newCatNode = malloc(sizeof(ActorNode));
+        newCatNode->obj = malloc(sizeof(Actor));
         newCatNode->next = enemyListHead;
         enemyListHead = newCatNode;
 
+        setActor(enemyListHead->obj,
+            (Vector2){4*TILE_SIZE, 4*TILE_SIZE},
+            catSpriteSheetArray);
     }
-
 }
 
 void updatePlayer(){
@@ -255,15 +255,11 @@ void updatePlayer(){
                 break;
 
             case MOVE:
-                actionMove(player, &arena);
+                actionMove(player);
                 break;
 
             case SPECIAL:
                 actionSpecial(player, player);
-                break;
-
-            case END:
-                TraceLog(LOG_DEBUG, "fim da linha");
                 break;
 
             default:
@@ -275,8 +271,9 @@ void updatePlayer(){
 
 void updateItens(){
 
+    Item* currentItem = NULL;
         // ------------------------------------------------------------
-        // "ações" dos itens
+        // "ações" dos iten
         for (ItemNode *currentNode = itemListHead, *prev = NULL; currentNode != NULL;
              prev = currentNode, currentNode = currentNode->next) {
             currentItem = currentNode->obj;
@@ -307,11 +304,10 @@ void updateItens(){
                         break;
                     default:
                         TraceLog(LOG_DEBUG, "item desconhecido");
+                        currentItem->life = -1;
                         break;
                 }
             }
-       // criar item novo e remover anterior
-            currentItem->life--;
 
             if (currentItem->life < 1) {
                 // REMOVER O NÓ
@@ -319,46 +315,54 @@ void updateItens(){
                     prev = currentNode->next;
                     itemListHead = prev;
                 } else prev->next = currentNode->next;
+
                 TraceLog(LOG_DEBUG, "== liberando ITEM %p", currentNode);
+                free(currentNode->obj);
                 free(currentNode);
 
                 currentNode = prev;
                 if (currentNode == NULL) break;
 
                 // CRIA UM NOVO ITEM ALEATÓRIO
-                ItemNode *newNode = malloc(sizeof(ItemNode));;
-                newNode->obj = malloc(sizeof(Item));
+                itemListHead = addItemNode(itemListHead);
 
-
-                newNode->obj = getItem(
+                itemListHead->obj = loadNewItem(
                     (Vector2){
-                        (float) GetRandomValue(64, SCREEN_WIDTH - 64), (float) (float) GetRandomValue(64, SCREEN_HEIGHT - 64)
+                        (float) GetRandomValue(2, NUM_TILES_WIDTH  - 2)  * TILE_SIZE,
+                        (float) GetRandomValue(2, NUM_TILES_HEIGHT - 2 ) * TILE_SIZE
                     },
                     itemSpriteSheetArray,
                     GetRandomValue(CHEESE, TRAP)
                 );
 
-                currentItem = newNode->obj;
+                currentItem = itemListHead->obj;
 
+                // verifica se o item foi criado embaixo do jogador
                 if (CheckCollisionRecs(player->collisionBox, currentItem->collisionBox)) {
-                    currentItem->collisionBox = getCollisionBox(
+                    currentItem->collisionBox = getItemCollisionBox(
                         (Vector2){(float) GetRandomValue(64, SCREEN_WIDTH - 64), (float) (float) GetRandomValue(64, SCREEN_HEIGHT - 64)}
                     );
 
+                    currentItem->position = (Vector2) {
+                        currentItem->collisionBox.x + currentItem->collisionBox.width / 2,
+                        currentItem->collisionBox.y + currentItem->collisionBox.height /2 };
+
                 }
 
-
-
-                newNode->next = currentNode->next;
-                currentNode->next = newNode;
             }
+
+            // dimiinuir vida do item
+            currentItem->life--;
         }
 
 }
 
 void updateEnemies(){
+
+    Actor* currentActor = NULL;
+    enemyCount = 0;
         // ------------------------------------------------------------
-        enemyCount = 0;
+
         // "ações" dos INIMIGOS
         for (ActorNode *currentNode = enemyListHead; currentNode != NULL; currentNode = currentNode->next) {
             // verifica se está vivo
@@ -370,80 +374,73 @@ void updateEnemies(){
 
             currentActor->action = STOP;
             currentActor->speed =  GetRandomValue(1 ,  enemyVel); // velocidade variável
-            currentActor->count +=  GetRandomValue(1 ,  3);
+            currentActor->count ++;
             targetPosition = player->position;
 
-            if (currentActor->count > 90){
+            if (currentActor->count > 180){
                 currentActor->behavior = GetRandomValue(ATTACK, CRAZY);
                 currentActor->count = 0 ;
-                TraceLog(LOG_DEBUG, "trocou comportamento para %d", currentActor->behavior);
+
             }
 
             // chose behavior
             switch (currentActor->behavior){
+                // persegue o jogador independente de qualquer coisa
                 case ATTACK:
-
+                    targetPosition = player->position;
                     currentActor->action = MOVE;
+                    break;
 
-                break;
                 case GUARD_CHEESE:
-                    // protege o queijo quando jogador não estiver muito próximo.
-                    if ( Vector2Distance(currentActor->position, player->position) > 128 && player->action != SPECIAL ){
+                    // protege o primeiro queijo que encontrar na lista quando player não estiver muito próximo
+                    if ( Vector2Distance(currentActor->position, player->position) > 128 ){
                         for (ItemNode *currentItem = itemListHead; currentItem != NULL; currentItem = currentItem->next) {
                             if (currentItem->obj->type == CHEESE ) {
                                 targetPosition = currentItem->obj->position;
-                                currentActor->action =  Vector2Distance(currentActor->position, targetPosition) < 64 ? STOP : MOVE;
+                                currentActor->action =  Vector2Distance(currentActor->position, targetPosition) < 32 ? STOP : MOVE;
                                 break;
                             }
                         }
-                    }
-                break;
+                    } else{ currentActor->action = MOVE;}
+                    break;
 
                 case GUARD_STRAW:
-                    // protege o morando quando jogador não estiver muito próximo.
-                    if ( Vector2Distance(currentActor->position, player->position) > 128 && player->action != SPECIAL ){
+                    // protege o primeiro morango que encontrar na lista quando player não estiver muito próximo.
+                    if ( Vector2Distance(currentActor->position, player->position) > 128 ){
                         for (ItemNode *currentItem = itemListHead; currentItem != NULL; currentItem = currentItem->next) {
                             if ( currentItem->obj->type == STRAWBERRY) {
                                 targetPosition = currentItem->obj->position;
-                                currentActor->action =  Vector2Distance(currentActor->position, targetPosition) < 64 ? STOP : MOVE;
+                                currentActor->action =  Vector2Distance(currentActor->position, targetPosition) < 32 ? STOP : MOVE;
                                 break;
                             }
                         }
-                    }
-                break;
-
+                    }else{ currentActor->action = MOVE;}
+                    break;
 
                 case CRAZY:
-                    // protege o morando quando jogador não estiver muito próximo.
-                        if ( Vector2Distance(currentActor->position, player->position) > 128 && player->action != SPECIAL ){
-                            for (ItemNode *currentItem = itemListHead; currentItem != NULL; currentItem = currentItem->next) {
-                                if ( currentItem->obj->type == CHEESE) {
-                                    targetPosition = currentItem->obj->position;
-                                    currentActor->action =  Vector2Distance(currentActor->position, targetPosition) < 64 ? STOP : MOVE;
+                    currentActor->action =  MOVE;
+                    targetPosition.x = player->position.x * cosf(DEG2RAD * 45);
+                    targetPosition.y = player->position.y * sinf(DEG2RAD * 45);
 
-                                }
-                            }
-                        }
-                break;
+                    break;
                 case SLEEPER:
                 default:// comportamento de dormir se jogador estiver longe
-                    if (Vector2Distance(currentActor->position, player->position) < 400 && player->action != SPECIAL ) {
+                    if (Vector2Distance(currentActor->position, player->position) < 500 || player->action == SPECIAL ) {
                         currentActor->action = MOVE;
                     }
                     break;
-
             };
 
 
             // do actions
             switch(currentActor->action){
                 case MOVE:
-                    currentActor->direction = 
-                    Vector2Distance(currentActor->position, targetPosition) > 64 ? Vector2LineAngle(
-                                currentActor->position,
-                                targetPosition) * -1: currentActor->direction;
+                    currentActor->direction =
+                    Vector2Distance(currentActor->position, targetPosition) > 64 ?
+                        Vector2LineAngle( currentActor->position, targetPosition) * -1 :
+                            currentActor->direction;
                                         
-                    actionMove(currentActor,  &arena);
+                    actionMove(currentActor);
 
                     break;
                 
@@ -467,18 +464,16 @@ void updateEnemies(){
 
 
 void updateSceneGame(){
-
     updateMap();
     updatePlayer();
     updateEnemies();
     updateItens();
-
 }
 
 void drawHud() {
     DrawRectangle(20, 20, 380, 50, ColorAlpha(SKYBLUE, 0.5f));
-    DrawRectangle(150,20,player->life*2,20,LIME);
-    DrawRectangleLines(150,20,200,20,BLACK);
+    DrawRectangle(150,20,player->life*2,20, player->life>= 50 ? LIME : player->life>= 20? ORANGE: RED);
+    DrawRectangleLines(150,20,player->life*2,20,BLACK);
     DrawText(TextFormat("VIDA : %d", player->life), 20, 20, 20, BLACK);
     DrawText(TextFormat("PONTOS: %d", score), 20, 40, 20, BLACK);
     DrawText(TextFormat("NÍVEL: %d", level), 750, 20, 50, BLACK);
@@ -487,7 +482,6 @@ void drawHud() {
 void drawDebug() {
     BeginBlendMode(BLEND_ALPHA);
     DrawRectangle(15, 420, 270, 160, ColorAlpha(SKYBLUE, 0.5f));
-
 
     DrawText( TextFormat("PlayerSize: %.2f x %.2f", player->collisionBox.width, player->collisionBox.height), 20, 440, 18, BLACK);
     DrawText( TextFormat("Mouse: %d %d", GetMouseX(), GetMouseY()), 20, 460, 18, BLACK);
@@ -498,7 +492,6 @@ void drawDebug() {
     DrawText( TextFormat("Player->direction: %f", player->direction), 20, 560, 18, BLACK);
     DrawText(TextFormat("FPS: %d", GetFPS() ), 500, 570, 20, BLACK);
     EndBlendMode();
-
 }
 
 void drawSceneGame(){
@@ -518,7 +511,7 @@ void drawSceneGame(){
         drawActorList(enemyListHead);
 
         //desenha player
-        drawActorList(playerListHead);
+        drawActor(player);
 
         //desenha HUD
         drawHud();
@@ -528,7 +521,7 @@ void drawSceneGame(){
             drawDebug();
         }
 
-         EndDrawing();
+    EndDrawing();
 
 
     }
@@ -575,20 +568,21 @@ void closeSceneGame(){
 
     //LIBERAR MEMORIA PLAYER
     TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA PLAYER LIST");
+    unloadActorSpriteSheet(mouseSpriteSheetArray);
     unloadActorList(playerListHead);
 
 
     //LIBERAR MEMORIA ENEMY LIST
     TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA ENEMY LIST");
+    unloadActorSpriteSheet(catSpriteSheetArray);
     unloadActorList(enemyListHead);
 
 
     //LIBERAR MEMORIA ITEM LIST
     TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA ITEM LIST");
-    for (ItemNode *temp = itemListHead, *prev = NULL; temp != NULL; prev = temp, temp = temp->next) {
-        free(prev);
-    }
-    free(itemSpriteSheetArray);
+    unloadItemSpriteSheet(itemSpriteSheetArray);
+    unloadItemList(itemListHead);
+
 
     //LIBERAR MEMORIA MAPA
     TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA MAPA");
@@ -600,13 +594,8 @@ void closeSceneGame(){
     UnloadSound(eatStrawberry);
 
     //LIBERAR MEMORIA MUSICA
-    TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA MUSICA");
-    StopMusicStream(bgMusic);
-    UnloadMusicStream(bgMusic);
-
-    volumeMaster = 0.5f;
-
-    return;
+    TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA CENA");
+    unloadScene(currentScene);
 
 }
 
@@ -615,28 +604,29 @@ void loopSceneGame(){
         if (!handlePlayerInput()) {
             currentSceneType = INTRO;
             break;
+
         }
 
         updateSceneGame();
 
         drawSceneGame();
 
-        UpdateMusicStream(bgMusic);
+        UpdateMusicStream(currentScene->music);
     }
-
 
 }
 // cena loop principal
 void runSceneGame() {
 
-    initSceneGame();
-    
+    currentScene = initSceneGame();
+
     loopSceneGame();
 
-    saveGame();
+    StopMusicStream(currentScene->music);
 
     closeSceneGame();
 
+    saveGame();
 }
 //----------------------------------------------------------
 // FIM DO ARQUIVO

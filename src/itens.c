@@ -8,7 +8,37 @@
  * a altura do spritesheet é o raio da area de colisão.
  */
 
-Item* getItem(Vector2 initPos, Texture2D *spritesheetArray, ItemType type) {
+Rectangle getItemCollisionBox(Vector2 position) {
+    return (Rectangle){
+        .width  = 40, //item->spriteFrame.width -32;
+        .height = 40, //item->spriteFrame.height;
+        .x = position.x - 20,
+        .y = position.y - 20
+    };
+
+}
+
+Vector2 getItemPosition(Rectangle box) {
+    return (Vector2){
+        .x = box.x + (box.width/2),
+        .y = box.y + (box.height/2)
+    };
+}
+
+void setItemPosition(Item* item, Vector2 position) {
+
+    item->collisionBox = (Rectangle){
+        .x = position.x,
+        .y = position.y,
+        .width = 40,
+        .height = 40
+    };
+
+    item->position = getItemPosition(item->collisionBox);
+
+}
+
+Item* loadNewItem(Vector2 initPos, Texture2D *spritesheetArray, ItemType type) {
     Item* item = malloc(sizeof(Item));
 
     // define o spritesheet
@@ -22,12 +52,8 @@ Item* getItem(Vector2 initPos, Texture2D *spritesheetArray, ItemType type) {
         item->spriteFrame = (Rectangle){ (float)(64 * GetRandomValue(0, spriteCounts-1)), 0, 64, item->spritesheet->height };
     else item->spriteFrame = (Rectangle){ 0, 0, 64,  item->spritesheet->height };
 
-    // posição do item
-    item->position = initPos;
-    
-    // define a area de colisão centralizada
-    item->collisionBox = getCollisionBox(item->position);
-
+    // define posição e area de colisão centralizada
+    setItemPosition(item, initPos);
 
     // seta o tipo de item e a vida inicial
     item->type = type;
@@ -38,9 +64,9 @@ Item* getItem(Vector2 initPos, Texture2D *spritesheetArray, ItemType type) {
 }
 
 
-Texture2D* getItemSpriteSheetArray(const char *spritepathList[]) {
+Texture2D* loadItemSpriteSheetArray(const char *spritepathList[]) {
 
-    Texture2D* itemSpriteSheet = malloc(sizeof(Texture2D) * 4);
+    Texture2D* itemSpriteSheet = malloc(sizeof(Texture2D) * 4 );
 
     itemSpriteSheet[CHEESE] = LoadTexture(spritepathList[CHEESE]);
     itemSpriteSheet[STRAWBERRY] = LoadTexture(spritepathList[STRAWBERRY]);
@@ -50,15 +76,14 @@ Texture2D* getItemSpriteSheetArray(const char *spritepathList[]) {
     return itemSpriteSheet;
 };
 
-Rectangle getCollisionBox(const Vector2 pos) {
-    Rectangle temp;
-    temp.width  = 40;//item->spriteFrame.width -32;
-    temp.height = 40;//item->spriteFrame.height;
-    temp.x = pos.x - (temp.width/2);
-    temp.y = pos.y - (temp.height/2);
-
-    return temp;
+void unloadItemSpriteSheet(Texture2D *itemSpriteSheet) {
+    UnloadTexture(itemSpriteSheet[CHEESE]);
+    UnloadTexture(itemSpriteSheet[STRAWBERRY]);
+    UnloadTexture(itemSpriteSheet[TRAP]);
+    UnloadTexture(itemSpriteSheet[END_ITEM]);
+    free(itemSpriteSheet);
 }
+
 
 
 void drawItem(Item* self){

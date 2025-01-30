@@ -27,7 +27,7 @@ typedef struct Actor{
     Rectangle pointOfCollision;
     Vector2 position;
     Vector2 oldPosition;
-    int speed;
+    float speed;
     
     Rectangle collisionBox;
     ActorType behavior;
@@ -36,10 +36,18 @@ typedef struct Actor{
     
 } Actor;
 
-
+Actor* loadNewActor(Vector2 initPos, Texture2D* spritesheet);
+Texture2D* loadActorSpriteSheetArray( const char* sprite);
+void unloadActorSpriteSheet(Texture2D *actorSpriteSheetArray);
 void setActor(Actor* self, Vector2 initPos, Texture2D* spritesheet);
+
+void setActorPosition(Actor* self, Vector2 position);
+Rectangle getActorCollisionBox(Vector2 position);
+Vector2 getActorPosition(Rectangle box);
+
+
 void actionStop(Actor* self);
-void actionMove(Actor* self, Rectangle* arena) ;
+void actionMove(Actor* self) ;
 void actionSpecial(Actor* self, Actor* target);
 
 void drawActor(Actor* self);

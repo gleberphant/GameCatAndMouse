@@ -7,7 +7,6 @@
 
 #define ITEM_DEFAULT_LIFE 120
 #define ITEM_DEFAULT_WIDTH 32
-#define ITEM_DEFAULT CHEESE
 
 
 typedef enum ItemType { CHEESE=0, STRAWBERRY=1, TRAP=2, END_ITEM=3 } ItemType;
@@ -25,11 +24,16 @@ typedef struct Item{
 
 
 
-Item* getItem(Vector2 initPos, Texture2D* spritesheetArray, ItemType type);
+Item* loadNewItem(Vector2 initPos, Texture2D* spritesheetArray, ItemType type);
+void setItemPosition(Item* item, Vector2 position);
 
-Rectangle getCollisionBox(Vector2 pos);
+Rectangle getItemCollisionBox(Vector2 position);
+Vector2 getItemPosition(Rectangle box);
 
 void drawItem(Item* self);
 
-Texture2D* getItemSpriteSheetArray(const char *spritepathList[]);
+Texture2D* loadItemSpriteSheetArray(const char *spritepathList[]);
+void unloadItemSpriteSheet(Texture2D *itemSpriteSheet) ;
+
+
 #endif

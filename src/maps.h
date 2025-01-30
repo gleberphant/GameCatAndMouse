@@ -22,7 +22,7 @@ typedef struct MapTile{
 } MapTile;
 
 
-bool isInside(Actor* target, Rectangle *arena);
+bool checkMapCollision(Actor* target);
 void drawMap();
 void loadMap(const char* pathfile);
 

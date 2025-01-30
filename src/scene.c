@@ -29,6 +29,7 @@ SceneData* initScene(ScenesType sceneType){
  * @param scene The current scene to process input events.
  */
 void inputScene(SceneData *scene) {
+
     if (WindowShouldClose()) {
         currentSceneType = EXIT;
         return;
@@ -54,7 +55,7 @@ void inputScene(SceneData *scene) {
 
 void updateScene(SceneData *scene) {
     UpdateMusicStream(scene->music);
-    currentScene->update();
+    scene->update();
 }
 
 void drawScene(SceneData *scene) {
@@ -112,6 +113,7 @@ void runScene(ScenesType sceneType) {
     // Finaliza a cena
     TraceLog(LOG_DEBUG, " == FINALIZANDO SCENE  ");
     StopMusicStream(scene->music);
+
     unloadScene(scene);
 
     // Libera memória associada à cena
@@ -136,6 +138,7 @@ SceneData* loadSceneData(const char* backgroundPath, const char* musicPath, Scen
     scene->background = LoadTexture(backgroundPath);
     scene->font = font;
     scene->type = type;
+    scene->nextScene = OVER;
 
     SetMusicVolume(scene->music, 1.0f);
 
