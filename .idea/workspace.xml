@@ -51,23 +51,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="comportamento variados">
-      <change afterPath="$PROJECT_DIR$/resources/enemyLayer01.data" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/itemLayer01.data" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/actor.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/actor.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/actor.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/actor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/itens.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/itens.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/itens.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/itens.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lists.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/lists.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lists.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/lists.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/maps.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/maps.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/maps.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/maps.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scene.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scene.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scene_game.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_game.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scene_game.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_game.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scene_intro.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_intro.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game.exe" beforeDir="false" afterPath="$PROJECT_DIR$/game.exe" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -136,7 +123,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "E:/PROGRAMAS_C/GameCatAndMouse/resources",
+    "last_opened_file_path": "C:/CODES_REPOSITORIOS/GameCatAndMouse",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -162,17 +149,17 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.GameCatAndMouse">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="GameCatAndMouse" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameCatAndMouse" TARGET_NAME="GameCatAndMouse" CONFIG_NAME="Release-web" RUN_TARGET_PROJECT_NAME="GameCatAndMouse" RUN_TARGET_NAME="GameCatAndMouse">
+    <configuration name="GameCatAndMouse" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameCatAndMouse" TARGET_NAME="GameCatAndMouse" CONFIG_NAME="Release-windows" RUN_TARGET_PROJECT_NAME="GameCatAndMouse" RUN_TARGET_NAME="GameCatAndMouse">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="raylib" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameCatAndMouse" TARGET_NAME="raylib" CONFIG_NAME="Release-web">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="raylib" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameCatAndMouse" TARGET_NAME="raylib" CONFIG_NAME="Release-windows">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -246,6 +233,7 @@
       <workItem from="1738106457453" duration="13842000" />
       <workItem from="1738159780401" duration="1548000" />
       <workItem from="1738183118980" duration="24125000" />
+      <workItem from="1738259050991" duration="423000" />
     </task>
     <task id="LOCAL-00001" summary="CMAKE para compilar windows e linux">
       <option name="closed" value="true" />

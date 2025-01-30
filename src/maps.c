@@ -33,6 +33,13 @@ int map[13][17]= {
 
 
 // carrega mapa
+/**
+ * @brief Carrega o mapa do jogo.
+ * 
+ * Esta função carrega o tileset e o mapa do jogo a partir de um arquivo.
+ * 
+ * @param pathfile O caminho para o arquivo do tileset.
+ */
 void loadMap(const char* pathfile) {
     // carrega tileset
     atlas = LoadTexture(pathfile);
@@ -53,11 +60,24 @@ void loadMap(const char* pathfile) {
 
 }
 
+/**
+ * @brief Descarrega o mapa do jogo.
+ * 
+ * Esta função libera os recursos alocados para o tileset.
+ */
 void unloadMap() {
     UnloadTexture(atlas);
 }
 
 // verifica se um objeto está dentro de um retangulo.
+/**
+ * @brief Verifica colisão no mapa.
+ * 
+ * Esta função verifica se um objeto está colidindo com um tile no mapa.
+ * 
+ * @param target O ator a ser verificado.
+ * @return bool Retorna true se houver colisão, false caso contrário.
+ */
 bool checkMapCollision(Actor* target){
 
     playerX = (int) floorf((target->position.x-offSetX )/TILE_SIZE);
@@ -71,13 +91,19 @@ bool checkMapCollision(Actor* target){
     return false;
 }
 
-
+/**
+ * @brief Desenha o mapa do jogo.
+ * 
+ * Esta função renderiza o mapa do jogo na tela.
+ * 
+ * @param target O ator a ser desenhado no mapa.
+ */
 void drawMap(Actor* target ) {
 
     playerX = (int) floorf((target->position.x-offSetX )/TILE_SIZE);
     playerY = (int) floorf((target->position.y-offSetY )/TILE_SIZE);
 
-    // DRAW TILES
+    // desenha tiles
     for (int i = 0; i < maxTilesWidth; i++) {
         for (int j = 0; j < maxTilesHeight; j++) {
 
@@ -102,7 +128,7 @@ void drawMap(Actor* target ) {
         }
     }
 
-    //debug mode
+    // modo debug
     if (debugMode) {
         BeginBlendMode(BLEND_MULTIPLIED);
         DrawCircle(
@@ -112,7 +138,7 @@ void drawMap(Actor* target ) {
             ColorAlpha(RED, 0.5f)
         );
         EndBlendMode();
-        //desenha linhas
+        // desenha linhas
         // linhas do eixo x
         for (int col = 0; col < SCREEN_WIDTH; col+=TILE_SIZE) {
             DrawLine(col+offSetY, 0, col+offSetY, SCREEN_HEIGHT, LIGHTGRAY);

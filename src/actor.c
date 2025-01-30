@@ -5,6 +5,15 @@
 
 // inicia um ator
 
+/**
+ * @brief Carrega um novo ator.
+ * 
+ * Esta função inicializa um novo ator com base na posição inicial e no spritesheet fornecidos.
+ * 
+ * @param initPos A posição inicial do ator.
+ * @param spritesheet O spritesheet do ator.
+ * @return Actor* Retorna um ponteiro para o ator inicializado.
+ */
 Actor* loadNewActor(Vector2 initPos, Texture2D* spritesheet) {
     TraceLog(LOG_DEBUG, "== Iniciando novo ACTOR");
     Actor* newActor = malloc(sizeof(Actor));
@@ -12,6 +21,14 @@ Actor* loadNewActor(Vector2 initPos, Texture2D* spritesheet) {
     return newActor;
 }
 
+/**
+ * @brief Carrega um array de spritesheets de ator.
+ * 
+ * Esta função carrega um array de spritesheets de ator a partir de um caminho base.
+ * 
+ * @param sprite O caminho base para os spritesheets.
+ * @return Texture2D* Retorna um ponteiro para o array de spritesheets carregado.
+ */
 Texture2D* loadActorSpriteSheetArray( const char* sprite){
 
     Texture2D* spriteSheetArray = malloc( sizeof(Texture2D) * 4 );
@@ -25,14 +42,30 @@ Texture2D* loadActorSpriteSheetArray( const char* sprite){
 
 }
 
+/**
+ * @brief Descarrega um array de spritesheets de ator.
+ * 
+ * Esta função libera os recursos alocados para um array de spritesheets de ator.
+ * 
+ * @param actorSpriteSheetArray O array de spritesheets a ser descarregado.
+ */
 void unloadActorSpriteSheet(Texture2D *actorSpriteSheetArray) {
     UnloadTexture(actorSpriteSheetArray[STOP]);
     UnloadTexture(actorSpriteSheetArray[MOVE]);
     UnloadTexture(actorSpriteSheetArray[SPECIAL]);
+    
     free(actorSpriteSheetArray);
 }
 
-
+/**
+ * @brief Define as propriedades de um ator.
+ * 
+ * Esta função define as propriedades de um ator, incluindo a posição e o spritesheet.
+ * 
+ * @param self O ator a ser definido.
+ * @param initPos A posição inicial do ator.
+ * @param spritesheet O spritesheet do ator.
+ */
 void setActor(Actor* self, Vector2 initPos, Texture2D* spritesheet){
 
     // carrega os spritesheet com animação de cada ação
@@ -55,6 +88,14 @@ void setActor(Actor* self, Vector2 initPos, Texture2D* spritesheet){
     self->behavior = GetRandomValue(ATTACK, CRAZY);
 }
 
+/**
+ * @brief Define a posição de um ator.
+ * 
+ * Esta função define a posição e o retângulo de colisão de um ator.
+ * 
+ * @param self O ator a ser posicionado.
+ * @param position A nova posição do ator.
+ */
 void setActorPosition(Actor* self, Vector2 position) {
     // retângulo de colisão
     self->collisionBox = (Rectangle){
@@ -74,7 +115,14 @@ void setActorPosition(Actor* self, Vector2 position) {
     self->oldPosition = self->position;
 }
 
-// obter o retângulo de colisão a partir de uma posição
+/**
+ * @brief Obtém o retângulo de colisão de um ator a partir de uma posição.
+ * 
+ * Esta função calcula o retângulo de colisão de um ator com base na sua posição.
+ * 
+ * @param position A posição do ator.
+ * @return Rectangle Retorna o retângulo de colisão do ator.
+ */
 Rectangle getActorCollisionBox(Vector2 position) {
     return (Rectangle)  {
         .width = 64,
@@ -85,7 +133,14 @@ Rectangle getActorCollisionBox(Vector2 position) {
 
 }
 
-// obtêm a posição centralizada a partir de um retangulo
+/**
+ * @brief Obtém a posição de um ator a partir do seu retângulo de colisão.
+ * 
+ * Esta função calcula a posição centralizada de um ator com base no seu retângulo de colisão.
+ * 
+ * @param box O retângulo de colisão do ator.
+ * @return Vector2 Retorna a posição do ator.
+ */
 Vector2 getActorPosition(Rectangle box) {
     return (Vector2){
         .x = box.x + box.width / 2,
@@ -94,11 +149,26 @@ Vector2 getActorPosition(Rectangle box) {
 }
 
 //------
+
+/**
+ * @brief Ação de parar do ator.
+ * 
+ * Esta função define a ação do ator como parar.
+ * 
+ * @param self O ator a ser atualizado.
+ */
 void actionStop(Actor* self)  {
     self->action = STOP;
     return;
 }
 
+/**
+ * @brief Ação de mover do ator.
+ * 
+ * Esta função atualiza a posição do ator com base na sua velocidade e direção.
+ * 
+ * @param self O ator a ser atualizado.
+ */
 void actionMove(Actor* self) {
 
     self->action = MOVE;
@@ -120,32 +190,39 @@ void actionMove(Actor* self) {
 
 }
 
+/**
+ * @brief Ação especial do ator.
+ * 
+ * Esta função define a ação do ator como especial.
+ * 
+ * @param self O ator a ser atualizado.
+ * @param target O alvo da ação especial.
+ */
  void actionSpecial(Actor* self, Actor* target)  {
     self->action = SPECIAL;
 
 }
 
-
-// desenhar ator
+/**
+ * @brief Desenha um ator na tela.
+ * 
+ * Esta função renderiza um ator na tela.
+ * 
+ * @param self O ator a ser desenhado.
+ */
 void drawActor(Actor* self){
 
-    // atualiza altura e largura do box de colisão
+    // define area de desenho. com posição centralizada 
     Rectangle drawRect = {
         .width = self->spriteA2[self->action]->frameRec.width,
-        .height = self->spriteA2[self->action]->frameRec.height
+        .height = self->spriteA2[self->action]->frameRec.height,
+        .x = self->position.x,
+        .y = self->position.y
     };
-
-    // Vector2 size = Vector2Rotate((Vector2){drawRect.width-32, drawRect.height-3}, self->direction - (90 * DEG2RAD));
-    //self->collisionBox.width     = fmax( abs(size.x), 32);
-    //self->collisionBox.height    =  fmax( abs(size.y), 32);
-
-
-    drawRect.x = self->position.x;
-    drawRect.y = self->position.y;
-
-    // atualizar posição do collision box
-    self->collisionBox.x = self->position.x-(self->collisionBox.width/2); //newPosX
-    self->collisionBox.y = self->position.y-(self->collisionBox.height/2); //newPosY
+  
+    // atualizar posição do collision box para o canto superior da imagem
+    self->collisionBox.x = self->position.x-(self->collisionBox.width/2); 
+    self->collisionBox.y = self->position.y-(self->collisionBox.height/2);
 
     //DESENHA SPRITE
     DrawTexturePro(
@@ -157,20 +234,22 @@ void drawActor(Actor* self){
         WHITE
     );
 
-    // DESENHA "SANGUE" - ponto de colisão
-    if (self->collision == true)
-        DrawCircle(
-            (int)self->pointOfCollision.x,
-            (int)self->pointOfCollision.y,
-            10,
-            RED);
-    self->collision = false;
+    
+    if(self->collision) self->collision = false;
 
+    // atualiza frame da animação
     if ( updateAnimationFrame (self->spriteA2[self->action] )) self->action = STOP; ;
 
 
     // DESENHOS DE DEPURAÇÃO
     if(debugMode){
+        // DESENHA ponto de colisão
+        DrawCircle(
+            (int)self->pointOfCollision.x,
+            (int)self->pointOfCollision.y,
+            10,
+            RED);
+        
         // ÁREA DE COLISÃO
         DrawRectangleLinesEx(self->collisionBox,5.0f,DARKGREEN);
         DrawRectangleLinesEx(drawRect,2.0f,RED);

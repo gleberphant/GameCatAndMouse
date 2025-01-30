@@ -8,6 +8,14 @@
  * a altura do spritesheet é o raio da area de colisão.
  */
 
+/**
+ * @brief Obtém o retângulo de colisão de um item.
+ * 
+ * Esta função calcula o retângulo de colisão de um item com base na sua posição.
+ * 
+ * @param position A posição do item.
+ * @return Rectangle Retorna o retângulo de colisão do item.
+ */
 Rectangle getItemCollisionBox(Vector2 position) {
     return (Rectangle){
         .width  = 40, //item->spriteFrame.width -32;
@@ -18,6 +26,14 @@ Rectangle getItemCollisionBox(Vector2 position) {
 
 }
 
+/**
+ * @brief Obtém a posição de um item a partir do seu retângulo de colisão.
+ * 
+ * Esta função calcula a posição centralizada de um item com base no seu retângulo de colisão.
+ * 
+ * @param box O retângulo de colisão do item.
+ * @return Vector2 Retorna a posição do item.
+ */
 Vector2 getItemPosition(Rectangle box) {
     return (Vector2){
         .x = box.x + (box.width/2),
@@ -25,6 +41,14 @@ Vector2 getItemPosition(Rectangle box) {
     };
 }
 
+/**
+ * @brief Define a posição de um item.
+ * 
+ * Esta função define a posição e o retângulo de colisão de um item.
+ * 
+ * @param item O item a ser posicionado.
+ * @param position A nova posição do item.
+ */
 void setItemPosition(Item* item, Vector2 position) {
 
     item->collisionBox = (Rectangle){
@@ -38,6 +62,16 @@ void setItemPosition(Item* item, Vector2 position) {
 
 }
 
+/**
+ * @brief Carrega um novo item.
+ * 
+ * Esta função carrega um novo item com base na posição inicial, spritesheet e tipo fornecidos.
+ * 
+ * @param initPos A posição inicial do item.
+ * @param spritesheetArray O array de spritesheets dos itens.
+ * @param type O tipo do item.
+ * @return Item* Retorna um ponteiro para o item carregado.
+ */
 Item* loadNewItem(Vector2 initPos, Texture2D *spritesheetArray, ItemType type) {
     Item* item = malloc(sizeof(Item));
 
@@ -63,7 +97,14 @@ Item* loadNewItem(Vector2 initPos, Texture2D *spritesheetArray, ItemType type) {
     return item;
 }
 
-
+/**
+ * @brief Carrega um array de spritesheets de itens.
+ * 
+ * Esta função carrega um array de spritesheets de itens a partir de uma lista de caminhos de arquivos.
+ * 
+ * @param spritepathList A lista de caminhos de arquivos dos spritesheets.
+ * @return Texture2D* Retorna um ponteiro para o array de spritesheets carregado.
+ */
 Texture2D* loadItemSpriteSheetArray(const char *spritepathList[]) {
 
     Texture2D* itemSpriteSheet = malloc(sizeof(Texture2D) * 4 );
@@ -76,16 +117,28 @@ Texture2D* loadItemSpriteSheetArray(const char *spritepathList[]) {
     return itemSpriteSheet;
 };
 
+/**
+ * @brief Descarrega um array de spritesheets de itens.
+ * 
+ * Esta função libera os recursos alocados para um array de spritesheets de itens.
+ * 
+ * @param itemSpriteSheet O array de spritesheets a ser descarregado.
+ */
 void unloadItemSpriteSheet(Texture2D *itemSpriteSheet) {
     UnloadTexture(itemSpriteSheet[CHEESE]);
     UnloadTexture(itemSpriteSheet[STRAWBERRY]);
     UnloadTexture(itemSpriteSheet[TRAP]);
-    UnloadTexture(itemSpriteSheet[END_ITEM]);
+    //UnloadTexture(itemSpriteSheet[END_ITEM]);
     free(itemSpriteSheet);
 }
 
-
-
+/**
+ * @brief Desenha um item na tela.
+ * 
+ * Esta função renderiza um item na tela.
+ * 
+ * @param self O item a ser desenhado.
+ */
 void drawItem(Item* self){
 
     DrawTexturePro(
@@ -96,7 +149,6 @@ void drawItem(Item* self){
         0.0f,
         WHITE
     );
-
 
     // DESENHOS DE DEPURAÇÃO
     if(debugMode){

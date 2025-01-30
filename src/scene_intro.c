@@ -10,6 +10,13 @@ Rectangle recText;
 int records[5];
 
 
+/**
+ * @brief Inicializa a cena de introdução.
+ * 
+ * Esta função carrega os recursos necessários para a cena de introdução e define as funções de entrada, atualização e desenho.
+ * 
+ * @return SceneData* Retorna um ponteiro para os dados da cena inicializada.
+ */
 SceneData* initSceneIntro() {
     SceneData* scene;
     // carregando a scene
@@ -42,7 +49,11 @@ SceneData* initSceneIntro() {
     return scene;
 }
 
-
+/**
+ * @brief Processa eventos de entrada para a cena de introdução.
+ * 
+ * Esta função lida com eventos de entrada, como pressionar a tecla Enter ou clicar com o mouse para iniciar a próxima cena.
+ */
 void inputSceneIntro() {
 
     if (IsKeyReleased(KEY_ENTER) || IsKeyReleased(KEY_KP_ENTER) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT) ) {
@@ -51,10 +62,20 @@ void inputSceneIntro() {
     }
  }
 
+/**
+ * @brief Atualiza a lógica da cena de introdução.
+ * 
+ * Esta função atualiza a lógica da cena de introdução.
+ */
 void updateSceneIntro() {
 
  }
 
+/**
+ * @brief Desenha a cena de introdução na tela.
+ * 
+ * Esta função renderiza a cena de introdução na tela.
+ */
 /* função de desenho da cena intro */
 void drawSceneIntro() {
     BeginDrawing();

@@ -6,6 +6,13 @@ static char *textBuffer = "GAME OVER";
 static Rectangle recText;
 
 
+/**
+ * @brief Inicializa a cena de game over.
+ * 
+ * Esta função carrega os recursos necessários para a cena de game over e define as funções de entrada, atualização e desenho.
+ * 
+ * @return SceneData* Retorna um ponteiro para os dados da cena inicializada.
+ */
 SceneData* initSceneOver() {
     TraceLog(LOG_DEBUG, " == INICIANDO SCENE_OVER");
     SceneData* scene;
@@ -33,6 +40,11 @@ SceneData* initSceneOver() {
 }
 
 
+/**
+ * @brief Processa eventos de entrada para a cena de game over.
+ * 
+ * Esta função lida com eventos de entrada, como pressionar a tecla Enter para iniciar a próxima cena.
+ */
 void inputSceneOver() {
 
     if (IsKeyReleased(KEY_ENTER) || IsKeyReleased(KEY_KP_ENTER) ) {
@@ -44,12 +56,22 @@ void inputSceneOver() {
     return;
 }
 
+
+/**
+ * @brief Atualiza a lógica da cena de game over.
+ * 
+ * Esta função atualiza a lógica da cena de game over.
+ */
 void updateSceneOver() {
     return;
 }
 
 
-/* função de desenho da cena intro */
+/**
+ * @brief Desenha a cena de game over na tela.
+ * 
+ * Esta função renderiza a cena de game over na tela.
+ */
 void drawSceneOver() {
     BeginDrawing();
 
