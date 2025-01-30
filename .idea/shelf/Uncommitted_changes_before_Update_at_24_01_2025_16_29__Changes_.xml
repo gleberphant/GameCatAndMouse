@@ -1,0 +1,94 @@
+<changelist name="Uncommitted_changes_before_Update_at_24_01_2025_16_29_[Changes]" date="1737746951016" recycled="false" toDelete="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_24_01_2025_16_29_[Changes]/shelved.patch" />
+  <option name="DESCRIPTION" value="Remove GameCatAndMouse.js." />
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/sounds/eat_strawberry.mp3" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/catA_stop.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/intro_bg.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/face_mouse.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/mouseA_special.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build_web/GameCatAndMouse.wasm" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/sounds/eat_cheese.mp3" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/catA_walk.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/01_cheese.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/mouseA_stop.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/GameCatAndMouse" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/sounds/intro_music.mp3" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="game.exe" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/gameover.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/sounds/game_music.mp3" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/sounds/get_hit2.mp3" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/item_cheese.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/sounds/gameover.mp3" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/item_trap.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/02_cheese.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/sounds/get_hit.mp3" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/tileset.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/mouseA_walk.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/item_strawberry.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/catA_special.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/sounds/confirm.mp3" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/LICENSE" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build_web/GameCatAndMouse.data" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/mapPack_spritesheet.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="build/resources/face_cat.png" />
+  </binary>
+</changelist>
