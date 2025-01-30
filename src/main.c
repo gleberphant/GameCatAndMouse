@@ -14,33 +14,33 @@ bool debugMode = false;
 Font gameFont;
 
 /**
- * @brief Initializes the game resources and sets the initial game state.
+ * @brief Inicializa os recursos do jogo e define o estado inicial do jogo.
  */
 void initGame() {
-    // config screen
+    // configura a tela
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "CatAndMouse by Handerson Gleber (Gr4v4t1nh4)");
     SetTargetFPS(30);
 
-    // Loadind screen
+    // Tela de carregamento
     BeginDrawing();
         ClearBackground(BLACK);
         DrawText("Carregando...", 10, 10, 60, WHITE);
     EndDrawing();
 
-    // config audio
+    // configura o áudio
     InitAudioDevice();
     SetMasterVolume(1.0f);
     
-    // set variables
-    SetTraceLogLevel(LOG_DEBUG);   // Set debugging level for logs
-    gameFont = GetFontDefault();   // Use the default font
-    currentSceneType = INTRO;      // Start with the INTRO scene
+    // define variáveis
+    SetTraceLogLevel(LOG_DEBUG);   // Define o nível de depuração para logs
+    gameFont = GetFontDefault();   // Usa a fonte padrão
+    currentSceneType = INTRO;      // Começa com a cena INTRO
 
     
 }
 
 /**
- * @brief Executes the primary loop controlling the transitions between scenes in the application.
+ * @brief Executa o loop principal controlando as transições entre cenas no aplicativo.
  */
 void gameLoop() {
     while (currentSceneType != EXIT) {
@@ -52,25 +52,22 @@ void gameLoop() {
         } else {
             TraceLog(LOG_DEBUG, "Iniciando Cena %d", currentSceneType);
             runScene(currentSceneType);
-            TraceLog(LOG_DEBUG, "proxima cena = %d", currentSceneType);
+            TraceLog(LOG_DEBUG, "próxima cena = %d", currentSceneType);
         }
     }
 }
 
-
-
 /**
- * @brief Unloads game resources and closes the application.
+ * @brief Descarrega os recursos do jogo e fecha o aplicativo.
  */
 void closeGame() {
     CloseAudioDevice();
     CloseWindow();
 }
 
-
 /**
- * @brief Entry point of the application.
- * @return An integer value, typically 0, indicating the successful execution of the program.
+ * @brief Ponto de entrada do aplicativo.
+ * @return Um valor inteiro, tipicamente 0, indicando a execução bem-sucedida do programa.
  */
 int main(int argc , char *argv[]) {
  

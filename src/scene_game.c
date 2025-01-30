@@ -25,7 +25,18 @@ short enemyType = 0, enemyCount = 0;
 Vector2 targetPosition;
 
 
+/**
+ * @brief Inicializa a cena do jogo.
+ * 
+ * Esta função carrega os recursos necessários para a cena do jogo e define as funções de entrada, atualização e desenho.
+ * 
+ * @return SceneData* Retorna um ponteiro para os dados da cena inicializada.
+ */
 SceneData* initSceneGame(){
+
+    // zera todos ponteiros
+    player = NULL;
+    enemyListHead = NULL, playerListHead = NULL, itemListHead = NULL;
 
     // CARREGAR LISTA DE INIMIGOS
     TraceLog(LOG_DEBUG, "== carregando ENEMY LIST");
@@ -44,7 +55,7 @@ SceneData* initSceneGame(){
 
     mouseSpriteSheetArray = loadActorSpriteSheetArray("resources/mouseA");
 
-    playerListHead = addActorNode(playerListHead);
+    playerListHead = addActorNode(NULL);
 
     if (playerListHead == NULL) {
         TraceLog(LOG_ERROR, " ::: ERROR ao carregar PLAYER list");
@@ -65,6 +76,7 @@ SceneData* initSceneGame(){
     }
 
     player->speed = 10;
+    player->life = 90;
 
 
     // CARREGAR LISTA DE ITENS
@@ -121,6 +133,13 @@ SceneData* initSceneGame(){
 
 }
 
+/**
+ * @brief Lida com a entrada do jogador.
+ * 
+ * Esta função processa a entrada do jogador, como teclas de movimento e ações especiais.
+ * 
+ * @return bool Retorna true se a entrada foi processada com sucesso, false caso contrário.
+ */
 bool handlePlayerInput(){
 
     if (IsKeyPressed(KEY_ESCAPE)) {
@@ -221,7 +240,11 @@ bool handlePlayerInput(){
 return true;
 }
 
-
+/**
+ * @brief Atualiza o mapa do jogo.
+ * 
+ * Esta função atualiza o mapa do jogo, incluindo a verificação do nível atual e a adição de novos inimigos.
+ */
 void updateMap() {
     // Verifica o nível atual
     if (score > level * 20) {
@@ -240,12 +263,16 @@ void updateMap() {
     }
 }
 
+/**
+ * @brief Atualiza o jogador.
+ * 
+ * Esta função atualiza a lógica do jogador, incluindo a verificação de condições de vitória ou derrota.
+ */
 void updatePlayer(){
 
 // Condições de vitória ou derrota.
         if (player->life < 1) {
             currentSceneType = OVER;
-            return;
         }
 
         // ações do jogador
@@ -255,6 +282,8 @@ void updatePlayer(){
                 break;
 
             case MOVE:
+                if (player->life == 100) player->speed = 15;
+                else player->speed = 8;
                 actionMove(player);
                 break;
 
@@ -269,6 +298,11 @@ void updatePlayer(){
 
 }
 
+/**
+ * @brief Atualiza os itens do jogo.
+ * 
+ * Esta função atualiza a lógica dos itens do jogo, incluindo a verificação de colisões com o jogador.
+ */
 void updateItens(){
 
     Item* currentItem = NULL;
@@ -293,7 +327,8 @@ void updateItens(){
                         PlaySound(eatStrawberry);
 
                         currentItem->life = -1;
-                        player->life += 10;
+                        player->life = player->life+10 > 100 ? 100 : player->life+10;
+
                         break;
 
                     case TRAP:
@@ -316,7 +351,6 @@ void updateItens(){
                     itemListHead = prev;
                 } else prev->next = currentNode->next;
 
-                TraceLog(LOG_DEBUG, "== liberando ITEM %p", currentNode);
                 free(currentNode->obj);
                 free(currentNode);
 
@@ -357,6 +391,11 @@ void updateItens(){
 
 }
 
+/**
+ * @brief Atualiza os inimigos do jogo.
+ * 
+ * Esta função atualiza a lógica dos inimigos do jogo, incluindo a verificação de colisões com o jogador.
+ */
 void updateEnemies(){
 
     Actor* currentActor = NULL;
@@ -455,14 +494,17 @@ void updateEnemies(){
                 currentActor->collision = true;
                 currentActor->pointOfCollision = GetCollisionRec(player->collisionBox, currentActor->collisionBox);
                 
-                if (!debugMode) {
-                    player->life--;
-                }
+                if (!debugMode) player->life-= 8;
+                
             }
         }
 }
 
-
+/**
+ * @brief Atualiza a cena do jogo.
+ * 
+ * Esta função atualiza a lógica da cena do jogo, incluindo o mapa, o jogador, os itens e os inimigos.
+ */
 void updateSceneGame(){
     updateMap();
     updatePlayer();
@@ -470,15 +512,40 @@ void updateSceneGame(){
     updateItens();
 }
 
+/**
+ * @brief Desenha o HUD do jogo.
+ * 
+ * Esta função desenha o HUD (Heads-Up Display) do jogo, incluindo a vida do jogador, a pontuação e o nível.
+ */
 void drawHud() {
+    
+    // desenha dialog do hud
     DrawRectangle(20, 20, 380, 50, ColorAlpha(SKYBLUE, 0.5f));
-    DrawRectangle(150,20,player->life*2,20, player->life>= 50 ? LIME : player->life>= 20? ORANGE: RED);
-    DrawRectangleLines(150,20,player->life*2,20,BLACK);
-    DrawText(TextFormat("VIDA : %d", player->life), 20, 20, 20, BLACK);
+
+    // desenha fundo da barra de vida
+    DrawRectangle(149,19, 202 ,22,BLACK);
+
+    // desenha barra de vida com a cor conforme o percentual de vida
+    DrawRectangle(
+        150, 20,
+        player->life*2,20, 
+        player->life == 100 ? SKYBLUE : player->life > 49 ? LIME : player->life>= 20? ORANGE: RED
+    );
+    
+    
+    
+    if(player->life == 100) DrawText(TextFormat("VIDA : MAX"), 20, 20, 20, BLACK);
+    else DrawText(TextFormat("VIDA : %d", player->life), 20, 20, 20, BLACK);  
+
     DrawText(TextFormat("PONTOS: %d", score), 20, 40, 20, BLACK);
     DrawText(TextFormat("NÍVEL: %d", level), 750, 20, 50, BLACK);
 }
 
+/**
+ * @brief Desenha informações de depuração.
+ * 
+ * Esta função desenha informações de depuração na tela, como a posição do jogador e a taxa de quadros por segundo (FPS).
+ */
 void drawDebug() {
     BeginBlendMode(BLEND_ALPHA);
     DrawRectangle(15, 420, 270, 160, ColorAlpha(SKYBLUE, 0.5f));
@@ -494,6 +561,11 @@ void drawDebug() {
     EndBlendMode();
 }
 
+/**
+ * @brief Desenha a cena do jogo na tela.
+ * 
+ * Esta função renderiza a cena do jogo na tela.
+ */
 void drawSceneGame(){
 
     BeginDrawing();
@@ -524,8 +596,13 @@ void drawSceneGame(){
     EndDrawing();
 
 
-    }
+}
 
+/**
+ * @brief Salva o jogo.
+ * 
+ * Esta função salva a pontuação do jogador em um arquivo.
+ */
 void saveGame(){
 
     // carregar pontuação salva
@@ -564,12 +641,19 @@ void saveGame(){
     fclose(file);
 }
 
+/**
+ * @brief Fecha a cena do jogo.
+ * 
+ * Esta função libera os recursos alocados para a cena do jogo.
+ */
 void closeSceneGame(){
 
     //LIBERAR MEMORIA PLAYER
     TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA PLAYER LIST");
     unloadActorSpriteSheet(mouseSpriteSheetArray);
     unloadActorList(playerListHead);
+    //free(player);
+    //free(playerListHead);
 
 
     //LIBERAR MEMORIA ENEMY LIST
@@ -593,18 +677,23 @@ void closeSceneGame(){
     UnloadSound(getHit);
     UnloadSound(eatStrawberry);
 
-    //LIBERAR MEMORIA MUSICA
+    //LIBERAR CENA
     TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA CENA");
     unloadScene(currentScene);
 
 }
 
+/**
+ * @brief Executa o loop principal da cena do jogo.
+ * 
+ * Esta função executa o loop principal da cena do jogo, incluindo a entrada, atualização e desenho da cena.
+ */
 void loopSceneGame(){
     while (currentSceneType == GAME) {
+        
         if (!handlePlayerInput()) {
             currentSceneType = INTRO;
             break;
-
         }
 
         updateSceneGame();
@@ -616,6 +705,11 @@ void loopSceneGame(){
 
 }
 // cena loop principal
+/**
+ * @brief Executa a cena do jogo.
+ * 
+ * Esta função inicializa, executa e finaliza a cena do jogo.
+ */
 void runSceneGame() {
 
     currentScene = initSceneGame();

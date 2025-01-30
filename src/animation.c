@@ -3,6 +3,14 @@
 #include <math.h>
 #include <stdlib.h>
 
+/**
+ * @brief Obtém uma nova animação.
+ * 
+ * Esta função inicializa uma nova estrutura de animação com base no spritesheet fornecido.
+ * 
+ * @param spritesheet O spritesheet da animação.
+ * @return Animation* Retorna um ponteiro para a animação inicializada.
+ */
 Animation* getAnimation(Texture2D* spritesheet){
 
     Animation* spriteA = malloc(sizeof(Animation));
@@ -28,7 +36,14 @@ Animation* getAnimation(Texture2D* spritesheet){
 
 }
 
-
+/**
+ * @brief Atualiza o quadro da animação.
+ * 
+ * Esta função atualiza o quadro atual da animação com base no tempo decorrido.
+ * 
+ * @param spriteA A animação a ser atualizada.
+ * @return bool Retorna true se a animação terminou, false caso contrário.
+ */
 bool updateAnimationFrame(Animation *spriteA){
 
     spriteA->frameRec.x = spriteA->frameRec.width * (float)spriteA->currentFrame;
