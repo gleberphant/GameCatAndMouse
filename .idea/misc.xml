@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="Black">
+    <option name="sdkName" value="Python 3.13" />
+  </component>
   <component name="CMakePythonSetting">
-    <option name="pythonIntegrationState" value="YES" />
+    <option name="pythonIntegrationState" value="NO" />
   </component>
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
   <component name="CidrRootsConfiguration">
@@ -13,8 +16,6 @@
       <file path="$PROJECT_DIR$/raylib/lib" />
     </libraryRoots>
     <excludeRoots>
-      <file path="$PROJECT_DIR$/build" />
-      <file path="$PROJECT_DIR$/cmake-build-debug" />
       <file path="$PROJECT_DIR$/cmake-build-debug-mingw" />
       <file path="$PROJECT_DIR$/cmake-build-release-mingw" />
       <file path="$PROJECT_DIR$/cmake-build-release-web" />

@@ -22,6 +22,7 @@
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppIncludesOrderOptions" type="string" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
   </component>
   <component name="CMakePresetLoader">{
   &quot;useNewFormat&quot;: true
@@ -44,26 +45,32 @@
   <component name="CMakeSettings">
     <configurations>
       <configuration PROFILE_NAME="Release-windows" ENABLED="true" TOOLCHAIN_NAME="MinGW" GENERATION_OPTIONS="-G &quot;MinGW Makefiles&quot; -DPLATFORM:STRING=Desktop -DCMAKE_BUILD_TYPE=Release -Draylib_DIR:PATH=./_deps/raylib-src/cmake" />
-      <configuration PROFILE_NAME="Release-web" ENABLED="true" CONFIG_NAME="Release" GENERATION_OPTIONS="-G Ninja -DCMAKE_TOOLCHAIN_FILE=/root/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake -DPLATFORM:STRING=Web -Draylib_DIR:PATH=./_deps/raylib-src/cmake" BUILD_OPTIONS="-j 14" />
+      <configuration PROFILE_NAME="Release-web" ENABLED="true" CONFIG_NAME="Release" GENERATION_OPTIONS="-G Ninja -DPLATFORM=Web -DCMAKE_TOOLCHAIN_FILE=/root/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake" BUILD_OPTIONS="-j 14" />
       <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" GENERATION_OPTIONS="-G &quot;Unix Makefiles&quot; -DCMAKE_BUILD_TYPE=Debug -Draylib_DIR:PATH=./_deps/raylib-src/cmake" BUILD_OPTIONS="-j 14" />
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="comportamento variados">
+    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="conversao de audios para ogg">
+      <change beforePath="$PROJECT_DIR$/.idea/GameCatAndMouse.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/GameCatAndMouse.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop.zip" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/GameCatAndMouse.exe" beforeDir="false" afterPath="$PROJECT_DIR$/build_CatAndMouse-Desktop/GameCatAndMouse.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/enemyLayer01.data" beforeDir="false" afterPath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/enemyLayer01.data" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/score.data" beforeDir="false" afterPath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/score.data" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/sounds/confirm.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/sounds/eat_cheese.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/sounds/eat_strawberry.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/sounds/game_music.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/sounds/gameover.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/sounds/get_hit.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/sounds/get_hit2.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/sounds/intro_music.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/confirm.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/eat_cheese.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/eat_strawberry.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/game_music.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/gameover.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/get_hit.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/get_hit2.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/intro_music.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/enemyLayer01.data" beforeDir="false" afterPath="$PROJECT_DIR$/resources/enemyLayer01.data" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/maps.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/maps.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/maps.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/maps.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/scene_game.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_game.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scene_intro.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_intro.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scene_over.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_over.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,7 +81,7 @@
     <option name="clangTidyViaClangd" value="false" />
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Release-windows" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Release-web" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -138,7 +145,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.fileTypes&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;CMakeSettings&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -158,12 +165,12 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.GameCatAndMouse">
-    <configuration name="GameCatAndMouse" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameCatAndMouse" TARGET_NAME="GameCatAndMouse" CONFIG_NAME="Release-windows" RUN_TARGET_PROJECT_NAME="GameCatAndMouse" RUN_TARGET_NAME="GameCatAndMouse">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration name="GameCatAndMouse" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameCatAndMouse" TARGET_NAME="GameCatAndMouse" CONFIG_NAME="Release-windows" RUN_TARGET_PROJECT_NAME="GameCatAndMouse" RUN_TARGET_NAME="GameCatAndMouse">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -243,6 +250,7 @@
       <workItem from="1738159780401" duration="1548000" />
       <workItem from="1738183118980" duration="24125000" />
       <workItem from="1738259050991" duration="423000" />
+      <workItem from="1738287587741" duration="1513000" />
     </task>
     <task id="LOCAL-00001" summary="CMAKE para compilar windows e linux">
       <option name="closed" value="true" />
@@ -364,7 +372,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738161323952</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="conversao de audios para ogg">
+      <option name="closed" value="true" />
+      <created>1738282120778</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1738282120778</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -400,7 +416,8 @@
     <MESSAGE value="colisao com itens&#10;mapa de matrix" />
     <MESSAGE value="CARREGAR FILE MAP" />
     <MESSAGE value="comportamento variados" />
-    <option name="LAST_COMMIT_MESSAGE" value="comportamento variados" />
+    <MESSAGE value="conversao de audios para ogg" />
+    <option name="LAST_COMMIT_MESSAGE" value="conversao de audios para ogg" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

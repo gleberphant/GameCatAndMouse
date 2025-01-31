@@ -23,7 +23,7 @@ typedef struct MapTile{
 
 
 bool checkMapCollision(Actor* target);
-void drawMap();
+void drawMap(Actor* target );
 void loadMap(const char* pathfile);
 
 #endif

@@ -248,7 +248,7 @@ return true;
 void updateMap() {
     // Verifica o nível atual
     if (score > level * 20) {
-        enemyVel = enemyVel > 8 ? 8: enemyVel++;
+        enemyVel = enemyVel > 8 ? 8 : enemyVel+1;
         level++;
 
 

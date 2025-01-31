@@ -68,7 +68,7 @@
    # Web Configurations
    if (EMSCRIPTEN)
        message(STATUS "COMPILANDO PARA WEB ASSEMBLY ")
-       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Os -Wall --shell-file build/shell.html -s ALLOW_MEMORY_GROWTH=1 -s TOTAL_MEMORY=67108864 -sUSE_GLFW=3 -sASSERTIONS=1 -sWASM=1 -sASYNCIFY -sGL_ENABLE_GET_PROC_ADDRESS=1 --preload-file ../resources")
+       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Os -Wall -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -s GL_ENABLE_GET_PROC_ADDRESS=1 -s ALLOW_MEMORY_GROWTH=1 --preload-file ../resources -DPLATFORM_WEB")
        set(CMAKE_EXECUTABLE_SUFFIX ".html") # This line is used to set your executable to build with the emscripten html template so that you can directly open it.
 
    else()
