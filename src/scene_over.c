@@ -19,7 +19,7 @@ SceneData* initSceneOver() {
     // carregando a scene
     scene = loadSceneData(
         "resources/gameover.png",
-        "resources/sounds/gameover.mp3",
+        "resources/sounds/gameover.ogg",
         OVER,
         &gameFont
         );

@@ -107,18 +107,18 @@ SceneData* initSceneGame(){
 
     // CARREGAR EFEITOS SONOROS
     TraceLog(LOG_DEBUG, "== carregando EFEITOS SONOROS");
-    eatCheese = LoadSound("resources/sounds/eat_cheese.mp3");
-    eatStrawberry = LoadSound("resources/sounds/eat_strawberry.mp3");
-    getHit = LoadSound("resources/sounds/get_hit.mp3");
+    eatCheese = LoadSound("resources/sounds/eat_cheese.ogg");
+    eatStrawberry = LoadSound("resources/sounds/eat_strawberry.ogg");
+    getHit = LoadSound("resources/sounds/get_hit.ogg");
 
 
-    TraceLog(LOG_DEBUG, "== carregando MAPA TLESET");
+    TraceLog(LOG_DEBUG, "== carregando MAPA TILESET");
     loadMap("resources/tileset.png");
 
-    TraceLog(LOG_DEBUG, "== INICIANDO MUSICA");
+    TraceLog(LOG_DEBUG, "== INICIANDO SCENE");
     SceneData *scene = loadSceneData(
     "resources/bg.png",
-    "resources/sounds/game_music.mp3",
+    "resources/sounds/game_music.ogg",
     GAME,
     &gameFont
     );

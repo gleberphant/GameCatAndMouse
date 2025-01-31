@@ -22,7 +22,7 @@ SceneData* initSceneIntro() {
     // carregando a scene
     scene = loadSceneData(
         "resources/intro_bg.png",
-        "resources/sounds/intro_music.mp3",
+        "resources/sounds/intro_music.ogg",
         INTRO,
         &gameFont
         );
