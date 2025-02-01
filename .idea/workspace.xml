@@ -50,9 +50,17 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="fix cmake">
+    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="fix resources">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/GameCatAndMouse.exe" beforeDir="false" afterPath="$PROJECT_DIR$/build_CatAndMouse-Desktop/GameCatAndMouse.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-WEB/GameCatAndMouse.wasm" beforeDir="false" afterPath="$PROJECT_DIR$/build_CatAndMouse-WEB/GameCatAndMouse.wasm" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/actor.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/actor.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/actor.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/actor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itens.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/itens.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itens.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/itens.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scene.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scene_game.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_game.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +71,7 @@
     <option name="clangTidyViaClangd" value="false" />
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Release-web" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Release-windows" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -88,6 +96,9 @@
   </component>
   <component name="Make.Settings">
     <option name="path" value="E:\w64devkit\bin\mingw32-make.exe" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -190,9 +201,9 @@
       <item itemvalue="CMake Application.raylib" />
       <item itemvalue="CMake Application.uninstall" />
       <item itemvalue="CMake Application.update_mappings" />
+      <item itemvalue="Makefile Target.run" />
       <item itemvalue="Makefile Target.all" />
       <item itemvalue="Makefile Target.clean" />
-      <item itemvalue="Makefile Target.run" />
     </list>
     <recent_temporary>
       <list>
@@ -229,7 +240,7 @@
       <workItem from="1738259050991" duration="423000" />
       <workItem from="1738287587741" duration="1605000" />
       <workItem from="1738289262123" duration="207000" />
-      <workItem from="1738365520371" duration="1000" />
+      <workItem from="1738365520371" duration="9916000" />
     </task>
     <task id="LOCAL-00001" summary="CMAKE para compilar windows e linux">
       <option name="closed" value="true" />
@@ -367,7 +378,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738289184472</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="fix resources">
+      <option name="closed" value="true" />
+      <created>1738369119791</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1738369119791</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -405,7 +424,8 @@
     <MESSAGE value="comportamento variados" />
     <MESSAGE value="conversao de audios para ogg" />
     <MESSAGE value="fix cmake" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix cmake" />
+    <MESSAGE value="fix resources" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix resources" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

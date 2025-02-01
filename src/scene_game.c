@@ -19,7 +19,10 @@ float volumeMaster = 1.00f;
 int level=0, score=0, enemyVel=4;
 
 Texture2D *itemSpriteSheetArray, *catSpriteSheetArray, *mouseSpriteSheetArray;
-Sound eatCheese, eatStrawberry, getHit;
+
+Sound soundEffect[3];
+
+
 
 short enemyType = 0, enemyCount = 0;
 Vector2 targetPosition;
@@ -77,6 +80,7 @@ SceneData* initSceneGame(){
 
     player->speed = 10;
     player->life = 90;
+    player->behavior = PLAYER;
 
 
     // CARREGAR LISTA DE ITENS
@@ -107,10 +111,10 @@ SceneData* initSceneGame(){
 
     // CARREGAR EFEITOS SONOROS
     TraceLog(LOG_DEBUG, "== carregando EFEITOS SONOROS");
-    eatCheese = LoadSound("resources/sounds/eat_cheese.ogg");
-    eatStrawberry = LoadSound("resources/sounds/eat_strawberry.ogg");
-    getHit = LoadSound("resources/sounds/get_hit.ogg");
 
+     soundEffect[SOUND_EAT_CHEESE] = LoadSound("resources/sounds/eat_cheese.ogg");
+     soundEffect[SOUND_EAT_STRAWBERRY] = LoadSound("resources/sounds/eat_strawberry.ogg");
+     soundEffect[SOUND_GET_HURT] = LoadSound("resources/sounds/get_hit.ogg");
 
     TraceLog(LOG_DEBUG, "== carregando MAPA TILESET");
     loadMap("resources/tileset.png");
@@ -124,7 +128,7 @@ SceneData* initSceneGame(){
     );
 
     PlayMusicStream(scene->music);
-    SetMusicVolume(scene->music, volumeMaster);
+    SetMusicVolume(scene->music, 0.2f);
 
     SetExitKey(KEY_NULL);
 
@@ -184,15 +188,15 @@ bool handlePlayerInput(){
             SetMasterVolume(volumeMaster);
         }
         if (IsKeyReleased(KEY_SPACE)) {                
-            if (player->action == SPECIAL) player->action = STOP;
-            else player->action = SPECIAL;
-            player->spriteA2[SPECIAL]->currentFrame = 0;
+            if (player->action == STUN) player->action = STOP;
+            else player->action = STUN;
+            player->spriteA2[STUN]->currentFrame = 0;
         }
     }
 
     // CONTROL PLAYER
     
-    if(player->action == SPECIAL) return true;
+    if(player->action == STUN) return true;
 
     player->action = STOP;
     Vector2 moveTarget = Vector2Zero();
@@ -222,7 +226,7 @@ bool handlePlayerInput(){
     // controle por mouse
     if (
     IsMouseButtonDown(MOUSE_BUTTON_LEFT) &&
-    Vector2Distance(player->position, GetMousePosition()) > player->collisionBox.width
+    Vector2Distance(player->position, GetMousePosition()) > player->hitBox.width
     ) {
 
         player->action = MOVE;
@@ -287,7 +291,7 @@ void updatePlayer(){
                 actionMove(player);
                 break;
 
-            case SPECIAL:
+            case STUN:
                 actionSpecial(player, player);
                 break;
 
@@ -297,6 +301,8 @@ void updatePlayer(){
         }
 
 }
+
+
 
 /**
  * @brief Atualiza os itens do jogo.
@@ -314,38 +320,14 @@ void updateItens(){
 
 
             // checa colisão com item
-            if (CheckCollisionRecs(player->collisionBox, currentItem->collisionBox)) {
-                switch (currentItem->type) {
-                    case CHEESE:
-                        PlaySound(eatCheese);
+            if (CheckCollisionRecs(player->hitBox, currentItem->collisionBox)) {
 
-                        currentItem->life = -1;
-                        score += 5;
-                        break;
+                itemGetHit(player, currentItem, soundEffect);
 
-                    case STRAWBERRY:
-                        PlaySound(eatStrawberry);
-
-                        currentItem->life = -1;
-                        player->life = player->life+10 > 100 ? 100 : player->life+10;
-
-                        break;
-
-                    case TRAP:
-
-                        currentItem->life = -1;
-                        player->life -= 10;
-                        player->action = SPECIAL;
-                        break;
-                    default:
-                        TraceLog(LOG_DEBUG, "item desconhecido");
-                        currentItem->life = -1;
-                        break;
-                }
             }
-
+            // SE ITEM ESTIVER MORTO
             if (currentItem->life < 1) {
-                // REMOVER O NÓ
+                // REMOVER O ITEM DA LISTA
                 if (prev == NULL) {
                     prev = currentNode->next;
                     itemListHead = prev;
@@ -359,20 +341,22 @@ void updateItens(){
 
                 // CRIA UM NOVO ITEM ALEATÓRIO
                 itemListHead = addItemNode(itemListHead);
+                // SORTEIA NOVO ITEM
+
 
                 itemListHead->obj = loadNewItem(
                     (Vector2){
-                        (float) GetRandomValue(2, NUM_TILES_WIDTH  - 2)  * TILE_SIZE,
-                        (float) GetRandomValue(2, NUM_TILES_HEIGHT - 2 ) * TILE_SIZE
+                        (float) GetRandomValue( 2, (int) ceilf((float)SCREEN_WIDTH/TILE_SIZE) - 2 )  * TILE_SIZE,
+                        (float) GetRandomValue( 2, (int) ceilf((float)SCREEN_HEIGHT/TILE_SIZE) - 2 ) * TILE_SIZE
                     },
                     itemSpriteSheetArray,
-                    GetRandomValue(CHEESE, TRAP)
+                    getRandomItemType()
                 );
 
                 currentItem = itemListHead->obj;
 
-                // verifica se o item foi criado embaixo do jogador
-                if (CheckCollisionRecs(player->collisionBox, currentItem->collisionBox)) {
+                // verifica se o item foi criado embaixo do jogador. se sim muda ele de lugar.
+                if (CheckCollisionRecs(player->hitBox, currentItem->collisionBox)) {
                     currentItem->collisionBox = getItemCollisionBox(
                         (Vector2){(float) GetRandomValue(64, SCREEN_WIDTH - 64), (float) (float) GetRandomValue(64, SCREEN_HEIGHT - 64)}
                     );
@@ -385,7 +369,7 @@ void updateItens(){
 
             }
 
-            // dimiinuir vida do item
+            // diminui vida do item
             currentItem->life--;
         }
 
@@ -413,10 +397,10 @@ void updateEnemies(){
 
             currentActor->action = STOP;
             currentActor->speed =  GetRandomValue(1 ,  enemyVel); // velocidade variável
-            currentActor->count ++;
+            currentActor->count ++; // atualiza contador interno
             targetPosition = player->position;
 
-            if (currentActor->count > 180){
+            if (currentActor->count > 180) {
                 currentActor->behavior = GetRandomValue(ATTACK, CRAZY);
                 currentActor->count = 0 ;
 
@@ -464,7 +448,7 @@ void updateEnemies(){
                     break;
                 case SLEEPER:
                 default:// comportamento de dormir se jogador estiver longe
-                    if (Vector2Distance(currentActor->position, player->position) < 500 || player->action == SPECIAL ) {
+                    if (Vector2Distance(currentActor->position, player->position) < 500 || player->action == STUN ) {
                         currentActor->action = MOVE;
                     }
                     break;
@@ -485,17 +469,17 @@ void updateEnemies(){
                 
                 default:
                     actionStop(currentActor);
+
                     break;
             };
 
             // Check collisions
-            if (CheckCollisionRecs(player->collisionBox, currentActor->collisionBox)) {
-                PlaySound(getHit);
+            if (CheckCollisionRecs(player->hitBox, currentActor->hitBox)) {
+                PlaySound(soundEffect[SOUND_GET_HURT]);
                 currentActor->collision = true;
-                currentActor->pointOfCollision = GetCollisionRec(player->collisionBox, currentActor->collisionBox);
-                
-                if (!debugMode) player->life-= 8;
-                
+
+                if (!debugMode) getHurt(player);
+
             }
         }
 }
@@ -520,7 +504,7 @@ void updateSceneGame(){
 void drawHud() {
     
     // desenha dialog do hud
-    DrawRectangle(20, 20, 380, 50, ColorAlpha(SKYBLUE, 0.5f));
+    DrawRectangle(0, 15, SCREEN_WIDTH, 55, ColorAlpha(RAYWHITE, 0.5f));
 
     // desenha fundo da barra de vida
     DrawRectangle(149,19, 202 ,22,BLACK);
@@ -550,7 +534,7 @@ void drawDebug() {
     BeginBlendMode(BLEND_ALPHA);
     DrawRectangle(15, 420, 270, 160, ColorAlpha(SKYBLUE, 0.5f));
 
-    DrawText( TextFormat("PlayerSize: %.2f x %.2f", player->collisionBox.width, player->collisionBox.height), 20, 440, 18, BLACK);
+    DrawText( TextFormat("PlayerSize: %.2f x %.2f", player->hitBox.width, player->hitBox.height), 20, 440, 18, BLACK);
     DrawText( TextFormat("Mouse: %d %d", GetMouseX(), GetMouseY()), 20, 460, 18, BLACK);
     DrawText( TextFormat("GriMap Pos: i %d j %d", (int) floorf(player->position.x/TILE_SIZE), (int) floorf(player->position.y/TILE_SIZE)), 20, 480, 18,BLACK);
     DrawText( TextFormat("Player Pos: x %d y %d", (int) player->position.x, (int) player->position.y ), 20, 500, 18, BLACK);
@@ -673,9 +657,9 @@ void closeSceneGame(){
 
     //LIBERAR MEMORIA EFEITOS SONOROS
     TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA EFEITOS SONOROS");
-    UnloadSound(eatCheese);
-    UnloadSound(getHit);
-    UnloadSound(eatStrawberry);
+    UnloadSound(soundEffect[SOUND_EAT_CHEESE]);
+    UnloadSound(soundEffect[SOUND_EAT_STRAWBERRY]);
+    UnloadSound(soundEffect[SOUND_GET_HURT]);
 
     //LIBERAR CENA
     TraceLog(LOG_DEBUG, "== LIBERAR MEMORIA CENA");

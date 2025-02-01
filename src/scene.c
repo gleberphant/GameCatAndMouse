@@ -192,8 +192,8 @@ SceneData* loadSceneData(const char* backgroundPath, const char* musicPath, Scen
     
     if (scene->music.stream.buffer == NULL) {
         TraceLog(LOG_ERROR, "  !!  error ao carregar MUSIC !!");
-        free(scene);
-        return NULL;
+        //free(scene);
+        //return NULL;
     }
 
     // Carregar textura de fundo
@@ -202,15 +202,15 @@ SceneData* loadSceneData(const char* backgroundPath, const char* musicPath, Scen
     if (scene->background.id == 0) {
         TraceLog(LOG_ERROR, "  !!  error ao carregar BACKGROUND !!");
         UnloadMusicStream(scene->music);
-        free(scene);
-        return NULL;
+        //free(scene);
+        //return NULL;
     }
 
     scene->font = font;
     scene->type = type;
     scene->nextScene = OVER;
 
-    SetMusicVolume(scene->music, 1.0f);
+    SetMusicVolume(scene->music, 0.4f);
 
     return scene;
 }

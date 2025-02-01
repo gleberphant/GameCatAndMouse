@@ -3,7 +3,8 @@
 #define ITENS_H_
 
 #include "raylib.h"
-
+#include "actor.h"
+#include "main.h"
 
 #define ITEM_DEFAULT_LIFE 120
 #define ITEM_DEFAULT_WIDTH 32
@@ -29,9 +30,9 @@ void setItemPosition(Item* item, Vector2 position);
 
 Rectangle getItemCollisionBox(Vector2 position);
 Vector2 getItemPosition(Rectangle box);
-
+void itemGetHit(Actor *target, Item *item, Sound *sound);
 void drawItem(Item* self);
-
+ItemType getRandomItemType();
 Texture2D* loadItemSpriteSheetArray(const char *spritepathList[]);
 void unloadItemSpriteSheet(Texture2D *itemSpriteSheet) ;
 

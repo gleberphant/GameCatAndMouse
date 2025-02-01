@@ -35,7 +35,7 @@ Texture2D* loadActorSpriteSheetArray( const char* sprite){
 
     spriteSheetArray[STOP]    = LoadTexture( TextFormat("%s%s", sprite, "_stop.png"));
     spriteSheetArray[MOVE]    = LoadTexture( TextFormat("%s%s", sprite, "_walk.png"));
-    spriteSheetArray[SPECIAL] = LoadTexture( TextFormat("%s%s", sprite, "_special.png"));
+    spriteSheetArray[STUN] = LoadTexture( TextFormat("%s%s", sprite, "_special.png"));
     spriteSheetArray[END]     = (Texture2D)  { 0 };
 
     return spriteSheetArray;
@@ -52,7 +52,7 @@ Texture2D* loadActorSpriteSheetArray( const char* sprite){
 void unloadActorSpriteSheet(Texture2D *actorSpriteSheetArray) {
     UnloadTexture(actorSpriteSheetArray[STOP]);
     UnloadTexture(actorSpriteSheetArray[MOVE]);
-    UnloadTexture(actorSpriteSheetArray[SPECIAL]);
+    UnloadTexture(actorSpriteSheetArray[STUN]);
     
     free(actorSpriteSheetArray);
 }
@@ -73,11 +73,11 @@ void setActor(Actor* self, Vector2 initPos, Texture2D* spritesheet){
     self->spriteA2[STOP]->type = STOP;
     self->spriteA2[MOVE]    = getAnimation( &spritesheet[MOVE] );
     self->spriteA2[MOVE]->type = MOVE;
-    self->spriteA2[SPECIAL] = getAnimation( &spritesheet[SPECIAL] );
-    self->spriteA2[SPECIAL]->type = SPECIAL;
+    self->spriteA2[STUN] = getAnimation( &spritesheet[STUN] );
+    self->spriteA2[STUN]->type = STUN;
 
-    // define posição e colission box
-    setActorPosition(self, initPos);
+    // define posição e colission box. passa posição centralizada no tile
+    setActorInitPosition(self, (Vector2){ initPos.x + (float)TILE_SIZE/2, initPos.y + (float)TILE_SIZE/2 });
 
     // define valores default dos atributos
 
@@ -94,22 +94,14 @@ void setActor(Actor* self, Vector2 initPos, Texture2D* spritesheet){
  * Esta função define a posição e o retângulo de colisão de um ator.
  * 
  * @param self O ator a ser posicionado.
- * @param position A nova posição do ator.
+ * @param position A nova posição do ator. posição centralizada aos tiles.
  */
-void setActorPosition(Actor* self, Vector2 position) {
-    // retângulo de colisão
-    self->collisionBox = (Rectangle){
-        .x = position.x,
-        .y = position.y,
-        .width  = 64, //self->spriteA2[STOP]->frameRec.width;
-        .height = 64 //self->spriteA2[STOP]->frameRec.height;
-    };
+void setActorInitPosition(Actor* self, Vector2 position) {
+    // recebe posição centralizada do sprite
+    self->position = position;
 
-    // centraliza posição no sprite
-    self->position = (Vector2){
-       .x = position.x + (self->collisionBox.width/2),
-       .y = position.y + (self->collisionBox.height/2)
-    };
+    // retângulo de colisão
+    self->hitBox = getActorHitBox(self, self->behavior != PLAYER ? true : false);
 
     // old pos
     self->oldPosition = self->position;
@@ -123,12 +115,14 @@ void setActorPosition(Actor* self, Vector2 position) {
  * @param position A posição do ator.
  * @return Rectangle Retorna o retângulo de colisão do ator.
  */
-Rectangle getActorCollisionBox(Vector2 position) {
+Rectangle getActorHitBox(Actor* target, bool cat) {
+
+
     return (Rectangle)  {
-        .width = 64,
-        .height = 64,
-        .x = position.x - 32,
-        .y = position.y - 32,
+        .width = 52,
+        .height = 52,
+        .x = cat && target->action == MOVE ? target->position.x - 26 + ( 20 * cosf(target->direction)) : target->position.x - 26,
+        .y = cat && target->action == MOVE ? target->position.y - 26 + ( 20 * sinf(target->direction)) : target->position.y - 26,
     };
 
 }
@@ -158,7 +152,7 @@ Vector2 getActorPosition(Rectangle box) {
  * @param self O ator a ser atualizado.
  */
 void actionStop(Actor* self)  {
-    self->action = STOP;
+    self->hitBox = getActorHitBox(self, self->behavior != PLAYER ? true : false);
     return;
 }
 
@@ -175,18 +169,18 @@ void actionMove(Actor* self) {
     self->oldPosition = self->position;
 
     // calcula nova posição
-    self->position = Vector2Add(
-        self->position,
-        (Vector2){
-            .x = self->speed * cosf(self->direction),
-            .y = self->speed * sinf(self->direction)
-        }
-    );
+    self->position.x += self->speed * cosf(self->direction);
+    self->position.y += self->speed * sinf(self->direction);
 
-    // VERIFICA SE JOGADOR DENTRO DA ARENA
+
+    // VERIFICA SE colisão com as parades do mapa
     if(checkMapCollision(self)){
         self->position = self->oldPosition; //nova posição
     }
+
+    // atualizar posição do hit de acordo com nova posição para o canto superior da imagem
+    self->hitBox = getActorHitBox(self, self->behavior != PLAYER ? true : false);
+
 
 }
 
@@ -198,8 +192,20 @@ void actionMove(Actor* self) {
  * @param self O ator a ser atualizado.
  * @param target O alvo da ação especial.
  */
- void actionSpecial(Actor* self, Actor* target)  {
-    self->action = SPECIAL;
+void actionSpecial(Actor* self, Actor* target)  {
+    self->action = STUN;
+
+}
+
+/**
+ * @brief ator sofreu um ataque
+ *
+ * Esta função causa dano no ator
+ *
+ * @param self O ator atacado.
+ */
+void getHurt(Actor* self)  {
+    self->life -= 8;
 
 }
 
@@ -219,10 +225,9 @@ void drawActor(Actor* self){
         .x = self->position.x,
         .y = self->position.y
     };
-  
-    // atualizar posição do collision box para o canto superior da imagem
-    self->collisionBox.x = self->position.x-(self->collisionBox.width/2); 
-    self->collisionBox.y = self->position.y-(self->collisionBox.height/2);
+
+
+
 
     //DESENHA SPRITE
     DrawTexturePro(
@@ -230,12 +235,27 @@ void drawActor(Actor* self){
         self->spriteA2[self->action]->frameRec,
         drawRect,
         (Vector2){ drawRect.width/2, drawRect.height/2 },
-        (self->direction*RAD2DEG)+90, // angulo de rotação em graus
-        WHITE
+        (self->direction*RAD2DEG) + 90, // angulo de rotação em graus
+        self-> life < 20 ? (Color){255,100,100,255} :  WHITE // SE LIFE BAIXO DESENHA VERMELHO
     );
 
-    
-    if(self->collision) self->collision = false;
+    // DESENHA EFEITO DE PODER
+    if(self->life == 100) {
+        DrawCircleGradient(
+            (int)self->position.x, (int)self->position.y,
+            32.0f,
+            Fade(WHITE, 0.0f), Fade(SKYBLUE, 0.6f));
+    }
+
+    if(self->collision)
+    {
+        DrawCircle(
+        (int)self->position.x,
+        (int)self->position.y,
+        10,
+        RED);
+        self->collision = false;
+    }
 
     // atualiza frame da animação
     if ( updateAnimationFrame (self->spriteA2[self->action] )) self->action = STOP; ;
@@ -243,15 +263,9 @@ void drawActor(Actor* self){
 
     // DESENHOS DE DEPURAÇÃO
     if(debugMode){
-        // DESENHA ponto de colisão
-        DrawCircle(
-            (int)self->pointOfCollision.x,
-            (int)self->pointOfCollision.y,
-            10,
-            RED);
-        
+
         // ÁREA DE COLISÃO
-        DrawRectangleLinesEx(self->collisionBox,5.0f,DARKGREEN);
+        DrawRectangleLinesEx(self->hitBox,5.0f,DARKGREEN);
         DrawRectangleLinesEx(drawRect,2.0f,RED);
 
         // DIREÇÃO DO MOVIMENTO
@@ -266,6 +280,7 @@ void drawActor(Actor* self){
             self->position,
              GetMousePosition(), RED);
 
+        // posição no maptile
         DrawCircle(
             (int)self->position.x,
             (int)self->position.y,

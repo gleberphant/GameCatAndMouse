@@ -62,6 +62,54 @@ void setItemPosition(Item* item, Vector2 position) {
 
 }
 
+
+void itemGetHit(Actor *target, Item *item, Sound *sound) {
+    switch (item->type) {
+        case CHEESE:
+            PlaySound(sound[SOUND_EAT_CHEESE]);
+        item->life = -1;
+        score += 5;
+        break;
+
+        case STRAWBERRY:
+            PlaySound(sound[SOUND_EAT_STRAWBERRY]);
+
+        item->life = -1;
+        target->life = 100;
+
+        break;
+
+        case TRAP:
+            PlaySound(sound[SOUND_GET_HURT]);
+        item->life = -1;
+        target->life -= 10;
+        target->action = STUN;
+        break;
+
+        default:
+            TraceLog(LOG_DEBUG, "item desconhecido");
+        item->life = -1;
+        break;
+    }
+}
+
+
+ItemType getRandomItemType() {
+
+    switch (GetRandomValue(0, 10))
+    {
+        case 0: case 1: case 2: case 3: case 4:
+            return CHEESE;
+        case 5: case 6: case 7: case 8:
+            return TRAP;
+        case 9: case 10:
+            return STRAWBERRY;
+        default:
+            return CHEESE;
+    }
+    return CHEESE;
+}
+
 /**
  * @brief Carrega um novo item.
  * 

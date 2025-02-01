@@ -13,6 +13,10 @@
 #define FONT_SPACE 2.0f
 #define PLAYER_INIT_POS (Vector2){ 380.0f, 300.0f }
 
+#define SOUND_EAT_CHEESE 0
+#define SOUND_EAT_STRAWBERRY 1
+#define SOUND_GET_HURT 2
+
 // declaração forwad
 typedef enum ScenesType ScenesType;  // Declaração forward
 typedef struct SceneData SceneData;  // Declaração forward
