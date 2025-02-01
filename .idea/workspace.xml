@@ -21,8 +21,8 @@
     <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
-    <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppIncludesOrderOptions" type="string" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
+    <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppIncludesOrderOptions" type="string" />
   </component>
   <component name="CMakePresetLoader">{
   &quot;useNewFormat&quot;: true
@@ -50,27 +50,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="conversao de audios para ogg">
-      <change beforePath="$PROJECT_DIR$/.idea/GameCatAndMouse.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/GameCatAndMouse.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="37019fb7-ed62-480c-a8a8-dee84e96b909" name="Changes" comment="fix cmake">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/GameCatAndMouse.exe" beforeDir="false" afterPath="$PROJECT_DIR$/build_CatAndMouse-Desktop/GameCatAndMouse.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/enemyLayer01.data" beforeDir="false" afterPath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/enemyLayer01.data" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/score.data" beforeDir="false" afterPath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/score.data" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/confirm.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/eat_cheese.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/eat_strawberry.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/game_music.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/gameover.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/get_hit.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/get_hit2.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build_CatAndMouse-Desktop/resources/sounds/intro_music.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/enemyLayer01.data" beforeDir="false" afterPath="$PROJECT_DIR$/resources/enemyLayer01.data" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/maps.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/maps.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/maps.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/maps.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/scene_game.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/scene_game.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -165,11 +147,6 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.GameCatAndMouse">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="GameCatAndMouse" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="GameCatAndMouse" TARGET_NAME="GameCatAndMouse" CONFIG_NAME="Release-windows" RUN_TARGET_PROJECT_NAME="GameCatAndMouse" RUN_TARGET_NAME="GameCatAndMouse">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -213,9 +190,9 @@
       <item itemvalue="CMake Application.raylib" />
       <item itemvalue="CMake Application.uninstall" />
       <item itemvalue="CMake Application.update_mappings" />
-      <item itemvalue="Makefile Target.run" />
       <item itemvalue="Makefile Target.all" />
       <item itemvalue="Makefile Target.clean" />
+      <item itemvalue="Makefile Target.run" />
     </list>
     <recent_temporary>
       <list>
@@ -250,7 +227,9 @@
       <workItem from="1738159780401" duration="1548000" />
       <workItem from="1738183118980" duration="24125000" />
       <workItem from="1738259050991" duration="423000" />
-      <workItem from="1738287587741" duration="1513000" />
+      <workItem from="1738287587741" duration="1605000" />
+      <workItem from="1738289262123" duration="207000" />
+      <workItem from="1738365520371" duration="1000" />
     </task>
     <task id="LOCAL-00001" summary="CMAKE para compilar windows e linux">
       <option name="closed" value="true" />
@@ -380,7 +359,15 @@
       <option name="project" value="LOCAL" />
       <updated>1738282120778</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="fix cmake">
+      <option name="closed" value="true" />
+      <created>1738289184472</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1738289184472</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -417,7 +404,8 @@
     <MESSAGE value="CARREGAR FILE MAP" />
     <MESSAGE value="comportamento variados" />
     <MESSAGE value="conversao de audios para ogg" />
-    <option name="LAST_COMMIT_MESSAGE" value="conversao de audios para ogg" />
+    <MESSAGE value="fix cmake" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix cmake" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
